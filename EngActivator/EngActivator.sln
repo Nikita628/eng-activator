@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31613.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EngActivator.API", "EngActivator.API\EngActivator.API.csproj", "{F7E92964-8F6C-436A-A8D3-B27A9C6E44BD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EngActivator.APP", "EngActivator.APP\EngActivator.APP.csproj", "{B1E9CF49-F231-44E3-B353-096DEEF4B4A4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F7E92964-8F6C-436A-A8D3-B27A9C6E44BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7E92964-8F6C-436A-A8D3-B27A9C6E44BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7E92964-8F6C-436A-A8D3-B27A9C6E44BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7E92964-8F6C-436A-A8D3-B27A9C6E44BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1E9CF49-F231-44E3-B353-096DEEF4B4A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1E9CF49-F231-44E3-B353-096DEEF4B4A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1E9CF49-F231-44E3-B353-096DEEF4B4A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1E9CF49-F231-44E3-B353-096DEEF4B4A4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {83E8A4A9-0515-4C07-ADB9-9A34444DA985}
+	EndGlobalSection
+EndGlobal
