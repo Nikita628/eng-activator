@@ -11,6 +11,7 @@ import 'package:eng_activator_app/widgets/screens/help.dart';
 import 'package:eng_activator_app/widgets/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AppDrawer extends StatelessWidget {
   final ActivityService _activityService = Injector.get<ActivityService>();
@@ -93,6 +94,18 @@ class AppDrawer extends StatelessWidget {
             title: Text('Logout'),
             onTap: () {
               authProvider.removeAuthData();
+            }
+          ),
+          ListTile(
+            // TODO remove after testing
+            leading: Icon(
+              Icons.exit_to_app,
+              color: Color(AppColors.green),
+              size: 30,
+            ),
+            title: Text('Clear app local data (remove this)'),
+            onTap: () {
+              SharedPreferences.getInstance().then((value) => value.clear());
             }
           ),
         ],

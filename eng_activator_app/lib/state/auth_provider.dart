@@ -101,7 +101,7 @@ class AuthProvider with ChangeNotifier {
 
   void _removeAuthDataFromLocalStorage() {
     SharedPreferences.getInstance().then((value) {
-      value.clear();
+      value.remove(_localStorageKey);
     }).catchError((e) {});
   }
 }
