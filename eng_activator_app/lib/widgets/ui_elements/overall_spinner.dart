@@ -9,7 +9,6 @@ class OverallSpinner extends StatelessWidget {
     return Container(
       color: const Color.fromARGB(200, 255, 255, 255),
       width: double.infinity,
-      //height: double.infinity,
       child: Center(
         child: AppSpinner(),
       ),

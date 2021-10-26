@@ -1,5 +1,6 @@
 import 'package:eng_activator_app/services/activity/activity_service.dart';
 import 'package:eng_activator_app/services/activity/activity_validator.dart';
+import 'package:eng_activator_app/services/api_clients/activity_response_api_client.dart';
 import 'package:eng_activator_app/services/api_clients/auth_api_client.dart';
 import 'package:eng_activator_app/services/api_clients/dictionary_api_client.dart';
 import 'package:eng_activator_app/shared/services/app_navigator.dart';
@@ -18,6 +19,7 @@ class Injector {
   static final AppNavigator _appNavigator = AppNavigator();
   static final DictionaryApiClient _dictionaryApiClient = DictionaryApiClient();
   static final AuthApiClient _authApiClient = AuthApiClient();
+  static final ActivityResponseApiClient _activityResponseApiClient = ActivityResponseApiClient();
 
   static T get<T>() {
     Object? objectOfType;
@@ -40,6 +42,8 @@ class Injector {
       objectOfType = _dictionaryApiClient;
     } else if (_typesEqual<T, AuthApiClient>()) {
       objectOfType = _authApiClient;
+    } else if (_typesEqual<T, ActivityResponseApiClient>()) {
+      objectOfType = _activityResponseApiClient;
     }
     else {
       throw Exception('Type not found');

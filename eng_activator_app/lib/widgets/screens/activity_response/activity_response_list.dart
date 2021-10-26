@@ -1,6 +1,8 @@
-import 'package:eng_activator_app/models/activity_response/activity_response.dart';
+import 'package:eng_activator_app/models/activity_response/activity_response_preview.dart';
+import 'package:eng_activator_app/models/activity_response/activity_response_search_param.dart';
+import 'package:eng_activator_app/services/api_clients/activity_response_api_client.dart';
+import 'package:eng_activator_app/shared/enums.dart';
 import 'package:eng_activator_app/shared/services/injector.dart';
-import 'package:eng_activator_app/shared/services/mock_api.dart';
 import 'package:eng_activator_app/shared/constants.dart';
 import 'package:eng_activator_app/widgets/activity_response/activity_response_list_item.dart';
 import 'package:eng_activator_app/widgets/ui_elements/app_scaffold.dart';
@@ -17,57 +19,59 @@ class ActivityResponseListWidget extends StatefulWidget {
 }
 
 class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget> {
-  final MockApi _api = Injector.get<MockApi>();
+  final ActivityResponseApiClient _activityResponseApiClient = Injector.get<ActivityResponseApiClient>();
   final ScrollController _scrollController = ScrollController();
-  final List<ActivityResponse> _responses = [];
-  bool _isOverallSpinner = true;
-  bool _isPagingSpinner = false;
-  DateTime? _dateFilter;
+  final List<ActivityResponsePreview> _previews = [];
+  WidgetStatusEnum _overallStatus = WidgetStatusEnum.Loading;
+  WidgetStatusEnum _pagingStatus = WidgetStatusEnum.Default;
+  ActivityResponseSearchParam _currentSearchParam = ActivityResponseSearchParam();
+  int _totalItemsCount = 0;
 
   @override
   void initState() {
-    _scrollController.addListener(_processScroll);
-
-    _api.getActivityResponses().then((value) {
-      if (mounted) {
-        setState(() {
-          _isOverallSpinner = false;
-          _responses.addAll(value);
-        });
-      }
-    });
-
+    _scrollController.addListener(_getNextPageIfScrolledToBottom);
+    _searchActivityPreviews(_currentSearchParam);
     super.initState();
   }
 
   @override
   void dispose() {
-    _scrollController.removeListener(_processScroll);
+    _scrollController.removeListener(_getNextPageIfScrolledToBottom);
     _scrollController.dispose();
     super.dispose();
   }
 
-  void _processScroll() {
+  Future<void> _getNextPageIfScrolledToBottom() async {
     var isScrolledToBottom = _scrollController.offset >= (_scrollController.position.maxScrollExtent - 30);
+    var hasMoreRecords = _currentSearchParam.pageNumber * _currentSearchParam.pageSize < _totalItemsCount;
 
-    if (isScrolledToBottom) {
+    if (isScrolledToBottom && hasMoreRecords) {
       setState(() {
-        _isPagingSpinner = true;
+        _pagingStatus = WidgetStatusEnum.Loading;
       });
 
-      _api.getActivityResponses().then((value) {
+      _currentSearchParam.pageNumber = _currentSearchParam.pageNumber + 1;
+
+      try {
+        var pageResponse = await _activityResponseApiClient.searchPreviews(_currentSearchParam, context);
+
         if (mounted) {
+          _totalItemsCount = pageResponse.totalCount;
           setState(() {
-            _isPagingSpinner = false;
-            _responses.addAll(value);
+            _pagingStatus = WidgetStatusEnum.Default;
+            _previews.addAll(pageResponse.items);
           });
         }
-      });
+      } catch (e) {
+        setState(() {
+          _pagingStatus = WidgetStatusEnum.Default;
+        });
+      }
     }
   }
 
-  void _filterByDate() {
-    showDatePicker(
+  Future<void> _filterByDate() async {
+    var dateFilter = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2021),
@@ -89,85 +93,50 @@ class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget>
           child: child!,
         );
       },
-    ).then((value) {
-      if (value != null) {
-        setState(() {
-          _dateFilter = value;
-          _isOverallSpinner = true;
-        });
+    );
 
-        _api.getActivityResponses().then((value) {
-          if (mounted) {
-            setState(() {
-              _isOverallSpinner = false;
-              _responses.clear();
-              _responses.addAll(value);
-            });
+    if (dateFilter != null) {
+      setState(() {
+        _currentSearchParam.createdDateEquals = dateFilter;
+        _currentSearchParam.pageNumber = 1;
+        _currentSearchParam.pageSize = 10;
+        _overallStatus = WidgetStatusEnum.Loading;
+      });
+
+      await _searchActivityPreviews(_currentSearchParam);
+    }
+  }
+
+  Future<void> _resetDateFilter() async {
+    setState(() {
+      _currentSearchParam = ActivityResponseSearchParam();
+      _overallStatus = WidgetStatusEnum.Loading;
+    });
+
+    await _searchActivityPreviews(_currentSearchParam);
+  }
+
+  Future<void> _searchActivityPreviews(ActivityResponseSearchParam param) async {
+    try {
+      var pageResponse = await _activityResponseApiClient.searchPreviews(param, context);
+
+      if (mounted) {
+        _totalItemsCount = pageResponse.totalCount;
+        setState(() {
+          if (pageResponse.items.isEmpty) {
+            _overallStatus = WidgetStatusEnum.EmptyResult;
+          } else {
+            _overallStatus = WidgetStatusEnum.Result;
+            _previews.clear();
+            _previews.addAll(pageResponse.items);
           }
         });
       }
-    });
-  }
-
-  void _resetDateFilter() {
-    setState(() {
-      _dateFilter = null;
-      _isOverallSpinner = true;
-    });
-
-    _api.getActivityResponses().then((value) {
-      if (mounted) {
-        setState(() {
-          _isOverallSpinner = false;
-          _responses.clear();
-          _responses.addAll(value);
-        });
-      }
-    });
-  }
-
-  List<Widget> _buildDateFilter() {
-    List<Widget> children = [
-      IconButton(
-        onPressed: _filterByDate,
-        icon: Icon(
-          Icons.calendar_today_outlined,
-          color: Color(AppColors.green),
-        ),
-        iconSize: 35,
-      ),
-    ];
-
-    if (_dateFilter != null) {
-      children.add(GestureDetector(
-        onTap: _filterByDate,
-        child: Text(
-          DateFormat().addPattern('MMMM d, yyyy').format(_dateFilter as DateTime),
-          style: TextStyle(color: Color(AppColors.black), fontSize: 14),
-        ),
-      ));
-
-      children.add(
-        IconButton(
-          onPressed: _resetDateFilter,
-          icon: Icon(
-            Icons.close,
-            color: Color(AppColors.green),
-          ),
-          iconSize: 25,
-        ),
-      );
-    } else {
-      children.add(GestureDetector(
-        onTap: _filterByDate,
-        child: Text(
-          "ALL TIME",
-          style: TextStyle(color: Color(AppColors.grey), fontSize: 14),
-        ),
-      ));
+    } catch (e) {
+      setState(() {
+        _overallStatus = WidgetStatusEnum.Error;
+      });
     }
-
-    return children;
   }
 
   @override
@@ -182,23 +151,123 @@ class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget>
         child: Column(
           children: [
             Container(
-              margin: const EdgeInsets.only(bottom: 10),
-              child: Row(children: _buildDateFilter(), mainAxisAlignment: MainAxisAlignment.end),
-            ),
+                margin: const EdgeInsets.only(bottom: 10),
+                child: _DateFilter(
+                  onFilterTap: _filterByDate,
+                  onResetFilter: _resetDateFilter,
+                  filter: _currentSearchParam.createdDateEquals,
+                )),
             Expanded(
-              child: _isOverallSpinner
-                  ? OverallSpinner()
-                  : ListView(
-                      controller: _scrollController,
-                      children: [
-                        ..._responses.map((r) => ActivityResponseListItemWidget(response: r)).toList(),
-                        SizedBox(height: 60, child: _isPagingSpinner ? Center(child: AppSpinner()) : null),
-                      ],
-                    ),
-            ),
+                child: _ActivityPreviewList(
+              overallStatus: _overallStatus,
+              pagingStatus: _pagingStatus,
+              scrollController: _scrollController,
+              previews: _previews,
+            )),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ActivityPreviewList extends StatelessWidget {
+  final ScrollController _scrollController;
+  final WidgetStatusEnum _overallStatus;
+  final WidgetStatusEnum _pagingStatus;
+  final List<ActivityResponsePreview> _previews;
+
+  _ActivityPreviewList({
+    required WidgetStatusEnum overallStatus,
+    required WidgetStatusEnum pagingStatus,
+    required ScrollController scrollController,
+    required List<ActivityResponsePreview> previews,
+  })  : _overallStatus = overallStatus,
+        _pagingStatus = pagingStatus,
+        _scrollController = scrollController,
+        _previews = previews,
+        super();
+
+  @override
+  Widget build(BuildContext context) {
+    Widget widget = SizedBox.shrink();
+
+    if (_overallStatus == WidgetStatusEnum.Loading) {
+      widget = OverallSpinner();
+    } else if (_overallStatus == WidgetStatusEnum.EmptyResult) {
+      widget = Center(child: Text("No items found"));
+    } else if (_overallStatus == WidgetStatusEnum.Result) {
+      widget = ListView(
+        controller: _scrollController,
+        children: [
+          ..._previews.map((r) => ActivityResponseListItemWidget(response: r)).toList(),
+          SizedBox(height: 60, child: _pagingStatus == WidgetStatusEnum.Loading ? Center(child: AppSpinner()) : null),
+        ],
+      );
+    } else if (_overallStatus == WidgetStatusEnum.Error) {
+      widget = Center(child: Text("Something went wrong"));
+    }
+
+    return widget;
+  }
+}
+
+class _DateFilter extends StatelessWidget {
+  final DateTime? _filter;
+  final void Function() _onFilterTap;
+  final void Function() _onResetFilter;
+
+  _DateFilter({
+    DateTime? filter,
+    required void Function() onFilterTap,
+    required void Function() onResetFilter,
+  })  : _filter = filter,
+        _onFilterTap = onFilterTap,
+        _onResetFilter = onResetFilter,
+        super();
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        IconButton(
+          onPressed: _onFilterTap,
+          icon: Icon(
+            Icons.calendar_today_outlined,
+            color: Color(AppColors.green),
+          ),
+          iconSize: 35,
+        ),
+        _filter != null
+            ? GestureDetector(
+                onTap: _onFilterTap,
+                child: Text(
+                  DateFormat().addPattern('MMMM d, yyyy').format(_filter as DateTime),
+                  style: TextStyle(color: Color(AppColors.black), fontSize: 14),
+                ),
+              )
+            : SizedBox.shrink(),
+        _filter != null
+            ? IconButton(
+                onPressed: _onResetFilter,
+                icon: Icon(
+                  Icons.close,
+                  color: Color(AppColors.green),
+                ),
+                iconSize: 25,
+              )
+            : SizedBox.shrink(),
+        _filter == null
+            ? GestureDetector(
+                onTap: _onFilterTap,
+                child: Text(
+                  "ALL TIME",
+                  style: TextStyle(color: Color(AppColors.grey), fontSize: 14),
+                ),
+              )
+            : SizedBox.shrink(),
+      ],
     );
   }
 }
