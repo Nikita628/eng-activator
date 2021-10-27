@@ -1,6 +1,4 @@
 import 'package:eng_activator_app/models/activity_response/activity_response_preview.dart';
-import 'package:eng_activator_app/models/activity_response/picture_activity_response.dart';
-import 'package:eng_activator_app/models/activity_response/question_activity_response.dart';
 import 'package:eng_activator_app/shared/enums.dart';
 import 'package:eng_activator_app/shared/services/app_navigator.dart';
 import 'package:eng_activator_app/shared/services/injector.dart';
@@ -19,10 +17,10 @@ class ActivityResponseListItemWidget extends StatelessWidget {
   }) : _response = response;
 
   void _navigateToDetails(BuildContext context) {
-    if (_response is QuestionActivityResponse) {
-      _appNavigator.pushOnTopCurrentUrl(QuestionActivityResponseWidget.screenUrl, context);
-    } else if (_response is PictureActivityResponse) {
-      _appNavigator.pushOnTopCurrentUrl(PictureActivityResponseWidget.screenUrl, context);
+    if (_response.activityTypeId == ActivityTypeEnum.Question) {
+      _appNavigator.pushOnTopCurrentUrl(QuestionActivityResponseWidget.screenUrl, context, args: _response.id);
+    } else if (_response.activityTypeId == ActivityTypeEnum.Picture) {
+      _appNavigator.pushOnTopCurrentUrl(PictureActivityResponseWidget.screenUrl, context, args: _response.id);
     }
   }
 
@@ -35,7 +33,7 @@ class ActivityResponseListItemWidget extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        margin: EdgeInsets.only(bottom: 10),
+        margin: const EdgeInsets.only(bottom: 10),
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.only(left: 10, right: 15, top: 10, bottom: 10),
@@ -73,7 +71,7 @@ class ActivityResponseListItemWidget extends StatelessWidget {
                               ? const Icon(
                                   Icons.message,
                                   color: Color(AppColors.green),
-                                  size: 14,
+                                  size: 15,
                                 )
                               : const SizedBox.shrink()
                         ],

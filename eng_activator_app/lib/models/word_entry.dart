@@ -33,7 +33,7 @@ class WordEntry {
 
   WordEntry.fromJson(Map<String, dynamic> json) {
     word = json["word"] ?? "";
-    meaning = json["definition"] ?? "";
+    meaning = json["meaning"] ?? "";
     pictureUrl = json["pictureUrl"] ?? "";
     examples = Converter.toList(json, "examples");
     forms = Converter.toList(json, "forms");

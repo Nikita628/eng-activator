@@ -13,6 +13,7 @@ import 'package:eng_activator_app/widgets/activity_picture_widget.dart';
 import 'package:eng_activator_app/widgets/activity_question_widget.dart';
 import 'package:eng_activator_app/widgets/ui_elements/app_scaffold.dart';
 import 'package:eng_activator_app/widgets/ui_elements/empty_screen.dart';
+import 'package:eng_activator_app/widgets/ui_elements/overall_spinner.dart';
 import 'package:eng_activator_app/widgets/word_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -59,7 +60,7 @@ class _ActivityForReviewState extends State<ActivityForReview> {
   @override
   Widget build(BuildContext context) {
     if (_isOverallSpinner) {
-      return EmptyScreenWidget(isSpinner: true);
+      return EmptyScreenWidget(child: OverallSpinner());
     }
 
     return AppScaffold(

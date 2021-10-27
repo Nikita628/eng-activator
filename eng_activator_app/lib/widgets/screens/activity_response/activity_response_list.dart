@@ -63,9 +63,11 @@ class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget>
           });
         }
       } catch (e) {
-        setState(() {
-          _pagingStatus = WidgetStatusEnum.Default;
-        });
+        if (mounted) {
+          setState(() {
+            _pagingStatus = WidgetStatusEnum.Default;
+          });
+        }
       }
     }
   }
@@ -133,9 +135,11 @@ class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget>
         });
       }
     } catch (e) {
-      setState(() {
-        _overallStatus = WidgetStatusEnum.Error;
-      });
+      if (mounted) {
+        setState(() {
+          _overallStatus = WidgetStatusEnum.Error;
+        });
+      }
     }
   }
 

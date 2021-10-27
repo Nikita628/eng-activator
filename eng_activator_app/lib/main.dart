@@ -47,13 +47,23 @@ class EnglishActivatorApp extends StatelessWidget {
         routes: {
           MainScreenWidget.screenUrl: (_) => AuthGuard(child: MainScreenWidget()),
           ActivityResponseListWidget.screenUrl: (_) => AuthGuard(child: ActivityResponseListWidget()),
-          PictureActivityResponseWidget.screenUrl: (_) => AuthGuard(child: PictureActivityResponseWidget()),
-          QuestionActivityResponseWidget.screenUrl: (_) => AuthGuard(child: QuestionActivityResponseWidget()),
+          // PictureActivityResponseWidget.screenUrl: (_) => AuthGuard(child: PictureActivityResponseWidget()),
+          // QuestionActivityResponseWidget.screenUrl: (_) => AuthGuard(child: QuestionActivityResponseWidget()),
           ActivityForReview.screenUrl: (_) => AuthGuard(child: ActivityForReview()),
           AppHelpWidget.screenUrl: (_) => AuthGuard(child: AppHelpWidget()),
           CurrentActivityWidget.screenUrl: (_) => AuthGuard(child: CurrentActivityWidget()),
           LoginScreenWidget.screenUrl: (_) => LoginScreenWidget(),
           SignupScreenWidget.screenUrl: (_) => SignupScreenWidget(),
+        },
+        onGenerateRoute: (RouteSettings settings) {
+          var routes = <String, WidgetBuilder>{
+            PictureActivityResponseWidget.screenUrl: (ctx) =>
+                PictureActivityResponseWidget(pictureActivityResponseId: settings.arguments as int),
+            QuestionActivityResponseWidget.screenUrl: (ctx) =>
+                QuestionActivityResponseWidget(questionActivityResponseId: settings.arguments as int)
+          };
+          WidgetBuilder builder = routes[settings.name] as WidgetBuilder;
+          return MaterialPageRoute(builder: (ctx) => builder(ctx));
         },
       ),
     );

@@ -29,6 +29,9 @@ class _AppBarWidgetState extends State<AppBarWidget> {
       _bottomSheetController = null;
     } else {
       _bottomSheetController = Scaffold.of(context).showBottomSheet<void>((_) => DictionaryBottomSheet());
+      _bottomSheetController?.closed.then((value) {
+        _bottomSheetController = null;
+      });
     }
   }
 

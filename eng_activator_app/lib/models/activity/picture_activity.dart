@@ -15,4 +15,8 @@ class PictureActivity extends Activity {
       ...super.toJson(),
     };
   }
+
+  PictureActivity.fromJson(Map<String, dynamic> json): super.fromJson(json) {
+    picUrl = json["picUrl"] ?? "";
+  }
 }

@@ -81,8 +81,9 @@ class _DictionaryBottomSheetState extends State<DictionaryBottomSheet> {
           controller: _scrollController,
           shrinkWrap: true,
           physics: const ScrollPhysics(),
-          padding: const EdgeInsets.only(top: 15, bottom: 15, left: 10, right: 10),
+          padding: const EdgeInsets.only(bottom: 15, left: 10, right: 10),
           children: [
+            Icon(Icons.arrow_drop_down, size: 30, color: Color(AppColors.black)),
             DictionarySearchTextField(onSearchIconClick: _searchDictionary),
             DictionarySearchResult(
               dictionaryResponse: _dictionaryResponse,

@@ -15,4 +15,8 @@ class QuestionActivity extends Activity {
       ...super.toJson(),
     };
   }
+
+  QuestionActivity.fromJson(Map<String, dynamic> json): super.fromJson(json) {
+    question = json["question"] ?? "";
+  }
 }

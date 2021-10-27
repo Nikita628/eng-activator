@@ -9,8 +9,11 @@ import 'package:flutter/material.dart';
 
 class QuestionActivityResponseWidget extends StatefulWidget {
   static final String screenUrl = '/question-activity-response';
+  final int _questionActivityResponseId;
 
-  const QuestionActivityResponseWidget({Key? key}) : super(key: key);
+  QuestionActivityResponseWidget({required int questionActivityResponseId})
+      : _questionActivityResponseId = questionActivityResponseId,
+        super();
 
   @override
   _QuestionActivityResponseWidgetState createState() => _QuestionActivityResponseWidgetState();
@@ -39,14 +42,15 @@ class _QuestionActivityResponseWidgetState extends State<QuestionActivityRespons
 
   @override
   Widget build(BuildContext context) {
-    return _isSpinner
-        ? EmptyScreenWidget(isSpinner: true)
-        : ActivityResponseDetailsWidget(
-            activityResponse: _response,
-            child: ActivityQuestionWidget(
-              text: _activity.question,
-              margin: const EdgeInsets.only(bottom: 20, top: 20),
-            ),
-          );
+    return Container();
+    // return _isSpinner
+    //     ? EmptyScreenWidget()
+    //     : ActivityResponseDetailsWidget(
+    //         activityResponse: _response,
+    //         child: ActivityQuestionWidget(
+    //           text: _activity.question,
+    //           margin: const EdgeInsets.only(bottom: 20, top: 20),
+    //         ),
+    //       );
   }
 }

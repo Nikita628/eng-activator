@@ -8,9 +8,9 @@ class AppNavigator {
     Navigator.of(context).pushReplacementNamed(newUrl);
   }
 
-  void pushOnTopCurrentUrl(String newUrl, BuildContext context){
+  void pushOnTopCurrentUrl(String newUrl, BuildContext context, {Object? args}){
     Provider.of<CurrentUrlProvider>(context, listen: false).setCurrentUrl(newUrl);
-    Navigator.of(context).pushNamed(newUrl);
+    Navigator.of(context).pushNamed(newUrl, arguments: args);
   }
 
   void popToUrl(String newUrl, BuildContext context){
