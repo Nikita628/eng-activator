@@ -1,10 +1,12 @@
 import 'package:eng_activator_app/models/activity/question_activity.dart';
-import 'package:eng_activator_app/models/activity_response/question_activity_response.dart';
+import 'package:eng_activator_app/models/activity_response/activity_response_details.dart';
+import 'package:eng_activator_app/services/api_clients/activity_response_api_client.dart';
+import 'package:eng_activator_app/shared/enums.dart';
 import 'package:eng_activator_app/shared/services/injector.dart';
-import 'package:eng_activator_app/shared/services/mock_api.dart';
 import 'package:eng_activator_app/widgets/activity_question_widget.dart';
 import 'package:eng_activator_app/widgets/activity_response/activity_response_details.dart';
 import 'package:eng_activator_app/widgets/ui_elements/empty_screen.dart';
+import 'package:eng_activator_app/widgets/ui_elements/overall_spinner.dart';
 import 'package:flutter/material.dart';
 
 class QuestionActivityResponseWidget extends StatefulWidget {
@@ -20,19 +22,24 @@ class QuestionActivityResponseWidget extends StatefulWidget {
 }
 
 class _QuestionActivityResponseWidgetState extends State<QuestionActivityResponseWidget> {
-  final MockApi _api = Injector.get<MockApi>();
-  late QuestionActivityResponse _response;
+  final _activityResponseApiClient = Injector.get<ActivityResponseApiClient>();
+  late ActivityResponseDetails _response;
   late QuestionActivity _activity;
-  late bool _isSpinner = true;
+  WidgetStatusEnum _widgetStatus = WidgetStatusEnum.Loading;
 
-  @override
   void initState() {
-    _api.getActivityResponses().then((value) {
+    _activityResponseApiClient.getDetails(widget._questionActivityResponseId, context).then((details) {
       if (mounted) {
         setState(() {
-          _isSpinner = false;
-          _response = value[0] as QuestionActivityResponse;
+          _response = details;
+          _widgetStatus = WidgetStatusEnum.Result;
           _activity = _response.activity as QuestionActivity;
+        });
+      }
+    }).catchError((e) {
+      if (mounted) {
+        setState(() {
+          _widgetStatus = WidgetStatusEnum.Error;
         });
       }
     });
@@ -42,15 +49,26 @@ class _QuestionActivityResponseWidgetState extends State<QuestionActivityRespons
 
   @override
   Widget build(BuildContext context) {
-    return Container();
-    // return _isSpinner
-    //     ? EmptyScreenWidget()
-    //     : ActivityResponseDetailsWidget(
-    //         activityResponse: _response,
-    //         child: ActivityQuestionWidget(
-    //           text: _activity.question,
-    //           margin: const EdgeInsets.only(bottom: 20, top: 20),
-    //         ),
-    //       );
+    Widget displayedWidget = EmptyScreenWidget();
+
+    if (_widgetStatus == WidgetStatusEnum.Result) {
+      displayedWidget = ActivityResponseDetailsWidget(
+        activityResponse: _response,
+        child: ActivityQuestionWidget(
+          text: _activity.question,
+          margin: const EdgeInsets.only(bottom: 20, top: 20),
+        ),
+      );
+    } else if (_widgetStatus == WidgetStatusEnum.Loading) {
+      displayedWidget = EmptyScreenWidget(child: OverallSpinner());
+    } else if (_widgetStatus == WidgetStatusEnum.Error) {
+      displayedWidget = EmptyScreenWidget(
+        child: Center(
+          child: Text("Something went wrong"),
+        ),
+      );
+    }
+
+    return displayedWidget;
   }
 }

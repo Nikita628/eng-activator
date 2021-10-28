@@ -93,6 +93,8 @@ class MockApi {
         score: 4.5,
         createdBy: User(name: 'Name Name', id: 3),
         createdDate: DateTime.now(),
+        isViewed: false,
+        id: 1,
       ),
       ActivityResponseReview(
         text:
@@ -100,6 +102,8 @@ class MockApi {
         score: 4.5,
         createdBy: User(name: 'Name Name', id: 3),
         createdDate: DateTime.now(),
+        isViewed: false,
+        id: 1,
       ),
       ActivityResponseReview(
         text:
@@ -107,6 +111,8 @@ class MockApi {
         score: 4.5,
         createdBy: User(name: 'Name Name', id: 3),
         createdDate: DateTime.now(),
+        isViewed: false,
+        id: 1,
       ),
     ];
 

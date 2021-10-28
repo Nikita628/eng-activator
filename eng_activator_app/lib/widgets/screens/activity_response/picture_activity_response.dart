@@ -29,23 +29,21 @@ class _PictureActivityResponseWidgetState extends State<PictureActivityResponseW
 
   @override
   void initState() {
-    if (mounted) {
-      _activityResponseApiClient.getDetails(widget._pictureActivityResponseId, context).then((details) {
-        if (mounted) {
-          setState(() {
-            _response = details;
-            _widgetStatus = WidgetStatusEnum.Result;
-            _activity = _response.activity as PictureActivity;
-          });
-        }
-      }).catchError((e) {
-        if (mounted) {
-          setState(() {
-            _widgetStatus = WidgetStatusEnum.Error;
-          });
-        }
-      });
-    }
+    _activityResponseApiClient.getDetails(widget._pictureActivityResponseId, context).then((details) {
+      if (mounted) {
+        setState(() {
+          _response = details;
+          _widgetStatus = WidgetStatusEnum.Result;
+          _activity = _response.activity as PictureActivity;
+        });
+      }
+    }).catchError((e) {
+      if (mounted) {
+        setState(() {
+          _widgetStatus = WidgetStatusEnum.Error;
+        });
+      }
+    });
 
     super.initState();
   }

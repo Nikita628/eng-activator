@@ -1,4 +1,5 @@
 import 'package:eng_activator_app/shared/services/app_navigator.dart';
+import 'package:eng_activator_app/shared/services/event_hub.dart';
 import 'package:eng_activator_app/shared/services/injector.dart';
 import 'package:eng_activator_app/shared/constants.dart';
 import 'package:eng_activator_app/state/activity_provider.dart';
@@ -21,7 +22,17 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
 
 class _AppBarWidgetState extends State<AppBarWidget> {
   final AppNavigator _appNavigator = Injector.get<AppNavigator>();
+  final _eventHub = Injector.get<EventHub>();
   PersistentBottomSheetController? _bottomSheetController;
+
+  @override
+  void initState() {
+    _eventHub.subscribe("closeDictionary", () {
+      _bottomSheetController?.close();
+      _bottomSheetController = null;
+    });
+    super.initState();
+  }
 
   void _toggleDictionaryBottomSheet() {
     if (_bottomSheetController != null) {

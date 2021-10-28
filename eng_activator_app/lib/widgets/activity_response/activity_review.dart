@@ -48,14 +48,26 @@ class ActivityReviewWidget extends StatelessWidget {
             ],
           ),
         ),
-        subtitle: Text(
-          _review.text,
-          style: const TextStyle(
-            color: Color(AppColors.black),
-            fontSize: 16,
-            height: 1.8,
-            wordSpacing: 0.7,
-          ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              _review.text,
+              style: const TextStyle(
+                color: Color(AppColors.black),
+                fontSize: 16,
+                height: 1.8,
+                wordSpacing: 0.7,
+              ),
+            ),
+            IconButton(
+              onPressed: null,
+              icon: Icon(
+                Icons.remove_red_eye_outlined,
+                color: Color(AppColors.green),
+              ),
+            ),
+          ],
         ),
       ),
     );

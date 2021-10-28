@@ -14,7 +14,7 @@ class ScoreBarWidget extends StatelessWidget {
       child: Row(
         children: [
           Container(
-            width: 200,
+            width: MediaQuery.of(context).size.width - 100,
             height: 10,
             child: Stack(
               children: [

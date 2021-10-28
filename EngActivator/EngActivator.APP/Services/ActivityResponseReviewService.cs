@@ -91,8 +91,8 @@ namespace EngActivator.APP.Services
 
             var dtos = await searchQuery
                 .AsNoTracking()
-                .Take(searchParam.PageSize)
                 .Skip((searchParam.PageNumber - 1) * searchParam.PageSize)
+                .Take(searchParam.PageSize)
                 .ToListAsync();
 
             return new PageResponse<ActivityResponseReviewForSearch>
