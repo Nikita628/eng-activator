@@ -1,5 +1,3 @@
-import 'package:eng_activator_app/shared/services/event_hub.dart';
-import 'package:eng_activator_app/shared/services/injector.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -16,16 +14,6 @@ class ActivityPictureWidget extends StatefulWidget {
 }
 
 class _ActivityPictureWidgetState extends State<ActivityPictureWidget> {
-  final _eventHub = Injector.get<EventHub>();
-
-  @override
-  void initState() {
-    // image from assets is not loaded immediately
-    // because of that, scrollbar cannot calculate position properly and it is not visible
-    Future.delayed(Duration(milliseconds: 500), () => _eventHub.notify("updateScrollPosition"));
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(

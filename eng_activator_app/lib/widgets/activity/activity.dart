@@ -2,6 +2,7 @@ import 'package:eng_activator_app/models/activity/activity.dart';
 import 'package:eng_activator_app/models/activity/picture_activity.dart';
 import 'package:eng_activator_app/models/activity/question_activity.dart';
 import 'package:eng_activator_app/services/activity/activity_service.dart';
+import 'package:eng_activator_app/shared/services/event_hub.dart';
 import 'package:eng_activator_app/shared/services/injector.dart';
 import 'package:eng_activator_app/widgets/activity/activity_answer_form.dart';
 import 'package:eng_activator_app/widgets/activity/activity_generation_buttons.dart';
@@ -32,9 +33,14 @@ class ActivityWidget extends StatefulWidget {
 
 class _ActivityState extends State<ActivityWidget> {
   final ActivityService _activityService = Injector.get<ActivityService>();
+  final EventHub _eventHub = Injector.get<EventHub>();
 
   @override
   void initState() {
+    if (widget._activity is PictureActivity) {
+      Future.delayed(Duration(milliseconds: 500), () => _eventHub.notify("updateScrollPosition"));
+    }
+
     SharedPreferences.getInstance().then((value) {
       if (widget._activity is QuestionActivity && !value.containsKey(_firstQuestionActivityKey)) {
         _showFirstActivityDialog(FirstQuestionActivityDialog(), _firstQuestionActivityKey);
@@ -42,7 +48,7 @@ class _ActivityState extends State<ActivityWidget> {
         _showFirstActivityDialog(FirstPictureActivityDialog(), _firstPictureActivityKey);
       }
     }).catchError((e) {});
-    
+
     super.initState();
   }
 

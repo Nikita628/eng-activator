@@ -50,7 +50,7 @@ class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget>
         _pagingStatus = WidgetStatusEnum.Loading;
       });
 
-      _currentSearchParam.pageNumber = _currentSearchParam.pageNumber + 1;
+      _currentSearchParam.pageNumber++;
 
       try {
         var pageResponse = await _activityResponseApiClient.searchPreviews(_currentSearchParam, context);

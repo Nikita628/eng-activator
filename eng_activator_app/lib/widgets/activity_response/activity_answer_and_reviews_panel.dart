@@ -211,39 +211,40 @@ class _ReviewsBoxWidgetState extends State<_ReviewsBoxWidget> {
 
   @override
   Widget build(BuildContext context) {
+    List<Widget> stackChildren = [
+      Scrollbar(
+        thickness: 0,
+        controller: _scrollController,
+        child: ListView(
+          children: [
+            ..._reviews.map((r) => ActivityReviewWidget(review: r, margin: const EdgeInsets.only(bottom: 30))).toList(),
+            SizedBox(height: 100),
+          ],
+          controller: _scrollController,
+        ),
+      )
+    ];
+
+    if (_widgetStatus == WidgetStatusEnum.Loading) {
+      stackChildren.add(OverallSpinner());
+    } else if (_widgetStatus == WidgetStatusEnum.Error) {
+      stackChildren.add(Container(
+        color: const Color.fromARGB(200, 255, 255, 255),
+        width: double.infinity,
+        child: const Center(child: Text("Something went wrong")),
+      ));
+    } else if (_widgetStatus == WidgetStatusEnum.EmptyResult) {
+      stackChildren.add(Container(
+        color: const Color.fromARGB(200, 255, 255, 255),
+        width: double.infinity,
+        child: const Center(child: Text("No items found")),
+      ));
+    }
+
     return ConstrainedBox(
       constraints: BoxConstraints(maxHeight: 400),
       child: Stack(
-        children: [
-          Scrollbar(
-            thickness: 0,
-            controller: _scrollController,
-            child: ListView(
-              children: [
-                ..._reviews
-                    .map((r) => ActivityReviewWidget(review: r, margin: const EdgeInsets.only(bottom: 30)))
-                    .toList(),
-                SizedBox(height: 100),
-              ],
-              controller: _scrollController,
-            ),
-          ),
-          _widgetStatus == WidgetStatusEnum.Loading ? OverallSpinner() : const SizedBox.shrink(),
-          _widgetStatus == WidgetStatusEnum.Error
-              ? Container(
-                  color: const Color.fromARGB(200, 255, 255, 255),
-                  width: double.infinity,
-                  child: const Center(child: Text("Something went wrong")),
-                )
-              : const SizedBox.shrink(),
-          _widgetStatus == WidgetStatusEnum.EmptyResult
-              ? Container(
-                  color: const Color.fromARGB(200, 255, 255, 255),
-                  width: double.infinity,
-                  child: const Center(child: Text("No items found")),
-                )
-              : const SizedBox.shrink(),
-        ],
+        children: stackChildren,
       ),
     );
   }
