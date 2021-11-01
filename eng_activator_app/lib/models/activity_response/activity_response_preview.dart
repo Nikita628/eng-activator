@@ -4,14 +4,16 @@ class ActivityResponsePreview {
   late int id;
   late String answer;
   late ActivityTypeEnum activityTypeId;
-  late DateTime createdDate;
+  late DateTime createdDateLocal;
   late bool hasUnreadReviews;
+  late DateTime lastUpdatedDateUtc;
 
   ActivityResponsePreview.fromJson(Map<String, dynamic> json) {
     id = json["id"] ?? 0;
     answer = json["answer"] ?? "";
     activityTypeId = ActivityTypeEnum.values[json["activityTypeId"] - 1];
-    createdDate = DateTime.parse(json["createdDate"]);
+    createdDateLocal = DateTime.parse(json["createdDate"] + 'Z').toLocal();
     hasUnreadReviews = json["hasUnreadReviews"] ?? false;
+    lastUpdatedDateUtc = DateTime.parse(json["lastUpdatedDate"]);
   }
 }

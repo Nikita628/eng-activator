@@ -45,7 +45,7 @@ class AppDrawer extends StatelessWidget {
               size: 30,
             ),
             title: Text('My Activities'),
-            onTap: () => _appNavigator.replaceCurrentUrl(ActivityResponseListWidget.screenUrl, context),
+            onTap: () => _appNavigator.replaceCurrentUrl(ActivityResponseListWidget.screenUrl, context, args: false),
           ),
           activity != null
               ? ListTile(

@@ -39,6 +39,9 @@ namespace EngActivator.APP.DataBase
                 .HasIndex(a => a.ReviewsCount);
 
             modelBuilder.Entity<Entities.ActivityResponse>()
+                .HasIndex(a => a.LastUpdatedDate);
+
+            modelBuilder.Entity<Entities.ActivityResponse>()
                 .HasOne(a => a.CreatedBy)
                 .WithMany(u => u.ActivityResponses)
                 .HasForeignKey(a => a.CreatedById)

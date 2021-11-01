@@ -18,13 +18,13 @@ namespace EngActivator.APP.Services
     {
         private readonly EngActivatorContext _db;
         private readonly IMapper _mapper;
-        private readonly ICurrentUserService _currentUser;
+        private readonly IHttpContextService _http;
 
-        public ActivityResponseService(EngActivatorContext db, IMapper m, ICurrentUserService c)
+        public ActivityResponseService(EngActivatorContext db, IMapper m, IHttpContextService c)
         {
             _db = db;
             _mapper = m;
-            _currentUser = c;
+            _http = c;
         }
 
         public async Task<int> CreateAsync(ActivityResponseForCreate dto)
@@ -32,7 +32,7 @@ namespace EngActivator.APP.Services
             var entity = _mapper.Map<DataBase.Entities.ActivityResponse>(dto);
 
             entity.CreatedDate = DateTime.UtcNow;
-            entity.CreatedById = _currentUser.CurrentUserId;
+            entity.CreatedById = _http.CurrentUserId;
 
             await _db.ActivityResponses.AddAsync(entity);
 
@@ -79,10 +79,10 @@ namespace EngActivator.APP.Services
                 from ar in _db.ActivityResponses
 
                 let isAlreadyReviewedByCurrentUser = (from arr in _db.ActivityResponseReviews
-                                                      where arr.CreatedById == _currentUser.CurrentUserId && arr.ActivityResponseId == ar.Id
+                                                      where arr.CreatedById == _http.CurrentUserId && arr.ActivityResponseId == ar.Id
                                                       select arr.Id).Any()
 
-                let isCreatedByCurrentUser = ar.CreatedById != _currentUser.CurrentUserId
+                let isCreatedByCurrentUser = ar.CreatedById != _http.CurrentUserId
 
                 where !isAlreadyReviewedByCurrentUser && !isCreatedByCurrentUser
                 orderby ar.ReviewsCount ascending
@@ -119,14 +119,14 @@ namespace EngActivator.APP.Services
         {
             var countQuery = _db.ActivityResponses
                 .AsNoTracking()
-                .Where(ar => ar.CreatedById == _currentUser.CurrentUserId);
+                .Where(ar => ar.CreatedById == _http.CurrentUserId);
 
             if (searchParam.CreatedDateEquals.HasValue)
             {
-                countQuery = countQuery.Where(ar =>
-                    ar.CreatedDate.Year == searchParam.CreatedDateEquals.Value.Year
-                    && ar.CreatedDate.Month == searchParam.CreatedDateEquals.Value.Month
-                    && ar.CreatedDate.Day == searchParam.CreatedDateEquals.Value.Day);
+                DateTime dateFrom = searchParam.CreatedDateEquals.Value.Date.AddMinutes(-_http.UtcOffset);
+                DateTime dateTo = searchParam.CreatedDateEquals.Value.Date.AddDays(1);
+
+                countQuery = countQuery.Where(ar => ar.CreatedDate >= dateFrom && ar.CreatedDate < dateTo);
             }
 
             return await countQuery.CountAsync();
@@ -134,6 +134,15 @@ namespace EngActivator.APP.Services
 
         private async Task<List<ActivityResponseForPreview>> GetItems(ActivityResponseSearchParam searchParam)
         {
+            var dateFrom = DateTime.MinValue;
+            var dateTo = DateTime.MaxValue;
+
+            if (searchParam.CreatedDateEquals.HasValue)
+            {
+                dateFrom = searchParam.CreatedDateEquals.Value.Date.AddMinutes(-_http.UtcOffset);
+                dateTo = searchParam.CreatedDateEquals.Value.Date.AddDays(1);
+            }
+
             var searchQuery =
                 from ar in _db.ActivityResponses
 
@@ -141,13 +150,11 @@ namespace EngActivator.APP.Services
                                         where review.ActivityResponseId == ar.Id && !review.IsViewed
                                         select review.Id).Any()
 
-                where (!searchParam.CreatedDateEquals.HasValue
-                    || (ar.CreatedDate.Year == searchParam.CreatedDateEquals.Value.Year
-                        && ar.CreatedDate.Month == searchParam.CreatedDateEquals.Value.Month
-                        && ar.CreatedDate.Day == searchParam.CreatedDateEquals.Value.Day))
-                        && ar.CreatedById == _currentUser.CurrentUserId
+                where (ar.CreatedById == _http.CurrentUserId)
+                    && (!searchParam.CreatedDateEquals.HasValue || (ar.CreatedDate >= dateFrom && ar.CreatedDate < dateTo))
+                    && (!searchParam.LastUpdatedDateLessThan.HasValue || (ar.LastUpdatedDate < searchParam.LastUpdatedDateLessThan))
 
-                orderby ar.Id, hasUnreadReviews descending
+                orderby ar.LastUpdatedDate descending
 
                 select new ActivityResponseForPreview
                 {
@@ -155,12 +162,12 @@ namespace EngActivator.APP.Services
                     Answer = ar.Answer,
                     ActivityTypeId = (Shared.Enums.ActivityTypeEnum)ar.ActivityTypeId,
                     CreatedDate = ar.CreatedDate,
-                    HasUnreadReviews = hasUnreadReviews
+                    HasUnreadReviews = hasUnreadReviews,
+                    LastUpdatedDate = ar.LastUpdatedDate,
                 };
 
             return await searchQuery
                 .AsNoTracking()
-                .Skip((searchParam.PageNumber - 1) * searchParam.PageSize)
                 .Take(searchParam.PageSize)
                 .ToListAsync();
         }

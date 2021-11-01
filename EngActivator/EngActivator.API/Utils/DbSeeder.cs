@@ -138,10 +138,11 @@ namespace EngActivator.API.Utils
             for (int i = 0; i < 500; i++)
             {
                 var activity = activities[_rand.Next(activities.Count)];
+                var createdDate = DateTime.UtcNow.AddDays(-100).AddHours(i);
 
                 context.ActivityResponses.Add(new ActivityResponse
                 {
-                    CreatedDate = DateTime.UtcNow.AddDays(-100).AddHours(i),
+                    CreatedDate = createdDate,
                     Answer = "Woody equal ask saw sir weeks aware decay. Entrance prospect removing we packages strictly is no " +
                     "smallest he. For hopes may chief get hours day rooms. Oh no turned behind polite piqued enough at. " +
                     "Forbade few through inquiry blushes you. Cousin no itself eldest it in dinner latter missed no. " +
@@ -153,6 +154,7 @@ namespace EngActivator.API.Utils
                     Activity = JsonConvert.SerializeObject(activity.Activity, _jsonSerializerSettings),
                     ActivityTypeId = activity.Type,
                     CreatedById = users[_rand.Next(users.Count)].Id,
+                    LastUpdatedDate = createdDate,
                 });
             }
             

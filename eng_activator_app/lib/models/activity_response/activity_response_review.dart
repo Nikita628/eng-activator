@@ -2,6 +2,7 @@ import 'package:eng_activator_app/models/user.dart';
 
 class ActivityResponseReview {
   late int id;
+  late int activityResponseId;
   late String text;
   late double score;
   late User createdBy;
@@ -15,6 +16,7 @@ class ActivityResponseReview {
     required DateTime createdDate,
     required bool isViewed,
     required int id,
+    required int activityResponseId,
   }) {
     this.text = text;
     this.score = score;
@@ -22,6 +24,7 @@ class ActivityResponseReview {
     this.createdDate = createdDate;
     this.id = id;
     this.isViewed = isViewed;
+    this.activityResponseId = activityResponseId;
   }
 
   ActivityResponseReview.fromJson(Map<String, dynamic> json) {
@@ -29,7 +32,8 @@ class ActivityResponseReview {
     text = json["text"] ?? "";
     score = json["score"] ?? 0;
     createdBy = User.fromJson(json["createdBy"]);
-    createdDate = DateTime.parse(json["createdDate"]);
+    createdDate = DateTime.parse(json["createdDate"] + 'Z').toLocal();
     isViewed = json["isViewed"] ?? false;
+    activityResponseId = json["activityResponseId"] ?? 0;
   }
 }

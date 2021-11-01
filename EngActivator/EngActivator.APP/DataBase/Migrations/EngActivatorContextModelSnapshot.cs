@@ -44,6 +44,9 @@ namespace EngActivator.APP.DataBase.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("LastUpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("ReviewsCount")
                         .HasColumnType("int");
 
@@ -52,6 +55,8 @@ namespace EngActivator.APP.DataBase.Migrations
                     b.HasIndex("ActivityTypeId");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("LastUpdatedDate");
 
                     b.HasIndex("ReviewsCount");
 

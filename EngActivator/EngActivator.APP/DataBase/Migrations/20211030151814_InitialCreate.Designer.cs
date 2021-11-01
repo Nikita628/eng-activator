@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EngActivator.APP.DataBase.Migrations
 {
     [DbContext(typeof(EngActivatorContext))]
-    [Migration("20211008094818_InitialCreate")]
+    [Migration("20211030151814_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,6 +46,9 @@ namespace EngActivator.APP.DataBase.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("LastUpdatedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("ReviewsCount")
                         .HasColumnType("int");
 
@@ -54,6 +57,8 @@ namespace EngActivator.APP.DataBase.Migrations
                     b.HasIndex("ActivityTypeId");
 
                     b.HasIndex("CreatedById");
+
+                    b.HasIndex("LastUpdatedDate");
 
                     b.HasIndex("ReviewsCount");
 

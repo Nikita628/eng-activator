@@ -74,7 +74,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                   color: Color(AppColors.green),
                   size: 30,
                 ),
-                onPressed: () => _appNavigator.popToUrl(ActivityResponseListWidget.screenUrl, context),
+                onPressed: () => _appNavigator.replaceCurrentUrl(ActivityResponseListWidget.screenUrl, context, args: true),
               )
             : const SizedBox.shrink(),
         isDictionaryButtonShown

@@ -4,15 +4,22 @@ import 'package:eng_activator_app/services/api_clients/activity_response_api_cli
 import 'package:eng_activator_app/shared/enums.dart';
 import 'package:eng_activator_app/shared/services/injector.dart';
 import 'package:eng_activator_app/shared/constants.dart';
+import 'package:eng_activator_app/state/activity_response_provider.dart';
 import 'package:eng_activator_app/widgets/activity_response/activity_response_list_item.dart';
 import 'package:eng_activator_app/widgets/ui_elements/app_scaffold.dart';
 import 'package:eng_activator_app/widgets/ui_elements/app_spinner.dart';
 import 'package:eng_activator_app/widgets/ui_elements/overall_spinner.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class ActivityResponseListWidget extends StatefulWidget {
   static const String screenUrl = '/activity-responses';
+  final bool _isOpenedFromBackButton;
+
+  ActivityResponseListWidget({required bool isOpenedFromBackButton})
+      : _isOpenedFromBackButton = isOpenedFromBackButton,
+        super();
 
   @override
   _ActivityResponseListWidgetState createState() => _ActivityResponseListWidgetState();
@@ -21,45 +28,58 @@ class ActivityResponseListWidget extends StatefulWidget {
 class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget> {
   final ActivityResponseApiClient _activityResponseApiClient = Injector.get<ActivityResponseApiClient>();
   final ScrollController _scrollController = ScrollController();
-  final List<ActivityResponsePreview> _previews = [];
   WidgetStatusEnum _overallStatus = WidgetStatusEnum.Loading;
   WidgetStatusEnum _pagingStatus = WidgetStatusEnum.Default;
-  ActivityResponseSearchParam _currentSearchParam = ActivityResponseSearchParam();
-  int _totalItemsCount = 0;
+  late ActivityResponseProvider _activityResponseProvider;
 
   @override
   void initState() {
-    _scrollController.addListener(_getNextPageIfScrolledToBottom);
-    _searchActivityPreviews(_currentSearchParam);
+    _scrollController.addListener(_scrollListener);
+    _activityResponseProvider = Provider.of<ActivityResponseProvider>(context, listen: false);
+
+    if (widget._isOpenedFromBackButton) {
+      _overallStatus = WidgetStatusEnum.Result;
+      WidgetsBinding.instance
+          ?.addPostFrameCallback((_) => _scrollController.jumpTo(_activityResponseProvider.scrollPosition));
+    } else {
+      _activityResponseProvider.resetState();
+      _searchActivityPreviews(_activityResponseProvider.currentSearchParam);
+    }
+
     super.initState();
   }
 
   @override
   void dispose() {
-    _scrollController.removeListener(_getNextPageIfScrolledToBottom);
+    _scrollController.removeListener(_scrollListener);
     _scrollController.dispose();
     super.dispose();
   }
 
-  Future<void> _getNextPageIfScrolledToBottom() async {
+  Future<void> _scrollListener() async {
+    if (_pagingStatus == WidgetStatusEnum.Loading) {
+      return;
+    }
+    
+    _activityResponseProvider.scrollPosition = _scrollController.offset;
     var isScrolledToBottom = _scrollController.offset >= (_scrollController.position.maxScrollExtent - 30);
-    var hasMoreRecords = _currentSearchParam.pageNumber * _currentSearchParam.pageSize < _totalItemsCount;
 
-    if (isScrolledToBottom && hasMoreRecords) {
+    if (isScrolledToBottom) {
       setState(() {
         _pagingStatus = WidgetStatusEnum.Loading;
       });
 
-      _currentSearchParam.pageNumber++;
+      _activityResponseProvider.currentSearchParam.lastUpdatedDateLessThan =
+          _activityResponseProvider.previews.last.lastUpdatedDateUtc;
 
       try {
-        var pageResponse = await _activityResponseApiClient.searchPreviews(_currentSearchParam, context);
+        var pageResponse =
+            await _activityResponseApiClient.searchPreviews(_activityResponseProvider.currentSearchParam, context);
 
         if (mounted) {
-          _totalItemsCount = pageResponse.totalCount;
           setState(() {
+            _activityResponseProvider.previews.addAll(pageResponse.items);
             _pagingStatus = WidgetStatusEnum.Default;
-            _previews.addAll(pageResponse.items);
           });
         }
       } catch (e) {
@@ -99,23 +119,23 @@ class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget>
 
     if (dateFilter != null) {
       setState(() {
-        _currentSearchParam.createdDateEquals = dateFilter;
-        _currentSearchParam.pageNumber = 1;
-        _currentSearchParam.pageSize = 10;
+        _activityResponseProvider.currentSearchParam.createdDateEquals = dateFilter;
+        _activityResponseProvider.currentSearchParam.pageNumber = 1;
+        _activityResponseProvider.currentSearchParam.pageSize = 10;
         _overallStatus = WidgetStatusEnum.Loading;
       });
 
-      await _searchActivityPreviews(_currentSearchParam);
+      await _searchActivityPreviews(_activityResponseProvider.currentSearchParam);
     }
   }
 
   Future<void> _resetDateFilter() async {
     setState(() {
-      _currentSearchParam = ActivityResponseSearchParam();
+      _activityResponseProvider.currentSearchParam = ActivityResponseSearchParam();
       _overallStatus = WidgetStatusEnum.Loading;
     });
 
-    await _searchActivityPreviews(_currentSearchParam);
+    await _searchActivityPreviews(_activityResponseProvider.currentSearchParam);
   }
 
   Future<void> _searchActivityPreviews(ActivityResponseSearchParam param) async {
@@ -123,14 +143,13 @@ class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget>
       var pageResponse = await _activityResponseApiClient.searchPreviews(param, context);
 
       if (mounted) {
-        _totalItemsCount = pageResponse.totalCount;
         setState(() {
           if (pageResponse.items.isEmpty) {
             _overallStatus = WidgetStatusEnum.EmptyResult;
           } else {
+            _activityResponseProvider.previews.clear();
+            _activityResponseProvider.previews.addAll(pageResponse.items);
             _overallStatus = WidgetStatusEnum.Result;
-            _previews.clear();
-            _previews.addAll(pageResponse.items);
           }
         });
       }
@@ -159,14 +178,14 @@ class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget>
                 child: _DateFilter(
                   onFilterTap: _filterByDate,
                   onResetFilter: _resetDateFilter,
-                  filter: _currentSearchParam.createdDateEquals,
+                  filter: _activityResponseProvider.currentSearchParam.createdDateEquals,
                 )),
             Expanded(
                 child: _ActivityPreviewList(
               overallStatus: _overallStatus,
               pagingStatus: _pagingStatus,
               scrollController: _scrollController,
-              previews: _previews,
+              previews: _activityResponseProvider.previews,
             )),
           ],
         ),

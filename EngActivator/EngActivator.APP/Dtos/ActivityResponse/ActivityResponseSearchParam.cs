@@ -8,5 +8,6 @@ namespace EngActivator.APP.Dtos
     public class  ActivityResponseSearchParam : PageRequest
     {
         public DateTime? CreatedDateEquals { get; set; }
+        public DateTime? LastUpdatedDateLessThan { get; set; }
     }
 }

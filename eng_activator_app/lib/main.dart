@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:eng_activator_app/state/activity_provider.dart';
 import 'package:eng_activator_app/shared/state/current_url_provider.dart';
+import 'package:eng_activator_app/state/activity_response_provider.dart';
 import 'package:eng_activator_app/state/auth_provider.dart';
 import 'package:eng_activator_app/widgets/home_widget.dart';
 import 'package:eng_activator_app/widgets/screens/activity/activity_for_review.dart';
@@ -39,6 +40,7 @@ class EnglishActivatorApp extends StatelessWidget {
         ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider()),
         ChangeNotifierProvider<ActivityProvider>(create: (_) => ActivityProvider()),
         ChangeNotifierProvider<CurrentUrlProvider>(create: (_) => CurrentUrlProvider()),
+        ChangeNotifierProvider<ActivityResponseProvider>(create: (_) => ActivityResponseProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
@@ -46,9 +48,7 @@ class EnglishActivatorApp extends StatelessWidget {
         home: HomeWidget(),
         routes: {
           MainScreenWidget.screenUrl: (_) => AuthGuard(child: MainScreenWidget()),
-          ActivityResponseListWidget.screenUrl: (_) => AuthGuard(child: ActivityResponseListWidget()),
-          // PictureActivityResponseWidget.screenUrl: (_) => AuthGuard(child: PictureActivityResponseWidget()),
-          // QuestionActivityResponseWidget.screenUrl: (_) => AuthGuard(child: QuestionActivityResponseWidget()),
+          // ActivityResponseListWidget.screenUrl: (_) => AuthGuard(child: ActivityResponseListWidget()),
           ActivityForReview.screenUrl: (_) => AuthGuard(child: ActivityForReview()),
           AppHelpWidget.screenUrl: (_) => AuthGuard(child: AppHelpWidget()),
           CurrentActivityWidget.screenUrl: (_) => AuthGuard(child: CurrentActivityWidget()),
@@ -58,9 +58,11 @@ class EnglishActivatorApp extends StatelessWidget {
         onGenerateRoute: (RouteSettings settings) {
           var routes = <String, WidgetBuilder>{
             PictureActivityResponseWidget.screenUrl: (ctx) =>
-                PictureActivityResponseWidget(pictureActivityResponseId: settings.arguments as int),
+                AuthGuard(child: PictureActivityResponseWidget(pictureActivityResponseId: settings.arguments as int)),
             QuestionActivityResponseWidget.screenUrl: (ctx) =>
-                QuestionActivityResponseWidget(questionActivityResponseId: settings.arguments as int)
+                AuthGuard(child: QuestionActivityResponseWidget(questionActivityResponseId: settings.arguments as int)),
+            ActivityResponseListWidget.screenUrl: (ctx) =>
+                AuthGuard(child: ActivityResponseListWidget(isOpenedFromBackButton: settings.arguments as bool)),
           };
           WidgetBuilder builder = routes[settings.name] as WidgetBuilder;
           return MaterialPageRoute(builder: (ctx) => builder(ctx));

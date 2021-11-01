@@ -37,9 +37,9 @@ class _ActivityState extends State<ActivityWidget> {
 
   @override
   void initState() {
-    if (widget._activity is PictureActivity) {
-      Future.delayed(Duration(milliseconds: 500), () => _eventHub.notify("updateScrollPosition"));
-    }
+    // if (widget._activity is PictureActivity) {
+    //   Future.delayed(Duration(milliseconds: 500), () => _eventHub.notify("updateScrollPosition"));
+    // }
 
     SharedPreferences.getInstance().then((value) {
       if (widget._activity is QuestionActivity && !value.containsKey(_firstQuestionActivityKey)) {

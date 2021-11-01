@@ -22,12 +22,7 @@ class _AppScaffoldState extends State<AppScaffold> {
   final ScrollController _scrollController = ScrollController();
 
   @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
-  }
-
-  _AppScaffoldState() {
+  void initState() {
     _eventHub.subscribe('scrollPageUp', () {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(0, duration: Duration(milliseconds: 1000), curve: Curves.ease);
@@ -39,6 +34,13 @@ class _AppScaffoldState extends State<AppScaffold> {
         _scrollController.jumpTo(0.01);
       }
     });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override

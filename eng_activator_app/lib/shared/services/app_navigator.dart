@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AppNavigator {
-  void replaceCurrentUrl(String newUrl, BuildContext context){
+  void replaceCurrentUrl(String newUrl, BuildContext context, {Object? args}){
     Provider.of<CurrentUrlProvider>(context, listen: false).setCurrentUrl(newUrl);
-    Navigator.of(context).pushReplacementNamed(newUrl);
+    Navigator.of(context).pushReplacementNamed(newUrl, arguments: args);
   }
 
   void pushOnTopCurrentUrl(String newUrl, BuildContext context, {Object? args}){

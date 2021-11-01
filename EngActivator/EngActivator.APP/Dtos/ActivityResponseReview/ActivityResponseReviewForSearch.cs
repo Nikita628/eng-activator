@@ -10,5 +10,6 @@ namespace EngActivator.APP.Dtos
         public Dtos.User CreatedBy { get; set; }
         public DateTime CreatedDate { get; set; }
         public bool IsViewed { get; set; }
+        public int ActivityResponseId { get; set; }
     }
 }

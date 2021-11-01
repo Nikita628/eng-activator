@@ -38,7 +38,7 @@ namespace EngActivator.API
             services.AddScoped<IActivityResponseService, ActivityResponseService>();
             services.AddScoped<IActivityResponseReviewService, ActivityResponseReviewService>();
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<IHttpContextService, HttpContextService>();
             services.AddScoped<IDictionaryService, DictionaryService>();
             services.AddSingleton(typeof(AppDictionary), new AppDictionary());
 

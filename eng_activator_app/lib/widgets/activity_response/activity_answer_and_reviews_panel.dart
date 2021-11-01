@@ -143,9 +143,9 @@ class _ReviewsBoxWidgetState extends State<_ReviewsBoxWidget> {
     _currentSearchParam = ActivityResponseReviewSearchParam(activityResponseId: widget._activityResponseId);
     _activityResponseReviewApiClient.search(_currentSearchParam, context).then((page) {
       if (mounted) {
-        _totalRecordsCount = page.totalCount;
-
         setState(() {
+          _totalRecordsCount = page.totalCount;
+
           if (page.items.isNotEmpty) {
             _reviews.addAll(page.items);
             _widgetStatus = WidgetStatusEnum.Result;
@@ -179,9 +179,8 @@ class _ReviewsBoxWidgetState extends State<_ReviewsBoxWidget> {
 
     _activityResponseReviewApiClient.search(_currentSearchParam, context).then((page) {
       if (mounted) {
-        _totalRecordsCount = page.totalCount;
-
         setState(() {
+          _totalRecordsCount = page.totalCount;
           _reviews.addAll(page.items);
           _widgetStatus = WidgetStatusEnum.Result;
         });

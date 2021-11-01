@@ -22,6 +22,7 @@ ApiResponseException createApiException(String responseBody) {
 Map<String, String> createRequestHeaders(String token) {
   return {
     "content-type": "application/json",
-    "Authorization": "Bearer $token"
+    "Authorization": "Bearer $token",
+    "utcOffset": DateTime.now().timeZoneOffset.inMinutes.toString(),
   };
 }

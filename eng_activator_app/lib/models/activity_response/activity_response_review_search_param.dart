@@ -2,6 +2,7 @@ import 'package:eng_activator_app/models/api_page_request.dart';
 
 class ActivityResponseReviewSearchParam extends ApiPageRequest {
 late int activityResponseIdEquals;
+late DateTime? createdDateLessThan;
 
   ActivityResponseReviewSearchParam({
     required int activityResponseId,
@@ -22,6 +23,7 @@ late int activityResponseIdEquals;
     return {
       ...super.toJson(),
       "activityResponseIdEquals": activityResponseIdEquals,
+      "createdDateLessThan": createdDateLessThan?.toIso8601String(),
     };
   }
 }

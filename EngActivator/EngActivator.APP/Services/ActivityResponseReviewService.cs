@@ -36,12 +36,13 @@ namespace EngActivator.APP.Services
 
                     var affectedRowsCount = await _db.Database.ExecuteSqlInterpolatedAsync(@$"
                         UPDATE dbo.ActivityResponses 
-                        SET ReviewsCount = ReviewsCount + 1  
+                        SET ReviewsCount = ReviewsCount + 1,
+                            LastUpdatedDate = getutcdate()
                         WHERE Id = ({dto.ActivityResponseId});
                     ");
 
                     if (affectedRowsCount <= 0)
-                        throw new Exception("Could not update reviews count");
+                        throw new Exception("Could not update reviews count and/or last updated date");
 
                     await transaction.CommitAsync();
                 }
@@ -55,15 +56,18 @@ namespace EngActivator.APP.Services
             return entitiy.Id;
         }
 
-        public async Task<bool> MarkAsViewedAsync(int id)
+        public async Task<ActivityResponseHasUnreadReviewsDto> MarkAsViewedAsync(int id)
         {
-            var affectedRowsCount = await _db.Database.ExecuteSqlInterpolatedAsync(@$"
-                UPDATE dbo.ActivityResponseReviews 
-                SET IsViewed = 1 
-                WHERE Id = ({id});
-            ");
+            var review = await _db.ActivityResponseReviews.FirstOrDefaultAsync(r => r.Id == id);
+            review.IsViewed = true;
 
-            return affectedRowsCount > 0;
+            await _db.SaveChangesAsync();
+
+            var activityResponseHasMoreUnreadReviews = (from r in _db.ActivityResponseReviews
+                                                        where r.ActivityResponseId == review.ActivityResponseId && !r.IsViewed
+                                                        select 1).Any();
+
+            return new ActivityResponseHasUnreadReviewsDto { ActivityResponseHasUnreadReviews = activityResponseHasMoreUnreadReviews };
         }
 
         public async Task<PageResponse<ActivityResponseReviewForSearch>> SearchAsync(ActivityResponseReviewSearchParam searchParam)
@@ -74,7 +78,7 @@ namespace EngActivator.APP.Services
 
             var searchQuery = from arr in _db.ActivityResponseReviews
                               where arr.ActivityResponseId == searchParam.ActivityResponseIdEquals
-                              orderby arr.Id descending
+                              orderby arr.CreatedDate descending
                               select new ActivityResponseReviewForSearch
                               {
                                   CreatedBy = new User
@@ -87,6 +91,7 @@ namespace EngActivator.APP.Services
                                   IsViewed = arr.IsViewed,
                                   Score = arr.Score,
                                   Text = arr.Text,
+                                  ActivityResponseId = arr.ActivityResponseId,
                               };
 
             var dtos = await searchQuery

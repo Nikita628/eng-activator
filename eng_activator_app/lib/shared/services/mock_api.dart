@@ -95,6 +95,7 @@ class MockApi {
         createdDate: DateTime.now(),
         isViewed: false,
         id: 1,
+        activityResponseId: 1,
       ),
       ActivityResponseReview(
         text:
@@ -104,6 +105,7 @@ class MockApi {
         createdDate: DateTime.now(),
         isViewed: false,
         id: 1,
+        activityResponseId: 1,
       ),
       ActivityResponseReview(
         text:
@@ -113,6 +115,7 @@ class MockApi {
         createdDate: DateTime.now(),
         isViewed: false,
         id: 1,
+        activityResponseId: 1,
       ),
     ];
 

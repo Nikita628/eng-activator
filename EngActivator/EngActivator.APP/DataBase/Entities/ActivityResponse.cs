@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace EngActivator.APP.DataBase.Entities
 {
@@ -9,6 +10,7 @@ namespace EngActivator.APP.DataBase.Entities
         public ActivityType ActivityType { get; set; }
         public int ActivityTypeId { get; set; }
         public int ReviewsCount { get; set; }
+        public DateTime LastUpdatedDate { get; set; }
         public List<ActivityResponseReview> ActivityResponseReviews { get; set; } = new List<ActivityResponseReview>();
     }
 }

@@ -56,6 +56,7 @@ namespace EngActivator.APP.DataBase.Migrations
                     Activity = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ActivityTypeId = table.Column<int>(type: "int", nullable: false),
                     ReviewsCount = table.Column<int>(type: "int", nullable: false),
+                    LastUpdatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedById = table.Column<int>(type: "int", nullable: false)
                 },
@@ -125,6 +126,11 @@ namespace EngActivator.APP.DataBase.Migrations
                 name: "IX_ActivityResponses_CreatedById",
                 table: "ActivityResponses",
                 column: "CreatedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ActivityResponses_LastUpdatedDate",
+                table: "ActivityResponses",
+                column: "LastUpdatedDate");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ActivityResponses_ReviewsCount",

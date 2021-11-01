@@ -10,5 +10,6 @@ namespace EngActivator.APP.Dtos
         public ActivityTypeEnum ActivityTypeId { get; set; }
         public DateTime CreatedDate { get; set; }
         public bool HasUnreadReviews { get; set; }
+        public DateTime LastUpdatedDate { get; set; }
     }
 }
