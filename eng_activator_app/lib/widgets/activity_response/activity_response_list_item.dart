@@ -60,7 +60,7 @@ class ActivityResponseListItemWidget extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            DateFormat().addPattern('MMMM d, ').add_Hm().format(_response.createdDateLocal),
+                            DateFormat().addPattern('MMMM d, ').add_Hm().format(_response.createdDate),
                             style: const TextStyle(
                               fontSize: 15,
                               color: Color(AppColors.black),

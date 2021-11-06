@@ -1,17 +1,28 @@
+import 'package:eng_activator_app/models/activity/activity.dart';
+import 'package:eng_activator_app/models/activity/question_activity.dart';
+import 'package:eng_activator_app/models/activity_response/activity_response_for_create.dart';
+import 'package:eng_activator_app/models/activity_response_review/activity_response_review_for_create.dart';
 import 'package:eng_activator_app/services/activity/activity_validator.dart';
+import 'package:eng_activator_app/services/api_clients/activity_response_api_client.dart';
+import 'package:eng_activator_app/services/api_clients/activity_response_review_api_client.dart';
+import 'package:eng_activator_app/shared/enums.dart';
 import 'package:eng_activator_app/shared/services/app_navigator.dart';
 import 'package:eng_activator_app/shared/services/injector.dart';
 import 'package:eng_activator_app/shared/constants.dart';
-import 'package:eng_activator_app/widgets/screens/activity/current_activity.dart';
+import 'package:eng_activator_app/state/activity_provider.dart';
+import 'package:eng_activator_app/widgets/screens/activity_response/activity_response_list.dart';
 import 'package:eng_activator_app/widgets/ui_elements/rounded_button.dart';
 import 'package:eng_activator_app/widgets/ui_elements/text_area.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ActivityReviewFormWidget extends StatefulWidget {
   final EdgeInsets? _margin;
+  final int _activityResponseId;
 
-  const ActivityReviewFormWidget({Key? key, EdgeInsets? margin})
+  const ActivityReviewFormWidget({Key? key, EdgeInsets? margin, required activityResponseId})
       : _margin = margin,
+        _activityResponseId = activityResponseId,
         super(key: key);
 
   @override
@@ -20,22 +31,62 @@ class ActivityReviewFormWidget extends StatefulWidget {
 
 class _ActivityReviewFormWidgetState extends State<ActivityReviewFormWidget> {
   final AppNavigator _appNavigator = Injector.get<AppNavigator>();
+  final ActivityResponseApiClient _activityResponseApiClient = Injector.get<ActivityResponseApiClient>();
+  final ActivityResponseReviewApiClient _activityResponseReviewApiClient =
+      Injector.get<ActivityResponseReviewApiClient>();
   final _formKey = GlobalKey<FormState>();
   final ActivityValidator _activityValidator = ActivityValidator();
-  late String? _review = '';
+  late String _review = '';
   late double _score = 0;
+  WidgetStatusEnum _buttonStatus = WidgetStatusEnum.Default;
 
-  void _sendReview() {
+  Future<void> _sendReview() async {
     bool? isValid = _formKey.currentState?.validate();
 
-    if (isValid == true) {
-      _formKey.currentState?.save();
-      // send review to API
-      // on success, show dialog, redirect back to user's activity
-      // allow user to submit their own activity on review
-      print(_review);
-      _appNavigator.replaceCurrentUrl(CurrentActivityWidget.screenUrl, context);
+    if (isValid != true) {
+      return;
     }
+
+    _formKey.currentState?.save();
+
+    if (mounted) {
+      setState(() {
+        _buttonStatus = WidgetStatusEnum.Loading;
+      });
+    }
+
+    var dto = ActivityResponseReviewForCreate(
+      text: _review,
+      activityResponseId: widget._activityResponseId,
+      score: _score,
+    );
+
+    try {
+      await _activityResponseReviewApiClient.create(dto, context);
+      await _sendActivityResponse();
+      _appNavigator.replaceCurrentUrl(ActivityResponseListWidget.screenUrl, context, args: false);
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _buttonStatus = WidgetStatusEnum.Default;
+        });
+      }
+    }
+  }
+
+  Future<void> _sendActivityResponse() async {
+    var activityProvider = Provider.of<ActivityProvider>(context, listen: false);
+    var currentActivity = activityProvider.getCurrentActivity();
+    var activityType = currentActivity is QuestionActivity ? ActivityTypeEnum.Question : ActivityTypeEnum.Picture;
+    var activityResponse = ActivityResponseForCreate(
+      answer: activityProvider.getCurrentActivityAnswer(),
+      activity: currentActivity as Activity,
+      activityTypeId: activityType,
+    );
+
+    await _activityResponseApiClient.create(activityResponse, context);
+
+    activityProvider.resetState();
   }
 
   @override
@@ -47,6 +98,20 @@ class _ActivityReviewFormWidgetState extends State<ActivityReviewFormWidget> {
         key: _formKey,
         child: Column(
           children: [
+            const SizedBox(height: 10),
+            CircleAvatar(
+              backgroundColor: Color(AppColors.yellow),
+              radius: 30,
+              child: Text(
+                _score.toStringAsFixed(2),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  color: Color(AppColors.green),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
             SliderTheme(
               data: SliderThemeData(
                 trackHeight: 8,
@@ -72,11 +137,12 @@ class _ActivityReviewFormWidgetState extends State<ActivityReviewFormWidget> {
             SizedBox(height: 20),
             AppTextAreaWidget(
               validator: _activityValidator.validateRequiredAndSwearing,
-              onSaved: (val) => _review = val,
+              onSaved: (val) => _review = val ?? '',
               placeholder: 'Type your review here...',
             ),
             SizedBox(height: 15),
             RoundedButton(
+              disabled: _buttonStatus == WidgetStatusEnum.Loading,
               bgColor: Color(AppColors.green),
               padding: const EdgeInsets.only(top: 10, bottom: 10, right: 30, left: 30),
               child: Text(

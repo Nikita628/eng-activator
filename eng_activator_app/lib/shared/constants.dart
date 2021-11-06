@@ -13,6 +13,7 @@ class AppConstants {
   static const Map<String, String> apiHeaders = {
     "content-type": "application/json",
   };
+  static const hasReviewedSomeoneKey = 'hasReviewedSomeone';
 }
 
 class ContextAccess {

@@ -9,6 +9,6 @@ namespace EngActivator.APP.Interfaces
     {
         Task<int> CreateAsync(ActivityResponseReviewForCreate dto);
         Task<ActivityResponseHasUnreadReviewsDto> MarkAsViewedAsync(int id);
-        Task<PageResponse<ActivityResponseReviewForSearch>> SearchAsync(ActivityResponseReviewSearchParam searchParam);
+        Task<KeysetPageResponse<ActivityResponseReviewForSearch>> SearchAsync(ActivityResponseReviewSearchParam searchParam);
     }
 }

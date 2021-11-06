@@ -2,7 +2,10 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:eng_activator_app/models/auth/auth_response.dart';
 import 'package:eng_activator_app/models/user.dart';
+import 'package:eng_activator_app/state/activity_provider.dart';
+import 'package:eng_activator_app/state/activity_response_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const _localStorageKey = 'eng_activator_auth_data';
@@ -38,6 +41,12 @@ class AuthProvider with ChangeNotifier {
     _saveAuthDataInLocalStorage();
 
     notifyListeners();
+  }
+
+  Future<void> logout(BuildContext context) async {
+    Provider.of<ActivityResponseProvider>(context, listen: false).resetState();
+    Provider.of<ActivityProvider>(context, listen: false).resetState();
+    removeAuthData();
   }
 
   void removeAuthData() {

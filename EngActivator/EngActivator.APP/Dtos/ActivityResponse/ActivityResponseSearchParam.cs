@@ -1,11 +1,9 @@
 ﻿using EngActivator.APP.Shared.Dtos;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace EngActivator.APP.Dtos
 {
-    public class  ActivityResponseSearchParam : PageRequest
+    public class  ActivityResponseSearchParam : KeysetPageRequest
     {
         public DateTime? CreatedDateEquals { get; set; }
         public DateTime? LastUpdatedDateLessThan { get; set; }

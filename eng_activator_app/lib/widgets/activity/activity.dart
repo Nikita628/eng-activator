@@ -33,12 +33,12 @@ class ActivityWidget extends StatefulWidget {
 
 class _ActivityState extends State<ActivityWidget> {
   final ActivityService _activityService = Injector.get<ActivityService>();
-  final EventHub _eventHub = Injector.get<EventHub>();
+  // final EventHub _eventHub = Injector.get<EventHub>();
 
   @override
   void initState() {
     // if (widget._activity is PictureActivity) {
-    //   Future.delayed(Duration(milliseconds: 500), () => _eventHub.notify("updateScrollPosition"));
+    //   Future.delayed(Duration(milliseconds: 500), () => _eventHub.notify("updateScrollPosition_AppScaffold"));
     // }
 
     SharedPreferences.getInstance().then((value) {

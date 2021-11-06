@@ -1,4 +1,4 @@
-import 'package:eng_activator_app/models/activity_response/activity_response_review.dart';
+import 'package:eng_activator_app/models/activity_response_review/activity_response_review.dart';
 import 'package:eng_activator_app/services/api_clients/activity_response_review_api_client.dart';
 import 'package:eng_activator_app/shared/constants.dart';
 import 'package:eng_activator_app/shared/services/injector.dart';

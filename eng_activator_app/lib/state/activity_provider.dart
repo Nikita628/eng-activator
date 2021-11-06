@@ -36,4 +36,9 @@ class ActivityProvider with ChangeNotifier {
 
     notifyListeners();
   }
+
+  void resetState() {
+    _currentActivityAnswer = '';
+    _currentActivity = null;
+  }
 }

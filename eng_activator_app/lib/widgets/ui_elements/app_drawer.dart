@@ -7,7 +7,6 @@ import 'package:eng_activator_app/state/activity_provider.dart';
 import 'package:eng_activator_app/state/auth_provider.dart';
 import 'package:eng_activator_app/widgets/screens/activity/current_activity.dart';
 import 'package:eng_activator_app/widgets/screens/activity_response/activity_response_list.dart';
-import 'package:eng_activator_app/widgets/screens/help.dart';
 import 'package:eng_activator_app/widgets/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -78,36 +77,26 @@ class AppDrawer extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(
-              Icons.help_outline,
-              color: Color(AppColors.green),
-              size: 30,
-            ),
-            title: Text('Help'),
-            onTap: () => _appNavigator.replaceCurrentUrl(AppHelpWidget.screenUrl, context),
-          ),
-          ListTile(
-            leading: Icon(
               Icons.exit_to_app,
               color: Color(AppColors.green),
               size: 30,
             ),
             title: Text('Logout'),
             onTap: () {
-              authProvider.removeAuthData();
+              authProvider.logout(context);
             }
           ),
-          ListTile(
-            // TODO remove after testing
-            leading: Icon(
-              Icons.exit_to_app,
-              color: Color(AppColors.green),
-              size: 30,
-            ),
-            title: Text('Clear app local data (remove this)'),
-            onTap: () {
-              SharedPreferences.getInstance().then((value) => value.clear());
-            }
-          ),
+          // ListTile(
+          //   leading: Icon(
+          //     Icons.exit_to_app,
+          //     color: Color(AppColors.green),
+          //     size: 30,
+          //   ),
+          //   title: Text('Clear app local data (remove this)'),
+          //   onTap: () {
+          //     SharedPreferences.getInstance().then((value) => value.clear());
+          //   }
+          // ),
         ],
       ),
     );

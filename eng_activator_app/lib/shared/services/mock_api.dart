@@ -1,5 +1,5 @@
 import 'package:eng_activator_app/models/activity_response/activity_response.dart';
-import 'package:eng_activator_app/models/activity_response/activity_response_review.dart';
+import 'package:eng_activator_app/models/activity_response_review/activity_response_review.dart';
 import 'package:eng_activator_app/models/activity_response/picture_activity_response.dart';
 import 'package:eng_activator_app/models/activity_response/question_activity_response.dart';
 import 'package:eng_activator_app/models/user.dart';

@@ -18,6 +18,12 @@ class WordListItemWidget extends StatefulWidget {
 class _WordListItemWidgetState extends State<WordListItemWidget> {
   late bool _isWordHighlighted = false;
 
+  initState() {
+    var activityProvider = Provider.of<ActivityProvider>(context, listen: false);
+    _isWordHighlighted = _currentAnswerContainsWord(activityProvider.getCurrentActivityAnswer());
+    super.initState();
+  }
+
   Future<void> _onWordTap(WordEntry wordEntry, BuildContext context) async {
     await showDialog<int>(
         context: context,
@@ -68,7 +74,7 @@ class _WordListItemWidgetState extends State<WordListItemWidget> {
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 16, color: Color(AppColors.green)),
           ),
-          duration: const Duration(milliseconds: 2000),
+          duration: const Duration(milliseconds: 1500),
           width: 250,
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(

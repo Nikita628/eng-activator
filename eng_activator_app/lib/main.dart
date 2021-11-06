@@ -48,7 +48,6 @@ class EnglishActivatorApp extends StatelessWidget {
         home: HomeWidget(),
         routes: {
           MainScreenWidget.screenUrl: (_) => AuthGuard(child: MainScreenWidget()),
-          // ActivityResponseListWidget.screenUrl: (_) => AuthGuard(child: ActivityResponseListWidget()),
           ActivityForReview.screenUrl: (_) => AuthGuard(child: ActivityForReview()),
           AppHelpWidget.screenUrl: (_) => AuthGuard(child: AppHelpWidget()),
           CurrentActivityWidget.screenUrl: (_) => AuthGuard(child: CurrentActivityWidget()),

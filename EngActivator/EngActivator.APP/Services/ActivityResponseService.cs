@@ -31,7 +31,10 @@ namespace EngActivator.APP.Services
         {
             var entity = _mapper.Map<DataBase.Entities.ActivityResponse>(dto);
 
-            entity.CreatedDate = DateTime.UtcNow;
+            var now = DateTime.UtcNow;
+
+            entity.CreatedDate = now;
+            entity.LastUpdatedDate = now;
             entity.CreatedById = _http.CurrentUserId;
 
             await _db.ActivityResponses.AddAsync(entity);
@@ -45,14 +48,10 @@ namespace EngActivator.APP.Services
         {
             var query =
                 from ar in _db.ActivityResponses
-                let averageScore = (from arr in _db.ActivityResponseReviews
-                                    where arr.ActivityResponseId == id
-                                    select arr.Score).Average()
                 where ar.Id == id
                 select new ActivityResponseForDetails
                 {
                     Id = ar.Id,
-                    Score = averageScore,
                     Activity = ar.Activity,
                     ActivityTypeId = (ActivityTypeEnum)ar.ActivityTypeId,
                     Answer = ar.Answer,
@@ -64,6 +63,12 @@ namespace EngActivator.APP.Services
             {
                 throw new AppNotFoundException($"Activity response with id {id} was not found");
             }
+
+            var averageScore = await (from arr in _db.ActivityResponseReviews
+                                      where arr.ActivityResponseId == id
+                                      select arr.Score).DefaultIfEmpty().AverageAsync();
+
+            dto.Score = averageScore;
 
             return dto;
         }
@@ -82,7 +87,7 @@ namespace EngActivator.APP.Services
                                                       where arr.CreatedById == _http.CurrentUserId && arr.ActivityResponseId == ar.Id
                                                       select arr.Id).Any()
 
-                let isCreatedByCurrentUser = ar.CreatedById != _http.CurrentUserId
+                let isCreatedByCurrentUser = ar.CreatedById == _http.CurrentUserId
 
                 where !isAlreadyReviewedByCurrentUser && !isCreatedByCurrentUser
                 orderby ar.ReviewsCount ascending
@@ -103,14 +108,19 @@ namespace EngActivator.APP.Services
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
 
+            if (dto == null)
+            {
+                throw new AppNotFoundException("Activity for review not found");
+            }
+
             return dto;
         }
 
-        public async Task<PageResponse<ActivityResponseForPreview>> SearchForPreviewAsync(ActivityResponseSearchParam searchParam)
+        public async Task<KeysetPageResponse<ActivityResponseForPreview>> SearchForPreviewAsync(ActivityResponseSearchParam searchParam)
         {
-            return new PageResponse<ActivityResponseForPreview>
+            return new KeysetPageResponse<ActivityResponseForPreview>
             {
-                TotalCount = await GetCount(searchParam),
+                HasMoreItems = await GetCount(searchParam) > searchParam.PageSize,
                 Items = await GetItems(searchParam),
             };
         }
@@ -129,6 +139,12 @@ namespace EngActivator.APP.Services
                 countQuery = countQuery.Where(ar => ar.CreatedDate >= dateFrom && ar.CreatedDate < dateTo);
             }
 
+            if (searchParam.LastUpdatedDateLessThan.HasValue)
+            {
+                var lastUpdatedDateLessThan = searchParam.LastUpdatedDateLessThan.Value.AddMinutes(-_http.UtcOffset);
+                countQuery = countQuery.Where(ar => ar.LastUpdatedDate < lastUpdatedDateLessThan);
+            }
+
             return await countQuery.CountAsync();
         }
 
@@ -136,11 +152,17 @@ namespace EngActivator.APP.Services
         {
             var dateFrom = DateTime.MinValue;
             var dateTo = DateTime.MaxValue;
+            var lastUpdatedDateLessThan = DateTime.MaxValue;
 
             if (searchParam.CreatedDateEquals.HasValue)
             {
                 dateFrom = searchParam.CreatedDateEquals.Value.Date.AddMinutes(-_http.UtcOffset);
                 dateTo = searchParam.CreatedDateEquals.Value.Date.AddDays(1);
+            }
+
+            if (searchParam.LastUpdatedDateLessThan.HasValue)
+            {
+                lastUpdatedDateLessThan = searchParam.LastUpdatedDateLessThan.Value.AddMinutes(-_http.UtcOffset);
             }
 
             var searchQuery =
@@ -152,7 +174,7 @@ namespace EngActivator.APP.Services
 
                 where (ar.CreatedById == _http.CurrentUserId)
                     && (!searchParam.CreatedDateEquals.HasValue || (ar.CreatedDate >= dateFrom && ar.CreatedDate < dateTo))
-                    && (!searchParam.LastUpdatedDateLessThan.HasValue || (ar.LastUpdatedDate < searchParam.LastUpdatedDateLessThan))
+                    && (!searchParam.LastUpdatedDateLessThan.HasValue || (ar.LastUpdatedDate < lastUpdatedDateLessThan))
 
                 orderby ar.LastUpdatedDate descending
 
@@ -166,10 +188,12 @@ namespace EngActivator.APP.Services
                     LastUpdatedDate = ar.LastUpdatedDate,
                 };
 
-            return await searchQuery
+            var items = await searchQuery
                 .AsNoTracking()
                 .Take(searchParam.PageSize)
                 .ToListAsync();
+
+            return items;
         }
     }
 }

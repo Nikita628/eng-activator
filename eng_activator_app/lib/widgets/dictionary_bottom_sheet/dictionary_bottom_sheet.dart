@@ -2,7 +2,6 @@ import 'package:eng_activator_app/models/dictionary/dictionary_response.dart';
 import 'package:eng_activator_app/models/dictionary/dictionary_search_param.dart';
 import 'package:eng_activator_app/services/api_clients/dictionary_api_client.dart';
 import 'package:eng_activator_app/shared/enums.dart';
-import 'package:eng_activator_app/shared/services/event_hub.dart';
 import 'package:eng_activator_app/shared/services/injector.dart';
 import 'package:eng_activator_app/shared/constants.dart';
 import 'package:eng_activator_app/widgets/dictionary_bottom_sheet/dictionary_search_result.dart';
@@ -20,7 +19,6 @@ class DictionaryBottomSheet extends StatefulWidget {
 class _DictionaryBottomSheetState extends State<DictionaryBottomSheet> {
   final _scrollController = ScrollController();
   final _dictionaryApiClient = Injector.get<DictionaryApiClient>();
-  final _eventHub = Injector.get<EventHub>();
 
   var _dictionaryResponse = DictionaryResponse(dictionaryEntries: [], recommendations: []);
   var _widgetStatus = WidgetStatusEnum.Empty;
@@ -76,34 +74,44 @@ class _DictionaryBottomSheetState extends State<DictionaryBottomSheet> {
       decoration: const BoxDecoration(color: Colors.white, boxShadow: [
         BoxShadow(color: Color(AppColors.grey), blurRadius: 2, spreadRadius: 1),
       ]),
-      child: Scrollbar(
-        controller: _scrollController,
-        isAlwaysShown: true,
-        child: ListView(
-          controller: _scrollController,
-          shrinkWrap: true,
-          physics: const ScrollPhysics(),
-          padding: const EdgeInsets.only(bottom: 15, left: 10, right: 10),
-          children: [
-            IconButton(
-              onPressed: () {
-                _eventHub.notify("closeDictionary");
-              },
-              padding: EdgeInsets.all(0),
-              visualDensity: VisualDensity.compact,
-              icon: Icon(
-                Icons.arrow_drop_down,
-                size: 30,
-                color: Color(AppColors.black),
-              ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButton(
+            onPressed: () {},
+            padding: EdgeInsets.all(0),
+            visualDensity: VisualDensity.compact,
+            icon: Icon(
+              Icons.arrow_drop_down,
+              size: 30,
+              color: Color(AppColors.black),
             ),
-            DictionarySearchTextField(onSearchIconClick: _searchDictionary),
-            DictionarySearchResult(
-              dictionaryResponse: _dictionaryResponse,
-              widgetStatus: _widgetStatus,
-            ),
-          ],
-        ),
+          ),
+          Container(
+            child: DictionarySearchTextField(onSearchIconClick: _searchDictionary),
+            margin: EdgeInsets.only(bottom: 10, right: 5, left: 5),
+          ),
+          _widgetStatus != WidgetStatusEnum.Empty
+              ? Flexible(
+                  child: Scrollbar(
+                    controller: _scrollController,
+                    isAlwaysShown: true,
+                    child: ListView(
+                      controller: _scrollController,
+                      shrinkWrap: true,
+                      physics: const ScrollPhysics(),
+                      padding: const EdgeInsets.only(bottom: 15, left: 10, right: 10),
+                      children: [
+                        DictionarySearchResult(
+                          dictionaryResponse: _dictionaryResponse,
+                          widgetStatus: _widgetStatus,
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              : SizedBox.shrink(),
+        ],
       ),
     );
   }

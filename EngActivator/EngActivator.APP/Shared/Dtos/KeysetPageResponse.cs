@@ -2,9 +2,9 @@
 
 namespace EngActivator.APP.Shared.Dtos
 {
-    public class PageResponse<T>
+    public class KeysetPageResponse<T>
     {
-        public int TotalCount { get; set; }
         public List<T> Items { get; set; } = new List<T>();
+        public bool HasMoreItems { get; set; }
     }
 }

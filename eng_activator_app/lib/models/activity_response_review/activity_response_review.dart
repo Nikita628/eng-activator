@@ -30,7 +30,17 @@ class ActivityResponseReview {
   ActivityResponseReview.fromJson(Map<String, dynamic> json) {
     id = json["id"] ?? 0;
     text = json["text"] ?? "";
-    score = json["score"] ?? 0;
+    
+    score = 0;
+
+    var scoreFromJson = json["score"];
+
+    if (scoreFromJson is int) {
+      score = scoreFromJson.toDouble();
+    } else if (scoreFromJson is double) {
+      score = scoreFromJson.toDouble();
+    }
+    
     createdBy = User.fromJson(json["createdBy"]);
     createdDate = DateTime.parse(json["createdDate"] + 'Z').toLocal();
     isViewed = json["isViewed"] ?? false;

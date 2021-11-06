@@ -64,13 +64,13 @@ class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget>
     _activityResponseProvider.scrollPosition = _scrollController.offset;
     var isScrolledToBottom = _scrollController.offset >= (_scrollController.position.maxScrollExtent - 30);
 
-    if (isScrolledToBottom) {
+    if (isScrolledToBottom && _activityResponseProvider.hasMoreItems) {
       setState(() {
         _pagingStatus = WidgetStatusEnum.Loading;
       });
 
       _activityResponseProvider.currentSearchParam.lastUpdatedDateLessThan =
-          _activityResponseProvider.previews.last.lastUpdatedDateUtc;
+          _activityResponseProvider.previews.last.lastUpdatedDate;
 
       try {
         var pageResponse =
@@ -78,6 +78,7 @@ class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget>
 
         if (mounted) {
           setState(() {
+            _activityResponseProvider.hasMoreItems = pageResponse.hasMoreItems;
             _activityResponseProvider.previews.addAll(pageResponse.items);
             _pagingStatus = WidgetStatusEnum.Default;
           });
@@ -120,7 +121,7 @@ class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget>
     if (dateFilter != null) {
       setState(() {
         _activityResponseProvider.currentSearchParam.createdDateEquals = dateFilter;
-        _activityResponseProvider.currentSearchParam.pageNumber = 1;
+        _activityResponseProvider.currentSearchParam.lastUpdatedDateLessThan = null;
         _activityResponseProvider.currentSearchParam.pageSize = 10;
         _overallStatus = WidgetStatusEnum.Loading;
       });
@@ -144,6 +145,8 @@ class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget>
 
       if (mounted) {
         setState(() {
+          _activityResponseProvider.hasMoreItems = pageResponse.hasMoreItems;
+
           if (pageResponse.items.isEmpty) {
             _overallStatus = WidgetStatusEnum.EmptyResult;
           } else {

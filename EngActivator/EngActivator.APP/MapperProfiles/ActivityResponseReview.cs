@@ -9,7 +9,7 @@ namespace EngActivator.APP.MapperProfiles
     {
         public ActivityResponseReviewProfile()
         {
-
+            CreateMap<Dtos.ActivityResponseReviewForCreate, DataBase.Entities.ActivityResponseReview>();
         }
     }
 }

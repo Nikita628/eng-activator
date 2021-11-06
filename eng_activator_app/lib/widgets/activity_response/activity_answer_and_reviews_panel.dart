@@ -1,6 +1,6 @@
 import 'package:eng_activator_app/models/activity_response/activity_response_details.dart';
-import 'package:eng_activator_app/models/activity_response/activity_response_review.dart';
-import 'package:eng_activator_app/models/activity_response/activity_response_review_search_param.dart';
+import 'package:eng_activator_app/models/activity_response_review/activity_response_review.dart';
+import 'package:eng_activator_app/models/activity_response_review/activity_response_review_search_param.dart';
 import 'package:eng_activator_app/services/api_clients/activity_response_review_api_client.dart';
 import 'package:eng_activator_app/shared/enums.dart';
 import 'package:eng_activator_app/shared/services/event_hub.dart';
@@ -134,7 +134,7 @@ class _ReviewsBoxWidgetState extends State<_ReviewsBoxWidget> {
   late List<ActivityResponseReview> _reviews = [];
   WidgetStatusEnum _widgetStatus = WidgetStatusEnum.Loading;
   late ActivityResponseReviewSearchParam _currentSearchParam;
-  int _totalRecordsCount = 0;
+  bool _hasMoreItems = false;
 
   @override
   void initState() {
@@ -144,7 +144,7 @@ class _ReviewsBoxWidgetState extends State<_ReviewsBoxWidget> {
     _activityResponseReviewApiClient.search(_currentSearchParam, context).then((page) {
       if (mounted) {
         setState(() {
-          _totalRecordsCount = page.totalCount;
+          _hasMoreItems = page.hasMoreItems;
 
           if (page.items.isNotEmpty) {
             _reviews.addAll(page.items);
@@ -172,39 +172,42 @@ class _ReviewsBoxWidgetState extends State<_ReviewsBoxWidget> {
     super.dispose();
   }
 
-  void _getReviews() {
+  Future<void> _getReviews() async {
     setState(() {
       _widgetStatus = WidgetStatusEnum.Loading;
     });
 
-    _activityResponseReviewApiClient.search(_currentSearchParam, context).then((page) {
+    try {
+      var page = await _activityResponseReviewApiClient.search(_currentSearchParam, context);
+
       if (mounted) {
         setState(() {
-          _totalRecordsCount = page.totalCount;
+          _hasMoreItems = page.hasMoreItems;
           _reviews.addAll(page.items);
           _widgetStatus = WidgetStatusEnum.Result;
         });
       }
-    }).catchError((e) {
+    } catch (e) {
       if (mounted) {
         setState(() {
           _widgetStatus = WidgetStatusEnum.Error;
         });
       }
-    });
+    }
   }
 
   void _processScroll() {
     var isScrolledToBottom = _scrollController.offset >= _scrollController.position.maxScrollExtent;
-    var hasMoreRecords = _totalRecordsCount > _currentSearchParam.pageNumber * _currentSearchParam.pageSize;
     var isScrolledToTop =
         _scrollController.position.userScrollDirection == ScrollDirection.forward && _scrollController.offset == 0;
 
     if (isScrolledToTop) {
-      _eventHub.notify('scrollPageUp');
-    } else if (isScrolledToBottom && hasMoreRecords) {
-      _currentSearchParam.pageNumber++;
+      _eventHub.notifyListeners('scrollPageUp_AppScaffold');
+    } else if (isScrolledToBottom && _hasMoreItems) {
+      _currentSearchParam.createdDateLessThan = _reviews.last.createdDate;
       _getReviews();
+    } else if (isScrolledToBottom) {
+      _eventHub.notifyListeners('scrollPageDown_AppScaffold');
     }
   }
 

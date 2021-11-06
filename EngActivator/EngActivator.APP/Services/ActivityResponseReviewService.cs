@@ -4,6 +4,7 @@ using EngActivator.APP.Dtos;
 using EngActivator.APP.Dtos.ActivityResponseReview;
 using EngActivator.APP.Interfaces;
 using EngActivator.APP.Shared.Dtos;
+using EngActivator.APP.Shared.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -15,16 +16,20 @@ namespace EngActivator.APP.Services
     {
         private readonly EngActivatorContext _db;
         private readonly IMapper _mapper;
+        private readonly IHttpContextService _http;
 
-        public ActivityResponseReviewService(EngActivatorContext db, IMapper m)
+        public ActivityResponseReviewService(EngActivatorContext db, IMapper m, IHttpContextService c)
         {
             _db = db;
             _mapper = m;
+            _http = c;
         }
 
         public async Task<int> CreateAsync(ActivityResponseReviewForCreate dto)
         {
             var entitiy = _mapper.Map<DataBase.Entities.ActivityResponseReview>(dto);
+            entitiy.CreatedDate = DateTime.UtcNow;
+            entitiy.CreatedById = _http.CurrentUserId;
 
             using (var transaction = _db.Database.BeginTransaction())
             {
@@ -46,7 +51,7 @@ namespace EngActivator.APP.Services
 
                     await transaction.CommitAsync();
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     await transaction.RollbackAsync();
                     throw;
@@ -70,15 +75,28 @@ namespace EngActivator.APP.Services
             return new ActivityResponseHasUnreadReviewsDto { ActivityResponseHasUnreadReviews = activityResponseHasMoreUnreadReviews };
         }
 
-        public async Task<PageResponse<ActivityResponseReviewForSearch>> SearchAsync(ActivityResponseReviewSearchParam searchParam)
+        public async Task<KeysetPageResponse<ActivityResponseReviewForSearch>> SearchAsync(ActivityResponseReviewSearchParam searchParam)
         {
-            var count = await _db.ActivityResponseReviews
-                .Where(arr => arr.ActivityResponseId == searchParam.ActivityResponseIdEquals)
-                .CountAsync();
+            var countQuery = _db.ActivityResponseReviews
+                .Where(arr => arr.ActivityResponseId == searchParam.ActivityResponseIdEquals);
+
+            var createdDateLessThan = DateTime.MaxValue;
+
+            if (searchParam.CreatedDateLessThan.HasValue)
+            {
+                createdDateLessThan = searchParam.CreatedDateLessThan.Value.AddMinutes(-_http.UtcOffset);
+                countQuery = countQuery.Where(arr => arr.CreatedDate < createdDateLessThan);
+            }
+
+            var count = await countQuery.CountAsync();
 
             var searchQuery = from arr in _db.ActivityResponseReviews
+
                               where arr.ActivityResponseId == searchParam.ActivityResponseIdEquals
+                                && (!searchParam.CreatedDateLessThan.HasValue || arr.CreatedDate < createdDateLessThan)
+
                               orderby arr.CreatedDate descending
+
                               select new ActivityResponseReviewForSearch
                               {
                                   CreatedBy = new User
@@ -96,14 +114,13 @@ namespace EngActivator.APP.Services
 
             var dtos = await searchQuery
                 .AsNoTracking()
-                .Skip((searchParam.PageNumber - 1) * searchParam.PageSize)
                 .Take(searchParam.PageSize)
                 .ToListAsync();
 
-            return new PageResponse<ActivityResponseReviewForSearch>
+            return new KeysetPageResponse<ActivityResponseReviewForSearch>
             {
                 Items = dtos,
-                TotalCount = count,
+                HasMoreItems = count > searchParam.PageSize,
             };
         }
     }
