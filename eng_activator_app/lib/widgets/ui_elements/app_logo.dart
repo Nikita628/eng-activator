@@ -1,4 +1,3 @@
-import 'package:eng_activator_app/shared/constants.dart';
 import 'package:flutter/material.dart';
 
 class AppLogoWidget extends StatelessWidget {
@@ -8,11 +7,11 @@ class AppLogoWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
-      child: CircleAvatar(
-        child: Text('exenge'),
-        backgroundColor: Color(AppColors.yellow),
-        radius: 50,
-      ),
+      constraints: BoxConstraints(maxWidth: 150, maxHeight: 150),
+      child: Image.asset(
+          'assets/images/logo.png',
+          fit: BoxFit.cover,
+        ),
     );
   }
 }
