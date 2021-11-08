@@ -23,6 +23,8 @@ class _AppScaffoldState extends State<AppScaffold> {
 
   @override
   void initState() {
+    super.initState();
+
     _eventHub.addOrReplaceListener('scrollPageUp_AppScaffold', () {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(0, duration: Duration(milliseconds: 1000), curve: Curves.ease);
@@ -41,7 +43,6 @@ class _AppScaffoldState extends State<AppScaffold> {
         _scrollController.jumpTo(0.01);
       }
     });
-    super.initState();
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:eng_activator_app/models/activity/activity.dart';
 import 'package:eng_activator_app/models/activity/picture_activity.dart';
 import 'package:eng_activator_app/models/activity/question_activity.dart';
@@ -37,8 +38,12 @@ class _ActivityState extends State<ActivityWidget> {
 
   @override
   void initState() {
+    super.initState();
+
     // if (widget._activity is PictureActivity) {
-    //   Future.delayed(Duration(milliseconds: 500), () => _eventHub.notify("updateScrollPosition_AppScaffold"));
+    //   Future.delayed(Duration(milliseconds: 500), () {
+    //     _eventHub.notifyListeners("updateScrollPosition_AppScaffold");
+    //   }); 
     // }
 
     SharedPreferences.getInstance().then((value) {
@@ -48,8 +53,6 @@ class _ActivityState extends State<ActivityWidget> {
         _showFirstActivityDialog(FirstPictureActivityDialog(), _firstPictureActivityKey);
       }
     }).catchError((e) {});
-
-    super.initState();
   }
 
   Future<void> _showFirstActivityDialog(Widget dialog, String key) async {
