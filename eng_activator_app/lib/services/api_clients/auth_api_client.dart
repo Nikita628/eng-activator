@@ -7,8 +7,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AuthApiClient {
-  final Uri _loginUrl = Uri.https(AppConstants.apiUrl, '/api/auth/login');
-  final Uri _signupUrl = Uri.https(AppConstants.apiUrl, '/api/auth/signup');
+  final Uri _loginUrl = Uri.http(AppConstants.apiUrl, '/api/auth/login');
+  final Uri _signupUrl = Uri.http(AppConstants.apiUrl, '/api/auth/signup');
 
   Future<AuthResponse> signup(SignupDto param) async {
     var response = await http.post(_signupUrl, body: json.encode(param), headers: AppConstants.apiHeaders);

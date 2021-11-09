@@ -13,14 +13,14 @@ namespace EngActivator.APP.DataBase
         }
 
         #region For Package Manager Console (need this at design time)
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder
-                .UseLoggerFactory(_loggerFactory)
-                .UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=eng_activator;Trusted_Connection=True");
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    optionsBuilder
+        //        .UseLoggerFactory(_loggerFactory)
+        //        .UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=eng_activator;Trusted_Connection=True");
 
-            base.OnConfiguring(optionsBuilder);
-        }
+        //    base.OnConfiguring(optionsBuilder);
+        //}
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

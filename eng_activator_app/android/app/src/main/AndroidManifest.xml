@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.eng_activator_app">
+    package="com.exenge.engactivator">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="eng_activator_app"
+        android:label="Exenge"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

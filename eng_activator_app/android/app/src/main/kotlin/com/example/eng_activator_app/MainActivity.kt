@@ -1,4 +1,4 @@
-package com.example.eng_activator_app
+package com.exenge.engactivator
 
 import io.flutter.embedding.android.FlutterActivity
 

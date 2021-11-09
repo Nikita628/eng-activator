@@ -34,7 +34,7 @@ class FirstPictureActivityDialog extends StatelessWidget {
         ),
         const SizedBox(height: 5),
         const Text(
-          "Use as many given words as possible.",
+          "Use as many words from the green box as possible.",
           style: const TextStyle(fontSize: 14, color: Color(AppColors.black)),
         ),
         const SizedBox(height: 5),

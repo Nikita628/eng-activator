@@ -9,7 +9,8 @@ class AppColors {
 
 class AppConstants {
   static const double preferredAppBarHeight = 50;
-  static const String apiUrl = '10.0.2.2:5001';
+  // static const String apiUrl = '10.0.2.2:5001'; // for local development
+  static const String apiUrl = 'exenge-001-site1.ftempurl.com';
   static const Map<String, String> apiHeaders = {
     "content-type": "application/json",
   };

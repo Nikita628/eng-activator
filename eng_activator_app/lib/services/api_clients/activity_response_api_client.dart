@@ -13,9 +13,9 @@ import 'dart:convert';
 import 'package:provider/provider.dart';
 
 class ActivityResponseApiClient {
-  final Uri _searchPreviewUrl = Uri.https(AppConstants.apiUrl, '/api/activity-response/search-preview');
-  final Uri _getForReviewUrl = Uri.https(AppConstants.apiUrl, '/api/activity-response/review');
-  final Uri _createUrl = Uri.https(AppConstants.apiUrl, '/api/activity-response/create');
+  final Uri _searchPreviewUrl = Uri.http(AppConstants.apiUrl, '/api/activity-response/search-preview');
+  final Uri _getForReviewUrl = Uri.http(AppConstants.apiUrl, '/api/activity-response/review');
+  final Uri _createUrl = Uri.http(AppConstants.apiUrl, '/api/activity-response/create');
   final String _getDetailsUrl = '/api/activity-response/details/';
 
   Future<KeysetPageResponse<ActivityResponsePreview>> searchPreviews(ActivityResponseSearchParam param, BuildContext context) async {
@@ -33,7 +33,7 @@ class ActivityResponseApiClient {
 
   Future<ActivityResponseDetails> getDetails(int id, BuildContext context) async {
     var token = Provider.of<AuthProvider>(context, listen: false).getToken();
-    var url = Uri.https(AppConstants.apiUrl, _getDetailsUrl + id.toString());
+    var url = Uri.http(AppConstants.apiUrl, _getDetailsUrl + id.toString());
 
     var response = await http.get(url, headers: createRequestHeaders(token));
 

@@ -57,6 +57,8 @@ namespace EngActivator.API.Middleware
             {
                 response = new ErrorResponse(_env.IsDevelopment() ? ex.Message : "Something went wrong");
 
+                // response = new ErrorResponse(ex.Message);
+
                 await ProcessErrorResponse(context, ex, HttpStatusCode.InternalServerError, response);
             }
         }

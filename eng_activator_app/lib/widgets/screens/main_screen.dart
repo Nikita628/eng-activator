@@ -28,7 +28,7 @@ class _MainScreenState extends State {
   }
 
   @override
-  Widget build(BuildContext context) {    
+  Widget build(BuildContext context) {
     return AppScaffold(
       isAppBarShown: true,
       child: Container(
@@ -36,8 +36,14 @@ class _MainScreenState extends State {
             AppConstants.preferredAppBarHeight -
             MediaQuery.of(context).padding.top,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Image.asset(
+              'assets/images/exenge.png',
+              fit: BoxFit.contain,
+              width: 200,
+              height: 200,
+            ),
+            SizedBox(height: 40),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
