@@ -11,6 +11,7 @@ import 'package:eng_activator_app/shared/services/injector.dart';
 import 'package:eng_activator_app/shared/constants.dart';
 import 'package:eng_activator_app/state/activity_provider.dart';
 import 'package:eng_activator_app/widgets/screens/activity_response/activity_response_list.dart';
+import 'package:eng_activator_app/widgets/ui_elements/app_spinner.dart';
 import 'package:eng_activator_app/widgets/ui_elements/rounded_button.dart';
 import 'package:eng_activator_app/widgets/ui_elements/text_area.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +41,14 @@ class _ActivityReviewFormWidgetState extends State<ActivityReviewFormWidget> {
   late double _score = 0;
   WidgetStatusEnum _buttonStatus = WidgetStatusEnum.Default;
 
+  void _setButtonStatus(WidgetStatusEnum status) {
+    if (mounted) {
+      setState(() {
+        _buttonStatus = status;
+      });
+    }
+  }
+
   Future<void> _sendReview() async {
     bool? isValid = _formKey.currentState?.validate();
 
@@ -49,11 +58,7 @@ class _ActivityReviewFormWidgetState extends State<ActivityReviewFormWidget> {
 
     _formKey.currentState?.save();
 
-    if (mounted) {
-      setState(() {
-        _buttonStatus = WidgetStatusEnum.Loading;
-      });
-    }
+    _setButtonStatus(WidgetStatusEnum.Loading);
 
     var dto = ActivityResponseReviewForCreate(
       text: _review,
@@ -66,11 +71,7 @@ class _ActivityReviewFormWidgetState extends State<ActivityReviewFormWidget> {
       await _sendActivityResponse();
       _appNavigator.replaceCurrentUrl(ActivityResponseListWidget.screenUrl, context, args: false);
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          _buttonStatus = WidgetStatusEnum.Default;
-        });
-      }
+      _setButtonStatus(WidgetStatusEnum.Default);
     }
   }
 
@@ -145,10 +146,12 @@ class _ActivityReviewFormWidgetState extends State<ActivityReviewFormWidget> {
               disabled: _buttonStatus == WidgetStatusEnum.Loading,
               bgColor: Color(AppColors.green),
               padding: const EdgeInsets.only(top: 10, bottom: 10, right: 30, left: 30),
-              child: Text(
-                'SEND REVIEW',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
+              child: _buttonStatus == WidgetStatusEnum.Loading
+                  ? AppSpinner()
+                  : Text(
+                      'SEND REVIEW',
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
               onPressed: _sendReview,
             ),
           ],

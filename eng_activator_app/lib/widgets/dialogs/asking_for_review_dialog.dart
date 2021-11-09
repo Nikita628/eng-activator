@@ -40,7 +40,7 @@ class AskingForReviewDialog extends StatelessWidget {
             RoundedButton(
               bgColor: Color(AppColors.grey),
               child: const Text('CANCEL', style: TextStyle(fontSize: 16)),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(context, false),
             ),
           ],
         ),
