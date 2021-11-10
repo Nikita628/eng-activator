@@ -12,8 +12,8 @@ import 'dart:convert';
 import 'package:provider/provider.dart';
 
 class ActivityResponseReviewApiClient {
-  final Uri _searchPreviewUrl = Uri.http(AppConstants.apiUrl, '/api/activity-response-review/search');
-  final Uri _createUrl = Uri.http(AppConstants.apiUrl, '/api/activity-response-review/create');
+  final Uri _searchPreviewUrl = Uri.http(AppConstants.getApiUrl(), '/api/activity-response-review/search');
+  final Uri _createUrl = Uri.http(AppConstants.getApiUrl(), '/api/activity-response-review/create');
   final String _markViewdUrl = 'api/activity-response-review/mark-viewed/';
 
   Future<KeysetPageResponse<ActivityResponseReview>> search(ActivityResponseReviewSearchParam param, BuildContext context) async {
@@ -32,7 +32,7 @@ class ActivityResponseReviewApiClient {
   Future<ActivityResponseHasMoreUnreadReviews> markViewed(int id, BuildContext context) async {
     var token = Provider.of<AuthProvider>(context, listen: false).getToken();
     
-    var url = Uri.http(AppConstants.apiUrl, _markViewdUrl + id.toString());
+    var url = Uri.http(AppConstants.getApiUrl(), _markViewdUrl + id.toString());
 
     var response = await http.put(url, headers: createRequestHeaders(token));
 

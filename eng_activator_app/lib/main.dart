@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:eng_activator_app/shared/constants.dart';
 import 'package:eng_activator_app/state/activity_provider.dart';
 import 'package:eng_activator_app/shared/state/current_url_provider.dart';
 import 'package:eng_activator_app/state/activity_response_provider.dart';
@@ -17,20 +18,24 @@ import 'package:eng_activator_app/widgets/ui_elements/auth_provider_consumer.dar
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// class MyHttpOverrides extends HttpOverrides {
-//   // this is for local development
-//   @override
-//   HttpClient createHttpClient(SecurityContext? context) {
-//     return super.createHttpClient(context)
-//       ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
-//   }
-// }
+const _isLocalDev = true;
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
+  }
+}
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(EnglishActivatorApp());
 
-  // HttpOverrides.global = MyHttpOverrides();
+  AppConstants.isLocalDev = _isLocalDev;
+  if (_isLocalDev) {
+    HttpOverrides.global = MyHttpOverrides();
+  }
 }
 
 class EnglishActivatorApp extends StatelessWidget {

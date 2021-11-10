@@ -1,5 +1,7 @@
+import 'package:eng_activator_app/shared/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class ActivityPictureWidget extends StatefulWidget {
   final String _picUrl;
@@ -31,9 +33,9 @@ class _ActivityPictureWidgetState extends State<ActivityPictureWidget> {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(8.0),
-        child: Image.asset(
-          'assets/random_pics/' + widget._picUrl,
-          fit: BoxFit.cover,
+        child: FadeInImage.memoryNetwork(
+          placeholder: kTransparentImage,
+          image: "${AppConstants.getApiUrlWithPrefix()}/files/randomPics/${widget._picUrl}",
         ),
       ),
     );

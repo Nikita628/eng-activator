@@ -15,7 +15,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -107,6 +109,13 @@ namespace EngActivator.API
             app.UseStatusCodePagesWithReExecute("/error/{0}");
 
             app.UseHttpsRedirection();
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "StaticFiles")),
+                RequestPath = "/files"
+                // eg https://apiurl/files/randomPics/pic01.jpg
+            });
 
             app.UseRouting();
 

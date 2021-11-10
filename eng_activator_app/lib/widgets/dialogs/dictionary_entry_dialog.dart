@@ -2,6 +2,7 @@ import 'package:eng_activator_app/models/word_entry.dart';
 import 'package:eng_activator_app/shared/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class DictionaryEntryDialog extends StatelessWidget {
   final WordEntry _wordEntry;
@@ -58,11 +59,12 @@ class DictionaryEntryDialog extends StatelessWidget {
         Container(
           margin: const EdgeInsets.only(top: 15),
           padding: const EdgeInsets.only(left: 10, right: 10),
+          constraints: const BoxConstraints(maxHeight: 250, minHeight: 250),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(8.0),
-            child: Image.asset(
-              'assets/word_images/' + _wordEntry.pictureUrl,
-              fit: BoxFit.cover,
+            child: FadeInImage.memoryNetwork(
+              placeholder: kTransparentImage,
+              image: "${AppConstants.getApiUrlWithPrefix()}/files/wordPics/${_wordEntry.pictureUrl}",
             ),
           ),
         ),
