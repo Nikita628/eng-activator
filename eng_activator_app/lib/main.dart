@@ -18,7 +18,7 @@ import 'package:eng_activator_app/widgets/ui_elements/auth_provider_consumer.dar
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-const _isLocalDev = true;
+const _isLocalDev = false;
 
 class MyHttpOverrides extends HttpOverrides {
   @override
