@@ -37,12 +37,6 @@ class _AppScaffoldState extends State<AppScaffold> {
             duration: Duration(milliseconds: 1000), curve: Curves.ease);
       }
     });
-
-    _eventHub.addOrReplaceListener('updateScrollPosition_AppScaffold', () {
-      if (_scrollController.hasClients && _scrollController.position.maxScrollExtent > 0) {
-        _scrollController.jumpTo(0.01);
-      }
-    });
   }
 
   @override

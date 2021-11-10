@@ -20,6 +20,7 @@ class _ActivityPictureWidgetState extends State<ActivityPictureWidget> {
   Widget build(BuildContext context) {
     return Container(
       margin: widget._margin,
+      constraints: BoxConstraints(minHeight: 200),
       decoration: const BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
         boxShadow: [
