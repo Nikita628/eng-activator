@@ -60,27 +60,29 @@ class _ActivityAnswerFormWidgetState extends State<ActivityAnswerFormWidget> {
 
     _setButtonStatus(WidgetStatusEnum.Loading);
 
-    var activityResponseForReview = await _activityResponseApiClient.getForReview(context);
+    try {
+      var activityResponseForReview = await _activityResponseApiClient.getForReview(context);
 
-    if (activityResponseForReview == null) {
-      await _showActivityForReviewNotFoundDialog();
-    } else {
-      await _showAskingForReviewDialog(activityResponseForReview);
+      if (activityResponseForReview == null) {
+        await _showActivityForReviewNotFoundDialog();
+      } else {
+        await _showAskingForReviewDialog(activityResponseForReview);
+      }
+
+      _setButtonStatus(WidgetStatusEnum.Default);
+    } catch (e) {
+      _setButtonStatus(WidgetStatusEnum.Default);
     }
   }
 
   Future<void> _showAskingForReviewDialog(ActivityResponseForReview activityResponseForReview) async {
     Provider.of<ActivityResponseProvider>(context, listen: false).activityResponseForReview = activityResponseForReview;
 
-    var agreedToReview = await showDialog<bool>(
+    await showDialog<bool>(
         context: context,
         builder: (BuildContext context) {
           return AskingForReviewDialog();
         });
-
-    if (agreedToReview == false) {
-      _setButtonStatus(WidgetStatusEnum.Default);
-    }
   }
 
   Future<void> _showActivityForReviewNotFoundDialog() async {
@@ -91,14 +93,8 @@ class _ActivityAnswerFormWidgetState extends State<ActivityAnswerFormWidget> {
         });
 
     if (shouldSendNow == true) {
-      try {
-        await _sendActivityResponse();
-        _appNavigator.replaceCurrentUrl(ActivityResponseListWidget.screenUrl, context, args: false);
-      } catch (e) {
-        _setButtonStatus(WidgetStatusEnum.Default);
-      }
-    } else {
-      _setButtonStatus(WidgetStatusEnum.Default);
+      await _sendActivityResponse();
+      _appNavigator.replaceCurrentUrl(ActivityResponseListWidget.screenUrl, context, args: false);
     }
   }
 

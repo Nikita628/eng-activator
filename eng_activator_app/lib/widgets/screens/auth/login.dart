@@ -42,29 +42,35 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
     super.initState();
   }
 
+  void _setWidgetStatus(WidgetStatusEnum status) {
+    if (mounted) {
+      setState(() {
+        _widgetStatus = WidgetStatusEnum.Loading;
+      });
+    }
+  }
+
   void _saveForm() async {
     _formKey.currentState?.save();
     var isValid = _formKey.currentState?.validate();
 
     if (isValid == true) {
-      setState(() {
-        _widgetStatus = WidgetStatusEnum.Loading;
-      });
+      _setWidgetStatus(WidgetStatusEnum.Loading);
 
       try {
-        var response = await _authApiClient.login(_loginDataDto);
+        var response = await _authApiClient.login(_loginDataDto, context);
         _authProvider.setAuthData(response);
         _appNavigator.replaceCurrentUrl(MainScreenWidget.screenUrl, context);
       } on ApiResponseException catch (e) {
         showDialog(
           context: context,
           builder: (_) => ErrorDialog(error: e.errorResponse.message),
-        ).then((value) => setState(() => _widgetStatus = WidgetStatusEnum.Default));
+        ).then((value) => _setWidgetStatus(WidgetStatusEnum.Default));
       } catch (e) {
         showDialog(
           context: context,
           builder: (_) => ErrorDialog(error: 'Something went wrong'),
-        ).then((_) => setState(() => _widgetStatus = WidgetStatusEnum.Default));
+        ).then((_) => _setWidgetStatus(WidgetStatusEnum.Default));
       }
     }
   }

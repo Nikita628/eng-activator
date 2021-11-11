@@ -3,15 +3,15 @@ import 'package:eng_activator_app/models/activity_response_review/activity_respo
 import 'package:eng_activator_app/models/activity_response_review/activity_response_review_for_create.dart';
 import 'package:eng_activator_app/models/activity_response_review/activity_response_review_search_param.dart';
 import 'package:eng_activator_app/models/api/api_keyset_page_response.dart';
+import 'package:eng_activator_app/services/api_clients/base_api_client.dart';
 import 'package:eng_activator_app/shared/constants.dart';
-import 'package:eng_activator_app/shared/functions.dart';
 import 'package:eng_activator_app/state/auth_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:provider/provider.dart';
 
-class ActivityResponseReviewApiClient {
+class ActivityResponseReviewApiClient extends BaseApiClient {
   final Uri _searchPreviewUrl = Uri.http(AppConstants.getApiUrl(), '/api/activity-response-review/search');
   final Uri _createUrl = Uri.http(AppConstants.getApiUrl(), '/api/activity-response-review/create');
   final String _markViewdUrl = 'api/activity-response-review/mark-viewed/';
@@ -19,7 +19,9 @@ class ActivityResponseReviewApiClient {
   Future<KeysetPageResponse<ActivityResponseReview>> search(ActivityResponseReviewSearchParam param, BuildContext context) async {
     var token = Provider.of<AuthProvider>(context, listen: false).getToken();
     
-    var response = await http.post(_searchPreviewUrl, body: json.encode(param), headers: createRequestHeaders(token));
+    var response = await executeHttp(() async {
+      return await http.post(_searchPreviewUrl, body: json.encode(param), headers: createRequestHeaders(token));
+    }, context);
 
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
@@ -34,7 +36,9 @@ class ActivityResponseReviewApiClient {
     
     var url = Uri.http(AppConstants.getApiUrl(), _markViewdUrl + id.toString());
 
-    var response = await http.put(url, headers: createRequestHeaders(token));
+    var response = await executeHttp(() async {
+      return await http.put(url, headers: createRequestHeaders(token));
+    }, context);
 
     if (response.statusCode == 200) {
       Map<String, dynamic> map = jsonDecode(response.body);
@@ -47,7 +51,9 @@ class ActivityResponseReviewApiClient {
   Future<int> create(ActivityResponseReviewForCreate dto, BuildContext context) async {
     var token = Provider.of<AuthProvider>(context, listen: false).getToken();
     
-    var response = await http.post(_createUrl, body: jsonEncode(dto), headers: createRequestHeaders(token));
+    var response = await executeHttp(() async {
+      return await http.post(_createUrl, body: jsonEncode(dto), headers: createRequestHeaders(token));
+    }, context);
 
     if (response.statusCode == 200) {
       int id = jsonDecode(response.body);

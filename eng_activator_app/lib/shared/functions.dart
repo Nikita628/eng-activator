@@ -1,6 +1,6 @@
-import 'dart:convert';
-import 'package:eng_activator_app/models/api/api_error_response.dart';
-import 'package:eng_activator_app/shared/api_exception.dart';
+import 'package:eng_activator_app/widgets/dialogs/error_dialog.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class Converter {
   static List<T> toList<T>(Map<String, dynamic> json, String prop) {
@@ -14,15 +14,9 @@ class Converter {
   }
 }
 
-ApiResponseException createApiException(String responseBody) {
-  Map<String, dynamic> err = jsonDecode(responseBody);
-  return ApiResponseException(ApiErrorResponse.fromJson(err));
-}
-
-Map<String, String> createRequestHeaders(String token) {
-  return {
-    "content-type": "application/json",
-    "Authorization": "Bearer $token",
-    "utcOffset": DateTime.now().timeZoneOffset.inMinutes.toString(),
-  };
+Future<void> showErrorDialog(String error, BuildContext ctx) async {
+  await showDialog(
+    context: ctx,
+    builder: (_) => ErrorDialog(error: error),
+  );
 }

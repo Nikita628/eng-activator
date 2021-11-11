@@ -24,14 +24,6 @@ class _ActivityPictureWidgetState extends State<ActivityPictureWidget> {
       constraints: BoxConstraints(minHeight: 100, minWidth: double.infinity, maxHeight: 250),
       decoration: const BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
-        boxShadow: [
-          const BoxShadow(
-            blurRadius: 2,
-            spreadRadius: 0.2,
-            color: Colors.grey,
-            offset: Offset(0.5, 0.5),
-          )
-        ],
       ),
       child: Stack(
         children: [
@@ -42,6 +34,12 @@ class _ActivityPictureWidgetState extends State<ActivityPictureWidget> {
               child: FadeInImage.memoryNetwork(
                 placeholder: kTransparentImage,
                 image: "${AppConstants.getApiUrlWithPrefix()}/files/randomPics/${widget._picUrl}",
+                imageErrorBuilder: (_, _2, _3) => Container(
+                  color: Colors.white,
+                  width: double.infinity,
+                  height: double.infinity,
+                  child: Center(child: Text("Could not load image")),
+                ),
               ),
             ),
           ),

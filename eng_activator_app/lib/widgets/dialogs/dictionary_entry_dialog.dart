@@ -60,7 +60,7 @@ class DictionaryEntryDialog extends StatelessWidget {
         Container(
           margin: const EdgeInsets.only(top: 15),
           padding: const EdgeInsets.only(left: 10, right: 10),
-          constraints: const BoxConstraints(maxHeight: 250, minHeight: 250, minWidth: double.infinity),
+          constraints: const BoxConstraints(maxHeight: 200, minHeight: 200, minWidth: double.infinity),
           child: Stack(
             children: [
               Center(child: AppSpinner()),
@@ -70,6 +70,12 @@ class DictionaryEntryDialog extends StatelessWidget {
                   child: FadeInImage.memoryNetwork(
                     placeholder: kTransparentImage,
                     image: "${AppConstants.getApiUrlWithPrefix()}/files/wordPics/${_wordEntry.pictureUrl}",
+                    imageErrorBuilder: (_, _2, _3) => Container(
+                      color: Colors.white,
+                      width: double.infinity,
+                      height: double.infinity,
+                      child: Center(child: Text("Could not load image")),
+                    ),
                   ),
                 ),
               ),
