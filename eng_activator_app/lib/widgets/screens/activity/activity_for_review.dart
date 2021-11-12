@@ -53,15 +53,16 @@ class _ActivityForReviewState extends State<ActivityForReview> {
         padding: EdgeInsets.only(bottom: 30),
         child: Column(
           children: [
-            _activityResponse.activityTypeId == ActivityTypeEnum.Question
-                ? ActivityQuestionWidget(
-                    text: _questionActivity?.question as String,
-                    margin: const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-                  )
-                : ActivityPictureWidget(
-                    picUrl: _pictureActivity?.picUrl as String,
-                    margin: const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
-                  ),
+            if (_activityResponse.activityTypeId == ActivityTypeEnum.Question)
+              ActivityQuestionWidget(
+                text: _questionActivity?.question as String,
+                margin: const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+              ),
+            if (_activityResponse.activityTypeId == ActivityTypeEnum.Picture)
+              ActivityPictureWidget(
+                picUrl: _pictureActivity?.picUrl as String,
+                margin: const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+              ),
             WordListWidget(
               wordEntries: _wordEntries,
               margin: const EdgeInsets.only(top: 10, bottom: 30, left: 10, right: 10),

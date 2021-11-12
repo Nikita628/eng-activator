@@ -29,15 +29,14 @@ class DictionaryEntryWidget extends StatelessWidget {
             margin: EdgeInsets.only(bottom: 10),
           ),
         ),
-        _entry.examples.isNotEmpty
-            ? const Text(
-                "Examples:",
-                style: TextStyle(
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.bold,
-                ),
-              )
-            : const SizedBox.shrink(),
+        if (_entry.examples.isNotEmpty)
+          const Text(
+            "Examples:",
+            style: TextStyle(
+              fontStyle: FontStyle.italic,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ..._entry.examples.map(
           (e) => Container(
             child: Text("- $e"),

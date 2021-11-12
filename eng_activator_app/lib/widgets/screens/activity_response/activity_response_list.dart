@@ -55,7 +55,7 @@ class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget>
     if (_pagingStatus == WidgetStatusEnum.Loading) {
       return;
     }
-    
+
     _activityResponseProvider.scrollPosition = _scrollController.offset;
     var isScrolledToBottom = _scrollController.offset >= (_scrollController.position.maxScrollExtent - 30);
 
@@ -164,30 +164,36 @@ class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget>
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
-      isAppBarShown: true,
-      child: Container(
-        height: MediaQuery.of(context).size.height -
-            AppConstants.preferredAppBarHeight -
-            MediaQuery.of(context).padding.top,
-        padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
-        child: Column(
-          children: [
-            Container(
-                margin: const EdgeInsets.only(bottom: 10),
-                child: _DateFilter(
-                  onFilterTap: _filterByDate,
-                  onResetFilter: _resetDateFilter,
-                  filter: _activityResponseProvider.currentSearchParam.createdDateEquals,
-                )),
-            Expanded(
-                child: _ActivityPreviewList(
-              overallStatus: _overallStatus,
-              pagingStatus: _pagingStatus,
-              scrollController: _scrollController,
-              previews: _activityResponseProvider.previews,
-            )),
-          ],
+    return WillPopScope(
+      onWillPop: () async {
+        print('pop pop pop');
+        return false;
+      },
+      child: AppScaffold(
+        isAppBarShown: true,
+        child: Container(
+          height: MediaQuery.of(context).size.height -
+              AppConstants.preferredAppBarHeight -
+              MediaQuery.of(context).padding.top,
+          padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+          child: Column(
+            children: [
+              Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child: _DateFilter(
+                    onFilterTap: _filterByDate,
+                    onResetFilter: _resetDateFilter,
+                    filter: _activityResponseProvider.currentSearchParam.createdDateEquals,
+                  )),
+              Expanded(
+                  child: _ActivityPreviewList(
+                overallStatus: _overallStatus,
+                pagingStatus: _pagingStatus,
+                scrollController: _scrollController,
+                previews: _activityResponseProvider.previews,
+              )),
+            ],
+          ),
         ),
       ),
     );
@@ -262,34 +268,31 @@ class _DateFilter extends StatelessWidget {
           ),
           iconSize: 35,
         ),
-        _filter != null
-            ? GestureDetector(
-                onTap: _onFilterTap,
-                child: Text(
-                  DateFormat().addPattern('MMMM d, yyyy').format(_filter as DateTime),
-                  style: TextStyle(color: Color(AppColors.black), fontSize: 14),
-                ),
-              )
-            : SizedBox.shrink(),
-        _filter != null
-            ? IconButton(
-                onPressed: _onResetFilter,
-                icon: Icon(
-                  Icons.close,
-                  color: Color(AppColors.green),
-                ),
-                iconSize: 25,
-              )
-            : SizedBox.shrink(),
-        _filter == null
-            ? GestureDetector(
-                onTap: _onFilterTap,
-                child: Text(
-                  "ALL TIME",
-                  style: TextStyle(color: Color(AppColors.grey), fontSize: 14),
-                ),
-              )
-            : SizedBox.shrink(),
+        if (_filter != null)
+          GestureDetector(
+            onTap: _onFilterTap,
+            child: Text(
+              DateFormat().addPattern('MMMM d, yyyy').format(_filter as DateTime),
+              style: TextStyle(color: Color(AppColors.black), fontSize: 14),
+            ),
+          ),
+        if (_filter != null)
+          IconButton(
+            onPressed: _onResetFilter,
+            icon: Icon(
+              Icons.close,
+              color: Color(AppColors.green),
+            ),
+            iconSize: 25,
+          ),
+        if (_filter == null)
+          GestureDetector(
+            onTap: _onFilterTap,
+            child: Text(
+              "ALL TIME",
+              style: TextStyle(color: Color(AppColors.grey), fontSize: 14),
+            ),
+          )
       ],
     );
   }
