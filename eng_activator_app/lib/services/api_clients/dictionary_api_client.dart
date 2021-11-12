@@ -14,8 +14,8 @@ class DictionaryApiClient extends BaseApiClient {
   Future<DictionaryResponse> search(DictionarySearchParam param, BuildContext context) async {
     var token = Provider.of<AuthProvider>(context, listen: false).getToken();
 
-    var response = await executeHttp(() async {
-      return await http.post(_searchUrl, body: json.encode(param), headers: createRequestHeaders(token));
+    var response = await executeHttp(() {
+      return http.post(_searchUrl, body: json.encode(param), headers: createRequestHeaders(token));
     }, context);
 
     if (response.statusCode == 200) {

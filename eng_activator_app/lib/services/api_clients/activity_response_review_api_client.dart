@@ -19,8 +19,8 @@ class ActivityResponseReviewApiClient extends BaseApiClient {
   Future<KeysetPageResponse<ActivityResponseReview>> search(ActivityResponseReviewSearchParam param, BuildContext context) async {
     var token = Provider.of<AuthProvider>(context, listen: false).getToken();
     
-    var response = await executeHttp(() async {
-      return await http.post(_searchPreviewUrl, body: json.encode(param), headers: createRequestHeaders(token));
+    var response = await executeHttp(() {
+      return http.post(_searchPreviewUrl, body: json.encode(param), headers: createRequestHeaders(token));
     }, context);
 
     if (response.statusCode == 200) {
@@ -36,8 +36,8 @@ class ActivityResponseReviewApiClient extends BaseApiClient {
     
     var url = Uri.http(AppConstants.getApiUrl(), _markViewdUrl + id.toString());
 
-    var response = await executeHttp(() async {
-      return await http.put(url, headers: createRequestHeaders(token));
+    var response = await executeHttp(() {
+      return http.put(url, headers: createRequestHeaders(token));
     }, context);
 
     if (response.statusCode == 200) {
@@ -51,8 +51,8 @@ class ActivityResponseReviewApiClient extends BaseApiClient {
   Future<int> create(ActivityResponseReviewForCreate dto, BuildContext context) async {
     var token = Provider.of<AuthProvider>(context, listen: false).getToken();
     
-    var response = await executeHttp(() async {
-      return await http.post(_createUrl, body: jsonEncode(dto), headers: createRequestHeaders(token));
+    var response = await executeHttp(() {
+      return http.post(_createUrl, body: jsonEncode(dto), headers: createRequestHeaders(token));
     }, context);
 
     if (response.statusCode == 200) {

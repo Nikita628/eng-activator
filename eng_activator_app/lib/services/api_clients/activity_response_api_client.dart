@@ -23,8 +23,8 @@ class ActivityResponseApiClient extends BaseApiClient {
       ActivityResponseSearchParam param, BuildContext context) async {
     var token = Provider.of<AuthProvider>(context, listen: false).getToken();
 
-    Response response = await executeHttp(() async {
-      return await http.post(_searchPreviewUrl, body: json.encode(param), headers: createRequestHeaders(token));
+    Response response = await executeHttp(() {
+      return http.post(_searchPreviewUrl, body: json.encode(param), headers: createRequestHeaders(token));
     }, context);
 
     if (response.statusCode == 200) {
@@ -39,8 +39,8 @@ class ActivityResponseApiClient extends BaseApiClient {
     var token = Provider.of<AuthProvider>(context, listen: false).getToken();
     var url = Uri.http(AppConstants.getApiUrl(), _getDetailsUrl + id.toString());
 
-    Response response = await executeHttp(() async {
-      return await http.get(url, headers: createRequestHeaders(token));
+    Response response = await executeHttp(() {
+      return http.get(url, headers: createRequestHeaders(token));
     }, context);
 
     if (response.statusCode == 200) {
@@ -54,8 +54,8 @@ class ActivityResponseApiClient extends BaseApiClient {
   Future<ActivityResponseForReview?> getForReview(BuildContext context) async {
     var token = Provider.of<AuthProvider>(context, listen: false).getToken();
 
-    Response response = await executeHttp(() async {
-      return await http.get(_getForReviewUrl, headers: createRequestHeaders(token));
+    Response response = await executeHttp(() {
+      return http.get(_getForReviewUrl, headers: createRequestHeaders(token));
     }, context);
 
     if (response.statusCode == 200) {
@@ -71,8 +71,8 @@ class ActivityResponseApiClient extends BaseApiClient {
   Future<int> create(ActivityResponseForCreate dto, BuildContext context) async {
     var token = Provider.of<AuthProvider>(context, listen: false).getToken();
 
-    Response response = await executeHttp(() async {
-      return await http.post(_createUrl, body: jsonEncode(dto), headers: createRequestHeaders(token));
+    Response response = await executeHttp(() {
+      return http.post(_createUrl, body: jsonEncode(dto), headers: createRequestHeaders(token));
     }, context);
 
     if (response.statusCode == 200) {

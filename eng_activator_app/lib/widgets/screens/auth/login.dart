@@ -45,7 +45,7 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
   void _setWidgetStatus(WidgetStatusEnum status) {
     if (mounted) {
       setState(() {
-        _widgetStatus = WidgetStatusEnum.Loading;
+        _widgetStatus = status;
       });
     }
   }

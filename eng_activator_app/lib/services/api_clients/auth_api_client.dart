@@ -12,8 +12,8 @@ class AuthApiClient extends BaseApiClient {
   final Uri _signupUrl = Uri.http(AppConstants.getApiUrl(), '/api/auth/signup');
 
   Future<AuthResponse> signup(SignupDto param, BuildContext context) async {
-    var response = await executeHttp(() async {
-      return await http.post(_signupUrl, body: json.encode(param), headers: AppConstants.apiHeaders);
+    var response = await executeHttp(() {
+      return http.post(_signupUrl, body: json.encode(param), headers: AppConstants.apiHeaders);
     }, context);
 
     if (response.statusCode == 200) {
@@ -25,8 +25,8 @@ class AuthApiClient extends BaseApiClient {
   }
 
   Future<AuthResponse> login(LoginDto param, BuildContext context) async {
-    var response = await executeHttp(() async {
-      return await http.post(_loginUrl, body: json.encode(param), headers: AppConstants.apiHeaders);
+    var response = await executeHttp(() {
+      return http.post(_loginUrl, body: json.encode(param), headers: AppConstants.apiHeaders);
     }, context);
 
     if (response.statusCode == 200) {
