@@ -3,19 +3,16 @@ import 'package:eng_activator_app/models/activity_response/activity_response_det
 import 'package:eng_activator_app/services/api_clients/activity_response_api_client.dart';
 import 'package:eng_activator_app/shared/enums.dart';
 import 'package:eng_activator_app/shared/services/injector.dart';
+import 'package:eng_activator_app/state/activity_response_provider.dart';
 import 'package:eng_activator_app/widgets/activity_question_widget.dart';
 import 'package:eng_activator_app/widgets/activity_response/activity_response_details.dart';
 import 'package:eng_activator_app/widgets/ui_elements/empty_screen.dart';
 import 'package:eng_activator_app/widgets/ui_elements/overall_spinner.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class QuestionActivityResponseWidget extends StatefulWidget {
   static final String screenUrl = '/question-activity-response';
-  final int _questionActivityResponseId;
-
-  QuestionActivityResponseWidget({required int questionActivityResponseId})
-      : _questionActivityResponseId = questionActivityResponseId,
-        super();
 
   @override
   _QuestionActivityResponseWidgetState createState() => _QuestionActivityResponseWidgetState();
@@ -28,7 +25,9 @@ class _QuestionActivityResponseWidgetState extends State<QuestionActivityRespons
   WidgetStatusEnum _widgetStatus = WidgetStatusEnum.Loading;
 
   void initState() {
-    _activityResponseApiClient.getDetails(widget._questionActivityResponseId, context).then((details) {
+    var activityResponseId = Provider.of<ActivityResponseProvider>(context, listen: false).activityResponseDetailsId;
+
+    _activityResponseApiClient.getDetails(activityResponseId, context).then((details) {
       if (mounted) {
         setState(() {
           _response = details;

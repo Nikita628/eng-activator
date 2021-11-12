@@ -94,7 +94,8 @@ class _ActivityAnswerFormWidgetState extends State<ActivityAnswerFormWidget> {
 
     if (shouldSendNow == true) {
       await _sendActivityResponse();
-      _appNavigator.replaceCurrentUrl(ActivityResponseListWidget.screenUrl, context, args: false);
+      Provider.of<ActivityResponseProvider>(context, listen: false).isActivityResponseListOpenedFromBackButton = false;
+      _appNavigator.replaceCurrentUrl(ActivityResponseListWidget.screenUrl, context);
     }
   }
 

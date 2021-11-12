@@ -3,19 +3,16 @@ import 'package:eng_activator_app/models/activity_response/activity_response_det
 import 'package:eng_activator_app/services/api_clients/activity_response_api_client.dart';
 import 'package:eng_activator_app/shared/enums.dart';
 import 'package:eng_activator_app/shared/services/injector.dart';
+import 'package:eng_activator_app/state/activity_response_provider.dart';
 import 'package:eng_activator_app/widgets/activity_picture_widget.dart';
 import 'package:eng_activator_app/widgets/activity_response/activity_response_details.dart';
 import 'package:eng_activator_app/widgets/ui_elements/empty_screen.dart';
 import 'package:eng_activator_app/widgets/ui_elements/overall_spinner.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class PictureActivityResponseWidget extends StatefulWidget {
   static final String screenUrl = '/picture-activity-response';
-  final int _pictureActivityResponseId;
-
-  PictureActivityResponseWidget({required int pictureActivityResponseId})
-      : _pictureActivityResponseId = pictureActivityResponseId,
-        super();
 
   @override
   _PictureActivityResponseWidgetState createState() => _PictureActivityResponseWidgetState();
@@ -29,7 +26,9 @@ class _PictureActivityResponseWidgetState extends State<PictureActivityResponseW
 
   @override
   void initState() {
-    _activityResponseApiClient.getDetails(widget._pictureActivityResponseId, context).then((details) {
+    var activityResponseId = Provider.of<ActivityResponseProvider>(context, listen: false).activityResponseDetailsId;
+
+    _activityResponseApiClient.getDetails(activityResponseId, context).then((details) {
       if (mounted) {
         setState(() {
           _response = details;

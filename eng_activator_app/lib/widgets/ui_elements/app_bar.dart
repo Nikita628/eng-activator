@@ -3,6 +3,7 @@ import 'package:eng_activator_app/shared/services/injector.dart';
 import 'package:eng_activator_app/shared/constants.dart';
 import 'package:eng_activator_app/state/activity_provider.dart';
 import 'package:eng_activator_app/shared/state/current_url_provider.dart';
+import 'package:eng_activator_app/state/activity_response_provider.dart';
 import 'package:eng_activator_app/widgets/dictionary_bottom_sheet/dictionary_bottom_sheet.dart';
 import 'package:eng_activator_app/widgets/screens/activity/current_activity.dart';
 import 'package:eng_activator_app/widgets/screens/activity_response/activity_response_list.dart';
@@ -66,36 +67,36 @@ class _AppBarWidgetState extends State<AppBarWidget> {
       backgroundColor: const Color(0xffffffff),
       shadowColor: const Color(AppColors.green),
       actions: [
-        isBackButtonShown
-            ? IconButton(
-                icon: const Icon(
-                  Icons.keyboard_backspace,
-                  color: Color(AppColors.green),
-                  size: 30,
-                ),
-                onPressed: () => _appNavigator.replaceCurrentUrl(ActivityResponseListWidget.screenUrl, context, args: true),
-              )
-            : const SizedBox.shrink(),
-        isDictionaryButtonShown
-            ? IconButton(
-                icon: const Icon(
-                  Icons.menu_book_sharp,
-                  color: Color(AppColors.green),
-                  size: 30,
-                ),
-                onPressed: _toggleDictionaryBottomSheet,
-              )
-            : const SizedBox.shrink(),
-        activity != null
-            ? IconButton(
-                icon: const Icon(
-                  Icons.edit_outlined,
-                  color: Color(AppColors.green),
-                  size: 30,
-                ),
-                onPressed: () => _appNavigator.replaceCurrentUrl(CurrentActivityWidget.screenUrl, context),
-              )
-            : const SizedBox.shrink(),
+        if (isBackButtonShown)
+          IconButton(
+              icon: const Icon(
+                Icons.keyboard_backspace,
+                color: Color(AppColors.green),
+                size: 30,
+              ),
+              onPressed: () {
+                Provider.of<ActivityResponseProvider>(context, listen: false)
+                    .isActivityResponseListOpenedFromBackButton = true;
+                _appNavigator.replaceCurrentUrl(ActivityResponseListWidget.screenUrl, context);
+              }),
+        if (isDictionaryButtonShown)
+          IconButton(
+            icon: const Icon(
+              Icons.menu_book_sharp,
+              color: Color(AppColors.green),
+              size: 30,
+            ),
+            onPressed: _toggleDictionaryBottomSheet,
+          ),
+        if (activity != null)
+          IconButton(
+            icon: const Icon(
+              Icons.edit_outlined,
+              color: Color(AppColors.green),
+              size: 30,
+            ),
+            onPressed: () => _appNavigator.replaceCurrentUrl(CurrentActivityWidget.screenUrl, context),
+          )
       ],
     );
   }

@@ -2,13 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:eng_activator_app/models/auth/auth_response.dart';
 import 'package:eng_activator_app/models/user.dart';
+import 'package:eng_activator_app/shared/state/current_url_provider.dart';
 import 'package:eng_activator_app/state/activity_provider.dart';
 import 'package:eng_activator_app/state/activity_response_provider.dart';
+import 'package:eng_activator_app/widgets/screens/auth/login.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const _localStorageKey = 'eng_activator_auth_data';
+const _authDataStorageKey = 'eng_activator_auth_data';
 
 class AuthProvider with ChangeNotifier {
   String _token = '';
@@ -33,29 +35,64 @@ class AuthProvider with ChangeNotifier {
     return _token.isNotEmpty && !isTokenExpired && _user != null;
   }
 
-  void setAuthData(AuthResponse authResponse) {
+  Future<void> setAuthData(AuthResponse authResponse) async {
     _token = authResponse.token;
     _user = authResponse.user;
     _tokenExpirationDate = authResponse.tokenExpirationDate;
     _autoLogout();
-    _saveAuthDataInLocalStorage();
-
-    notifyListeners();
+    await _saveAuthDataInLocalStorage();
   }
 
   Future<void> logout(BuildContext context) async {
     Provider.of<ActivityResponseProvider>(context, listen: false).resetState();
     Provider.of<ActivityProvider>(context, listen: false).resetState();
-    removeAuthData();
-  }
+    Provider.of<CurrentUrlProvider>(context, listen: false).resetState();
 
-  void removeAuthData() {
     _token = '';
     _tokenExpirationDate = null;
     _user = null;
     _autoLogoutTimer?.cancel();
     _autoLogoutTimer = null;
-    _removeAuthDataFromLocalStorage();
+
+    await _removeAuthDataFromLocalStorage();
+
+    await Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreenWidget()),
+      (Route<dynamic> route) => false,
+    );
+  }
+
+  Future<bool> tryAutoLogin() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    if (!prefs.containsKey(_authDataStorageKey)) {
+      return false;
+    }
+
+    var isLoggedIn = false;
+
+    Map<String, dynamic> json = jsonDecode(prefs.getString(_authDataStorageKey) as String);
+    var authData = AuthResponse.fromJson(json);
+
+    if ((authData.tokenExpirationDate as DateTime).isAfter(DateTime.now().subtract(Duration(days: 1)))) {
+      _token = authData.token;
+      _user = authData.user;
+      _tokenExpirationDate = authData.tokenExpirationDate;
+      _autoLogout();
+      isLoggedIn = true;
+    }
+
+    return isLoggedIn;
+  }
+
+  Future<void> _removeAuthData() async {
+    _token = '';
+    _tokenExpirationDate = null;
+    _user = null;
+    _autoLogoutTimer?.cancel();
+    _autoLogoutTimer = null;
+    await _removeAuthDataFromLocalStorage();
 
     notifyListeners();
   }
@@ -66,36 +103,14 @@ class AuthProvider with ChangeNotifier {
     var secondsUntilExpiration = _tokenExpirationDate?.difference(DateTime.now().subtract(Duration(days: 1))).inSeconds;
 
     if (secondsUntilExpiration != null) {
-      _autoLogoutTimer = Timer(Duration(seconds: secondsUntilExpiration), removeAuthData);
+      _autoLogoutTimer = Timer(Duration(seconds: secondsUntilExpiration), _removeAuthData);
     }
   }
 
-  Future<bool> tryAutoLogin() async {
-    final prefs = await SharedPreferences.getInstance();
+  Future<void> _saveAuthDataInLocalStorage() async {
+    try {
+      var sharedPrefs = await SharedPreferences.getInstance();
 
-    if (!prefs.containsKey(_localStorageKey)) {
-      return false;
-    }
-
-    var isLoggedIn = false;
-
-    Map<String, dynamic> json = jsonDecode(prefs.getString(_localStorageKey) as String);
-    var authData = AuthResponse.fromJson(json);
-
-    if ((authData.tokenExpirationDate as DateTime).isAfter(DateTime.now().subtract(Duration(days: 1)))) {
-      _token = authData.token;
-      _user = authData.user;
-      _tokenExpirationDate = authData.tokenExpirationDate;
-      _autoLogout();
-      isLoggedIn = true;
-      notifyListeners();
-    }
-
-    return isLoggedIn;
-  }
-
-  void _saveAuthDataInLocalStorage() {
-    SharedPreferences.getInstance().then((value) {
       var authData = {
         "token": _token,
         "tokenExpirationDate": _tokenExpirationDate.toString(),
@@ -104,13 +119,15 @@ class AuthProvider with ChangeNotifier {
           "name": _user?.name,
         }
       };
-      value.setString(_localStorageKey, jsonEncode(authData));
-    }).catchError((e) {});
+
+      await sharedPrefs.setString(_authDataStorageKey, jsonEncode(authData));
+    } catch (e) {}
   }
 
-  void _removeAuthDataFromLocalStorage() {
-    SharedPreferences.getInstance().then((value) {
-      value.remove(_localStorageKey);
-    }).catchError((e) {});
+  Future<void> _removeAuthDataFromLocalStorage() async {
+    try {
+      var sharedPrefs = await SharedPreferences.getInstance();
+      await sharedPrefs.remove(_authDataStorageKey);
+    } catch (e) {}
   }
 }

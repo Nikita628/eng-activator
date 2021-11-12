@@ -58,18 +58,9 @@ class EnglishActivatorApp extends StatelessWidget {
           CurrentActivityWidget.screenUrl: (_) => AuthGuard(child: CurrentActivityWidget()),
           LoginScreenWidget.screenUrl: (_) => LoginScreenWidget(),
           SignupScreenWidget.screenUrl: (_) => SignupScreenWidget(),
-        },
-        onGenerateRoute: (RouteSettings settings) {
-          var routes = <String, WidgetBuilder>{
-            PictureActivityResponseWidget.screenUrl: (ctx) =>
-                AuthGuard(child: PictureActivityResponseWidget(pictureActivityResponseId: settings.arguments as int)),
-            QuestionActivityResponseWidget.screenUrl: (ctx) =>
-                AuthGuard(child: QuestionActivityResponseWidget(questionActivityResponseId: settings.arguments as int)),
-            ActivityResponseListWidget.screenUrl: (ctx) =>
-                AuthGuard(child: ActivityResponseListWidget(isOpenedFromBackButton: settings.arguments as bool)),
-          };
-          WidgetBuilder builder = routes[settings.name] as WidgetBuilder;
-          return MaterialPageRoute(builder: (ctx) => builder(ctx));
+          PictureActivityResponseWidget.screenUrl: (_) => PictureActivityResponseWidget(),
+          QuestionActivityResponseWidget.screenUrl: (_) => QuestionActivityResponseWidget(),
+          ActivityResponseListWidget.screenUrl: (_) => ActivityResponseListWidget(),
         },
       ),
     );

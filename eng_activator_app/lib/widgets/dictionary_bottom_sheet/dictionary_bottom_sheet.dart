@@ -23,14 +23,20 @@ class _DictionaryBottomSheetState extends State<DictionaryBottomSheet> {
   var _dictionaryResponse = DictionaryResponse(dictionaryEntries: [], recommendations: []);
   var _widgetStatus = WidgetStatusEnum.Empty;
 
+  void _setWidgetStatus(WidgetStatusEnum status) {
+    if (mounted) {
+      setState(() {
+        _widgetStatus = status;
+      });
+    }
+  }
+
   void _searchDictionary(String searchTerm) async {
     if (searchTerm.isEmpty) {
       return;
     }
 
-    setState(() {
-      _widgetStatus = WidgetStatusEnum.Loading;
-    });
+    _setWidgetStatus(WidgetStatusEnum.Loading);
 
     try {
       var dictionaryResponse = await _dictionaryApiClient.search(DictionarySearchParam(searchTerm), context);
@@ -40,16 +46,16 @@ class _DictionaryBottomSheetState extends State<DictionaryBottomSheet> {
         status = WidgetStatusEnum.EmptyResult;
       }
 
-      setState(() {
-        _dictionaryResponse = dictionaryResponse;
-        _widgetStatus = status;
-      });
+      if (mounted) {
+        setState(() {
+          _dictionaryResponse = dictionaryResponse;
+          _widgetStatus = status;
+        });
+      }
 
       _updateScrollPosition();
     } catch (e) {
-      setState(() {
-        _widgetStatus = WidgetStatusEnum.Error;
-      });
+      _setWidgetStatus(WidgetStatusEnum.Error);
     }
   }
 

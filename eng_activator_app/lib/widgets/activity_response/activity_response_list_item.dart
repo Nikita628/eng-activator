@@ -3,10 +3,12 @@ import 'package:eng_activator_app/shared/enums.dart';
 import 'package:eng_activator_app/shared/services/app_navigator.dart';
 import 'package:eng_activator_app/shared/services/injector.dart';
 import 'package:eng_activator_app/shared/constants.dart';
+import 'package:eng_activator_app/state/activity_response_provider.dart';
 import 'package:eng_activator_app/widgets/screens/activity_response/picture_activity_response.dart';
 import 'package:eng_activator_app/widgets/screens/activity_response/question_activity_response.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class ActivityResponseListItemWidget extends StatelessWidget {
   final AppNavigator _appNavigator = Injector.get<AppNavigator>();
@@ -16,17 +18,19 @@ class ActivityResponseListItemWidget extends StatelessWidget {
     required ActivityResponsePreview response,
   }) : _response = response;
 
-  void _navigateToDetails(BuildContext context) {
+  Future<void> _navigateToDetails(BuildContext context) async {
+    Provider.of<ActivityResponseProvider>(context, listen: false).activityResponseDetailsId = _response.id;
+
     if (_response.activityTypeId == ActivityTypeEnum.Question) {
-      _appNavigator.pushOnTopCurrentUrl(QuestionActivityResponseWidget.screenUrl, context, args: _response.id);
+      _appNavigator.replaceCurrentUrl(QuestionActivityResponseWidget.screenUrl, context);
     } else if (_response.activityTypeId == ActivityTypeEnum.Picture) {
-      _appNavigator.pushOnTopCurrentUrl(PictureActivityResponseWidget.screenUrl, context, args: _response.id);
+      _appNavigator.replaceCurrentUrl(PictureActivityResponseWidget.screenUrl, context);
     }
   }
 
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => _navigateToDetails(context),
+      onTap: () async => await _navigateToDetails(context),
       child: Card(
         elevation: 2,
         color: Color(AppColors.yellow),

@@ -59,18 +59,17 @@ class _SignupScreenWidgetState extends State<SignupScreenWidget> {
 
       try {
         var response = await _authApiClient.signup(_signupData, context);
-        _authProvider.setAuthData(response);
+        await _authProvider.setAuthData(response);
         _appNavigator.replaceCurrentUrl(MainScreenWidget.screenUrl, context);
       } on ApiResponseException catch (e) {
-        showDialog(
+        await showDialog(
           context: context,
           builder: (_) => ErrorDialog(error: e.errorResponse.message),
-        ).then((value) => _setWidgetStatus(WidgetStatusEnum.Default));
+        );
+
+        _setWidgetStatus(WidgetStatusEnum.Default);
       } catch (e) {
-        showDialog(
-          context: context,
-          builder: (_) => ErrorDialog(error: 'Something went wrong'),
-        ).then((_) => _setWidgetStatus(WidgetStatusEnum.Default));
+        _setWidgetStatus(WidgetStatusEnum.Default);
       }
     }
   }

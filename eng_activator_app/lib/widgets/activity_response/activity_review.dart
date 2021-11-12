@@ -31,32 +31,32 @@ class _ActivityReviewWidgetState extends State<ActivityReviewWidget> {
     super.initState();
   }
 
+  void _setIsViewed() {
+    if (mounted) {
+      setState(() {
+        widget._review.isViewed = true;
+      });
+    }
+  }
+
   Future<void> _markAsViewed() async {
     if (widget._review.isViewed) {
       return;
     }
 
     try {
-      if (mounted) {
-        setState(() {
-          widget._review.isViewed = true;
-        });
-      }
+      _setIsViewed();
 
       var response = await _activityResponseReviewApiClient.markViewed(widget._review.id, context);
 
       if (!response.activityResponseHasUnreadReviews) {
         var preview = _activityResponseProvider.previews
             .singleWhere((element) => element.id == widget._review.activityResponseId);
-        
+
         preview.hasUnreadReviews = false;
       }
     } catch (e) {
-      if (mounted) {
-        setState(() {
-          widget._review.isViewed = true;
-        });
-      }
+      _setIsViewed();
     }
   }
 

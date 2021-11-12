@@ -15,11 +15,6 @@ import 'package:provider/provider.dart';
 
 class ActivityResponseListWidget extends StatefulWidget {
   static const String screenUrl = '/activity-responses';
-  final bool _isOpenedFromBackButton;
-
-  ActivityResponseListWidget({required bool isOpenedFromBackButton})
-      : _isOpenedFromBackButton = isOpenedFromBackButton,
-        super();
 
   @override
   _ActivityResponseListWidgetState createState() => _ActivityResponseListWidgetState();
@@ -37,7 +32,7 @@ class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget>
     _scrollController.addListener(_scrollListener);
     _activityResponseProvider = Provider.of<ActivityResponseProvider>(context, listen: false);
 
-    if (widget._isOpenedFromBackButton) {
+    if (_activityResponseProvider.isActivityResponseListOpenedFromBackButton) {
       _overallStatus = WidgetStatusEnum.Result;
       WidgetsBinding.instance
           ?.addPostFrameCallback((_) => _scrollController.jumpTo(_activityResponseProvider.scrollPosition));
@@ -123,6 +118,7 @@ class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget>
         _activityResponseProvider.currentSearchParam.createdDateEquals = dateFilter;
         _activityResponseProvider.currentSearchParam.lastUpdatedDateLessThan = null;
         _activityResponseProvider.currentSearchParam.pageSize = 10;
+        _activityResponseProvider.scrollPosition = 0;
         _overallStatus = WidgetStatusEnum.Loading;
       });
 
@@ -133,6 +129,7 @@ class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget>
   Future<void> _resetDateFilter() async {
     setState(() {
       _activityResponseProvider.currentSearchParam = ActivityResponseSearchParam();
+      _activityResponseProvider.scrollPosition = 0;
       _overallStatus = WidgetStatusEnum.Loading;
     });
 

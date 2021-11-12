@@ -4,6 +4,7 @@ import 'package:eng_activator_app/shared/services/injector.dart';
 import 'package:eng_activator_app/shared/constants.dart';
 import 'package:eng_activator_app/shared/enums.dart';
 import 'package:eng_activator_app/state/activity_provider.dart';
+import 'package:eng_activator_app/state/activity_response_provider.dart';
 import 'package:eng_activator_app/state/auth_provider.dart';
 import 'package:eng_activator_app/widgets/screens/activity/current_activity.dart';
 import 'package:eng_activator_app/widgets/screens/activity_response/activity_response_list.dart';
@@ -38,25 +39,27 @@ class AppDrawer extends StatelessWidget {
             onTap: () => _appNavigator.replaceCurrentUrl(MainScreenWidget.screenUrl, context),
           ),
           ListTile(
-            leading: Icon(
-              Icons.rate_review,
-              color: Color(AppColors.green),
-              size: 30,
+              leading: Icon(
+                Icons.rate_review,
+                color: Color(AppColors.green),
+                size: 30,
+              ),
+              title: Text('My Activities'),
+              onTap: () {
+                Provider.of<ActivityResponseProvider>(context, listen: false)
+                    .isActivityResponseListOpenedFromBackButton = false;
+                _appNavigator.replaceCurrentUrl(ActivityResponseListWidget.screenUrl, context);
+              }),
+          if (activity != null)
+            ListTile(
+              leading: Icon(
+                Icons.edit,
+                color: Color(AppColors.green),
+                size: 30,
+              ),
+              title: Text('Opened Activity'),
+              onTap: () => _appNavigator.replaceCurrentUrl(CurrentActivityWidget.screenUrl, context),
             ),
-            title: Text('My Activities'),
-            onTap: () => _appNavigator.replaceCurrentUrl(ActivityResponseListWidget.screenUrl, context, args: false),
-          ),
-          activity != null
-              ? ListTile(
-                  leading: Icon(
-                    Icons.edit,
-                    color: Color(AppColors.green),
-                    size: 30,
-                  ),
-                  title: Text('Opened Activity'),
-                  onTap: () => _appNavigator.replaceCurrentUrl(CurrentActivityWidget.screenUrl, context),
-                )
-              : const SizedBox.shrink(),
           ListTile(
             leading: Icon(
               Icons.arrow_forward,
@@ -76,16 +79,15 @@ class AppDrawer extends StatelessWidget {
             onTap: () => _activityService.navigateToNewRandomActivity(ActivityTypeEnum.Question, context),
           ),
           ListTile(
-            leading: Icon(
-              Icons.exit_to_app,
-              color: Color(AppColors.green),
-              size: 30,
-            ),
-            title: Text('Logout'),
-            onTap: () {
-              authProvider.logout(context);
-            }
-          ),
+              leading: Icon(
+                Icons.exit_to_app,
+                color: Color(AppColors.green),
+                size: 30,
+              ),
+              title: Text('Logout'),
+              onTap: () async {
+                await authProvider.logout(context);
+              }),
           // ListTile(
           //   leading: Icon(
           //     Icons.exit_to_app,

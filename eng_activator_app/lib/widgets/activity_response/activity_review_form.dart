@@ -10,6 +10,7 @@ import 'package:eng_activator_app/shared/services/app_navigator.dart';
 import 'package:eng_activator_app/shared/services/injector.dart';
 import 'package:eng_activator_app/shared/constants.dart';
 import 'package:eng_activator_app/state/activity_provider.dart';
+import 'package:eng_activator_app/state/activity_response_provider.dart';
 import 'package:eng_activator_app/widgets/screens/activity_response/activity_response_list.dart';
 import 'package:eng_activator_app/widgets/ui_elements/app_spinner.dart';
 import 'package:eng_activator_app/widgets/ui_elements/rounded_button.dart';
@@ -69,7 +70,8 @@ class _ActivityReviewFormWidgetState extends State<ActivityReviewFormWidget> {
     try {
       await _activityResponseReviewApiClient.create(dto, context);
       await _sendActivityResponse();
-      _appNavigator.replaceCurrentUrl(ActivityResponseListWidget.screenUrl, context, args: false);
+      Provider.of<ActivityResponseProvider>(context, listen: false).isActivityResponseListOpenedFromBackButton = false;
+      _appNavigator.replaceCurrentUrl(ActivityResponseListWidget.screenUrl, context);
     } catch (e) {
       _setButtonStatus(WidgetStatusEnum.Default);
     }

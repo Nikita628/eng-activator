@@ -9,6 +9,8 @@ class ActivityResponseProvider with ChangeNotifier {
   bool hasMoreItems = false;
   double scrollPosition = 0;
   ActivityResponseForReview? activityResponseForReview;
+  int activityResponseDetailsId = 0;
+  bool isActivityResponseListOpenedFromBackButton = false;
 
   void resetState() {
     previews.clear();
@@ -16,5 +18,7 @@ class ActivityResponseProvider with ChangeNotifier {
     hasMoreItems = false;
     scrollPosition = 0;
     activityResponseForReview = null;
+    activityResponseDetailsId = 0;
+    isActivityResponseListOpenedFromBackButton = false;
   }
 }
