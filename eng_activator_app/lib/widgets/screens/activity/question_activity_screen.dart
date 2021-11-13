@@ -6,6 +6,7 @@ import 'package:eng_activator_app/state/activity_provider.dart';
 import 'package:eng_activator_app/widgets/activity/activity.dart';
 import 'package:eng_activator_app/widgets/activity_question_widget.dart';
 import 'package:eng_activator_app/widgets/dialogs/first_question_activity_dialog.dart';
+import 'package:eng_activator_app/widgets/dialogs/losing_progress_warning_dialog.dart';
 import 'package:eng_activator_app/widgets/screens/main_screen.dart';
 import 'package:eng_activator_app/widgets/ui_elements/empty_screen.dart';
 import 'package:eng_activator_app/widgets/ui_elements/overall_spinner.dart';
@@ -29,12 +30,8 @@ class _QuestionActivityScreenState extends State<QuestionActivityScreen> {
   var _widgetStatus = WidgetStatusEnum.Default;
   late ActivityProvider _activityProvider;
 
-  void _setWidgetStatus(WidgetStatusEnum status) {
-    if (mounted) {
-      setState(() {
-        _widgetStatus = status;
-      });
-    }
+  void _rebuildState() {
+    setState(() {});
   }
 
   @override
@@ -65,31 +62,62 @@ class _QuestionActivityScreenState extends State<QuestionActivityScreen> {
     sharedPrefs.setBool(_firstQuestionActivityKey, true);
   }
 
-  Future<void> _onNextQuestionActivity() async {
-    _setWidgetStatus(WidgetStatusEnum.Loading);
+  void _onNextQuestionActivity() {
+    if (_activityProvider.getCurrentActivityAnswer().length > 0) {
+      showDialog(
+        context: context,
+        builder: (_) => LosingProgressWarningDialog(),
+      ).then(
+        (value) {
+          if (value == true) {
+            _moveToNextQuestionActivity();
+          }
+        },
+      );
+    } else {
+      _moveToNextQuestionActivity();
+    }
+  }
 
+  void _onPreviousQuestionActivity() {
+    if (_activityProvider.getCurrentActivityAnswer().length > 0) {
+      showDialog(
+        context: context,
+        builder: (_) => LosingProgressWarningDialog(),
+      ).then(
+        (value) {
+          if (value == true) {
+            _moveToPreviousQuestion();
+          }
+        },
+      );
+    } else {
+      _moveToPreviousQuestion();
+    }
+  }
+
+  void _moveToNextQuestionActivity() {
     if (_activityProvider.activityHistory.canMoveForward()) {
       _activityProvider.activityHistory.moveForward();
     } else {
       _activityProvider.setRandomQuestionActivity();
     }
 
-    await Future.delayed(Duration(milliseconds: 500));
-    _setWidgetStatus(WidgetStatusEnum.Default);
+    _activityProvider.setCurrentActivityAnswer('');
+    _rebuildState();
   }
 
-  Future<void> _onPreviousQuestionActivity() async {
+  void _moveToPreviousQuestion() {
     if (_activityProvider.activityHistory.canMoveBack()) {
-      _setWidgetStatus(WidgetStatusEnum.Loading);
+      _activityProvider.setCurrentActivityAnswer('');
       _activityProvider.activityHistory.moveBack();
-      await Future.delayed(Duration(milliseconds: 500));
-      _setWidgetStatus(WidgetStatusEnum.Default);
+      _rebuildState();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    var activityProvider = Provider.of<ActivityProvider>(context);
+    var activityProvider = Provider.of<ActivityProvider>(context, listen: false);
     var currentActivity = activityProvider.getCurrentActivity() as QuestionActivity;
 
     Widget displayedWidget = EmptyScreenWidget();

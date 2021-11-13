@@ -29,17 +29,43 @@ class AppTextAreaWidget extends StatefulWidget {
 }
 
 class _AppTextAreaWidgetState extends State<AppTextAreaWidget> {
-  final FocusNode _focusNode = FocusNode();
+  final _focusNode = FocusNode();
+  late String _currentInputValue;
+  late TextEditingController _controller;
 
   @override
   void initState() {
     super.initState();
+
+    _currentInputValue = widget._value;
+    _controller = TextEditingController(text: widget._value);
+
+    _controller.addListener(() {
+      var isValueChanged = _controller.text != _currentInputValue;
+
+      if (isValueChanged && widget._onChanged != null) {
+        _currentInputValue = _controller.text;
+        widget._onChanged!(_currentInputValue);
+      }
+    });
   }
 
   @override
   void dispose() {
-    _focusNode.dispose();
     super.dispose();
+    _controller.dispose();
+    _focusNode.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant AppTextAreaWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      _currentInputValue = widget._value;
+      _controller.text = widget._value;
+      _controller.selection = TextSelection.fromPosition(TextPosition(offset: _currentInputValue.length));
+    });
   }
 
   @override
@@ -51,13 +77,13 @@ class _AppTextAreaWidgetState extends State<AppTextAreaWidget> {
         maxLines: null,
         enableSuggestions: false,
         autocorrect: false,
-        focusNode: _focusNode,
         onSaved: widget._onSaved,
-        onChanged: widget._onChanged,
         validator: widget._validator,
         maxLength: 1000,
-        initialValue: widget._value,
+        focusNode: _focusNode,
+        controller: _controller,
         cursorColor: const Color(AppColors.green),
+        autofocus: false,
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
           hintText: widget._placeholder,

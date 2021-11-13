@@ -48,6 +48,7 @@ class ActivityHistory {
   }
 
   void clear() {
+    _currentHistoryIndex = 0;
     _history.clear();
   }
 }

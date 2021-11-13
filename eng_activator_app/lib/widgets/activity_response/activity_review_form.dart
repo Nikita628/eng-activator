@@ -32,14 +32,13 @@ class ActivityReviewFormWidget extends StatefulWidget {
 }
 
 class _ActivityReviewFormWidgetState extends State<ActivityReviewFormWidget> {
-  final AppNavigator _appNavigator = Injector.get<AppNavigator>();
-  final ActivityResponseApiClient _activityResponseApiClient = Injector.get<ActivityResponseApiClient>();
-  final ActivityResponseReviewApiClient _activityResponseReviewApiClient =
-      Injector.get<ActivityResponseReviewApiClient>();
+  final _appNavigator = Injector.get<AppNavigator>();
+  final _activityResponseApiClient = Injector.get<ActivityResponseApiClient>();
+  final _activityResponseReviewApiClient = Injector.get<ActivityResponseReviewApiClient>();
   final _formKey = GlobalKey<FormState>();
-  final ActivityValidator _activityValidator = ActivityValidator();
-  late String _review = '';
-  late double _score = 0;
+  final _activityValidator = ActivityValidator();
+  String _review = '';
+  double _score = 0;
   WidgetStatusEnum _buttonStatus = WidgetStatusEnum.Default;
 
   void _setButtonStatus(WidgetStatusEnum status) {
@@ -92,6 +91,10 @@ class _ActivityReviewFormWidgetState extends State<ActivityReviewFormWidget> {
     activityProvider.resetState();
   }
 
+  void _onReviewTextChanged(String text) {
+    _review = text;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -142,6 +145,8 @@ class _ActivityReviewFormWidgetState extends State<ActivityReviewFormWidget> {
               validator: _activityValidator.validateRequiredAndSwearing,
               onSaved: (val) => _review = val ?? '',
               placeholder: 'Type your review here...',
+              onChanged: _onReviewTextChanged,
+              value: _review,
             ),
             SizedBox(height: 15),
             RoundedButton(

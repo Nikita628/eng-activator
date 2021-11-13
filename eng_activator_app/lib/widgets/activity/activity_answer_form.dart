@@ -32,10 +32,17 @@ class ActivityAnswerFormWidget extends StatefulWidget {
 
 class _ActivityAnswerFormWidgetState extends State<ActivityAnswerFormWidget> {
   final _formKey = GlobalKey<FormState>();
-  final AppNavigator _appNavigator = Injector.get<AppNavigator>();
-  final ActivityValidator _activityValidator = Injector.get<ActivityValidator>();
-  final ActivityResponseApiClient _activityResponseApiClient = Injector.get<ActivityResponseApiClient>();
-  WidgetStatusEnum _buttonStatus = WidgetStatusEnum.Default;
+  final _appNavigator = Injector.get<AppNavigator>();
+  final _activityValidator = Injector.get<ActivityValidator>();
+  final _activityResponseApiClient = Injector.get<ActivityResponseApiClient>();
+  var _buttonStatus = WidgetStatusEnum.Default;
+  late ActivityProvider _activityProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    _activityProvider = Provider.of<ActivityProvider>(context, listen: false);
+  }
 
   void _setButtonStatus(WidgetStatusEnum status) {
     if (mounted) {
@@ -45,9 +52,8 @@ class _ActivityAnswerFormWidgetState extends State<ActivityAnswerFormWidget> {
     }
   }
 
-  void _onAnswerFormChanged(String text, ActivityProvider activityProvider) {
-    activityProvider.setCurrentActivityAnswer(text);
-    activityProvider.notifyListenersAboutChange();
+  void _onAnswerFormChanged(String text) {
+    _activityProvider.setCurrentActivityAnswer(text);
   }
 
   Future<void> _sendOrAskForReview() async {
@@ -117,8 +123,6 @@ class _ActivityAnswerFormWidgetState extends State<ActivityAnswerFormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    var activityProvider = Provider.of<ActivityProvider>(context, listen: false);
-
     return Container(
       margin: widget._margin,
       child: Form(
@@ -126,8 +130,8 @@ class _ActivityAnswerFormWidgetState extends State<ActivityAnswerFormWidget> {
         child: Column(
           children: [
             AppTextAreaWidget(
-              value: activityProvider.getCurrentActivityAnswer(),
-              onChanged: (text) => _onAnswerFormChanged(text, activityProvider),
+              value: _activityProvider.getCurrentActivityAnswer(),
+              onChanged: _onAnswerFormChanged,
               margin: const EdgeInsets.only(bottom: 15),
               validator: _activityValidator.validateRequiredAndSwearing,
               onSaved: (val) => {},
