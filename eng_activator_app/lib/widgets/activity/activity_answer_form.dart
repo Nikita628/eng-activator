@@ -12,6 +12,7 @@ import 'package:eng_activator_app/state/activity_provider.dart';
 import 'package:eng_activator_app/state/activity_response_provider.dart';
 import 'package:eng_activator_app/widgets/dialogs/activity_for_review_not_found_dialog.dart';
 import 'package:eng_activator_app/widgets/dialogs/asking_for_review_dialog.dart';
+import 'package:eng_activator_app/widgets/screens/activity/activity_for_review.dart';
 import 'package:eng_activator_app/widgets/screens/activity_response/activity_response_list.dart';
 import 'package:eng_activator_app/widgets/ui_elements/app_spinner.dart';
 import 'package:eng_activator_app/widgets/ui_elements/rounded_button.dart';
@@ -85,11 +86,15 @@ class _ActivityAnswerFormWidgetState extends State<ActivityAnswerFormWidget> {
   Future<void> _showAskingForReviewDialog(ActivityResponseForReview activityResponseForReview) async {
     Provider.of<ActivityResponseProvider>(context, listen: false).activityResponseForReview = activityResponseForReview;
 
-    await showDialog<bool>(
+    var response = await showDialog<bool>(
         context: context,
         builder: (BuildContext context) {
           return AskingForReviewDialog();
         });
+    
+    if (response == true) {
+      _appNavigator.replaceCurrentUrl(ActivityForReview.screenUrl, context);
+    }
   }
 
   Future<void> _showActivityForReviewNotFoundDialog() async {

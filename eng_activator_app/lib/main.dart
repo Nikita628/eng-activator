@@ -14,7 +14,6 @@ import 'package:eng_activator_app/widgets/screens/auth/login.dart';
 import 'package:eng_activator_app/widgets/screens/auth/signup.dart';
 import 'package:eng_activator_app/widgets/screens/main_screen.dart';
 import 'package:eng_activator_app/widgets/screens/activity_response/question_activity_response.dart';
-import 'package:eng_activator_app/widgets/ui_elements/auth_guard.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -52,8 +51,8 @@ class EnglishActivatorApp extends StatelessWidget {
         theme: ThemeData(fontFamily: 'Varela'),
         home: HomeWidget(),
         routes: {
-          MainScreenWidget.screenUrl: (_) => AuthGuard(child: MainScreenWidget()),
-          ActivityForReview.screenUrl: (_) => AuthGuard(child: ActivityForReview()),
+          MainScreenWidget.screenUrl: (_) => MainScreenWidget(),
+          ActivityForReview.screenUrl: (_) => ActivityForReview(),
           LoginScreenWidget.screenUrl: (_) => LoginScreenWidget(),
           SignupScreenWidget.screenUrl: (_) => SignupScreenWidget(),
           PictureActivityResponseWidget.screenUrl: (_) => PictureActivityResponseWidget(),

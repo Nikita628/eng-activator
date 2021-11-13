@@ -1,13 +1,8 @@
 import 'package:eng_activator_app/shared/constants.dart';
-import 'package:eng_activator_app/shared/services/app_navigator.dart';
-import 'package:eng_activator_app/shared/services/injector.dart';
-import 'package:eng_activator_app/widgets/screens/activity/activity_for_review.dart';
 import 'package:eng_activator_app/widgets/ui_elements/rounded_button.dart';
 import 'package:flutter/material.dart';
 
-class AskingForReviewDialog extends StatelessWidget {
-  final AppNavigator _appNavigator = Injector.get<AppNavigator>();
-  
+class AskingForReviewDialog extends StatelessWidget {  
   AskingForReviewDialog({Key? key}) : super(key: key);
 
   @override
@@ -33,7 +28,7 @@ class AskingForReviewDialog extends StatelessWidget {
               bgColor: Color(AppColors.green),
               child: const Text('OK', style: TextStyle(fontSize: 16)),
               onPressed: () {
-                _appNavigator.replaceCurrentUrl(ActivityForReview.screenUrl, context);
+                Navigator.pop(context, true);
               },
             ),
             SizedBox(width: 10),
