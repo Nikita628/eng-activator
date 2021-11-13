@@ -6,14 +6,15 @@ import 'package:eng_activator_app/state/activity_response_provider.dart';
 import 'package:eng_activator_app/state/auth_provider.dart';
 import 'package:eng_activator_app/widgets/home_widget.dart';
 import 'package:eng_activator_app/widgets/screens/activity/activity_for_review.dart';
-import 'package:eng_activator_app/widgets/screens/activity/current_activity.dart';
+import 'package:eng_activator_app/widgets/screens/activity/picture_activity_screen.dart';
+import 'package:eng_activator_app/widgets/screens/activity/question_activity_screen.dart';
 import 'package:eng_activator_app/widgets/screens/activity_response/activity_response_list.dart';
 import 'package:eng_activator_app/widgets/screens/activity_response/picture_activity_response.dart';
 import 'package:eng_activator_app/widgets/screens/auth/login.dart';
 import 'package:eng_activator_app/widgets/screens/auth/signup.dart';
 import 'package:eng_activator_app/widgets/screens/main_screen.dart';
 import 'package:eng_activator_app/widgets/screens/activity_response/question_activity_response.dart';
-import 'package:eng_activator_app/widgets/ui_elements/auth_provider_consumer.dart';
+import 'package:eng_activator_app/widgets/ui_elements/auth_guard.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -53,12 +54,13 @@ class EnglishActivatorApp extends StatelessWidget {
         routes: {
           MainScreenWidget.screenUrl: (_) => AuthGuard(child: MainScreenWidget()),
           ActivityForReview.screenUrl: (_) => AuthGuard(child: ActivityForReview()),
-          CurrentActivityWidget.screenUrl: (_) => AuthGuard(child: CurrentActivityWidget()),
           LoginScreenWidget.screenUrl: (_) => LoginScreenWidget(),
           SignupScreenWidget.screenUrl: (_) => SignupScreenWidget(),
           PictureActivityResponseWidget.screenUrl: (_) => PictureActivityResponseWidget(),
           QuestionActivityResponseWidget.screenUrl: (_) => QuestionActivityResponseWidget(),
           ActivityResponseListWidget.screenUrl: (_) => ActivityResponseListWidget(),
+          QuestionActivityScreen.screenUrl: (_) => QuestionActivityScreen(),
+          PictureActivityScreen.screenUrl: (_) => PictureActivityScreen(),
         },
       ),
     );

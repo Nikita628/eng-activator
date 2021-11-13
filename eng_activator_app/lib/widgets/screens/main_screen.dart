@@ -22,9 +22,17 @@ class _MainScreenState extends State {
   _MainScreenState();
 
   void _selectActivityType(ActivityTypeEnum activityType) {
-    setState(() {
-      _activityType = activityType;
-    });
+    if (mounted) {
+      setState(() {
+        _activityType = activityType;
+      });
+    }
+  }
+
+  void _navigateToNewRandomActivity() {
+    if (_activityType != null) {
+      _activityService.navigateToNewRandomActivity(_activityType as ActivityTypeEnum, context);
+    }
   }
 
   @override
@@ -80,11 +88,7 @@ class _MainScreenState extends State {
               ),
               bgColor: _activityType != null ? Color(AppColors.yellow) : Colors.grey[200],
               margin: const EdgeInsets.only(top: 60),
-              onPressed: () {
-                if (_activityType != null) {
-                  _activityService.navigateToNewRandomActivity(_activityType as ActivityTypeEnum, context);
-                }
-              },
+              onPressed: _navigateToNewRandomActivity,
             ),
           ],
         ),

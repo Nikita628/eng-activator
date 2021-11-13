@@ -21,10 +21,10 @@ class ActivityResponseListWidget extends StatefulWidget {
 }
 
 class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget> {
-  final ActivityResponseApiClient _activityResponseApiClient = Injector.get<ActivityResponseApiClient>();
-  final ScrollController _scrollController = ScrollController();
-  WidgetStatusEnum _overallStatus = WidgetStatusEnum.Loading;
-  WidgetStatusEnum _pagingStatus = WidgetStatusEnum.Default;
+  final _activityResponseApiClient = Injector.get<ActivityResponseApiClient>();
+  final _scrollController = ScrollController();
+  var _overallStatus = WidgetStatusEnum.Loading;
+  var _pagingStatus = WidgetStatusEnum.Default;
   late ActivityResponseProvider _activityResponseProvider;
 
   @override
@@ -164,36 +164,30 @@ class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        print('pop pop pop');
-        return false;
-      },
-      child: AppScaffold(
-        isAppBarShown: true,
-        child: Container(
-          height: MediaQuery.of(context).size.height -
-              AppConstants.preferredAppBarHeight -
-              MediaQuery.of(context).padding.top,
-          padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
-          child: Column(
-            children: [
-              Container(
-                  margin: const EdgeInsets.only(bottom: 10),
-                  child: _DateFilter(
-                    onFilterTap: _filterByDate,
-                    onResetFilter: _resetDateFilter,
-                    filter: _activityResponseProvider.currentSearchParam.createdDateEquals,
-                  )),
-              Expanded(
-                  child: _ActivityPreviewList(
-                overallStatus: _overallStatus,
-                pagingStatus: _pagingStatus,
-                scrollController: _scrollController,
-                previews: _activityResponseProvider.previews,
-              )),
-            ],
-          ),
+    return AppScaffold(
+      isAppBarShown: true,
+      child: Container(
+        height: MediaQuery.of(context).size.height -
+            AppConstants.preferredAppBarHeight -
+            MediaQuery.of(context).padding.top,
+        padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+        child: Column(
+          children: [
+            Container(
+                margin: const EdgeInsets.only(bottom: 10),
+                child: _DateFilter(
+                  onFilterTap: _filterByDate,
+                  onResetFilter: _resetDateFilter,
+                  filter: _activityResponseProvider.currentSearchParam.createdDateEquals,
+                )),
+            Expanded(
+                child: _ActivityPreviewList(
+              overallStatus: _overallStatus,
+              pagingStatus: _pagingStatus,
+              scrollController: _scrollController,
+              previews: _activityResponseProvider.previews,
+            )),
+          ],
         ),
       ),
     );
@@ -262,7 +256,7 @@ class _DateFilter extends StatelessWidget {
       children: [
         IconButton(
           onPressed: _onFilterTap,
-          icon: Icon(
+          icon: const Icon(
             Icons.calendar_today_outlined,
             color: Color(AppColors.green),
           ),
@@ -279,7 +273,7 @@ class _DateFilter extends StatelessWidget {
         if (_filter != null)
           IconButton(
             onPressed: _onResetFilter,
-            icon: Icon(
+            icon: const Icon(
               Icons.close,
               color: Color(AppColors.green),
             ),
@@ -288,7 +282,7 @@ class _DateFilter extends StatelessWidget {
         if (_filter == null)
           GestureDetector(
             onTap: _onFilterTap,
-            child: Text(
+            child: const Text(
               "ALL TIME",
               style: TextStyle(color: Color(AppColors.grey), fontSize: 14),
             ),

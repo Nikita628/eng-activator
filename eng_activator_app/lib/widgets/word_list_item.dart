@@ -95,7 +95,7 @@ class _WordListItemWidgetState extends State<WordListItemWidget> {
         backgroundColor: _isWordHighlighted ? Color(AppColors.yellow) : Colors.white,
         label: Text(
           widget._wordEntry.word,
-          style: TextStyle(fontSize: 20, color: Colors.black54),
+          style: const TextStyle(fontSize: 20, color: Colors.black54),
         ),
         labelPadding: const EdgeInsets.only(left: 10, right: 10, top: 3, bottom: 3),
       ),

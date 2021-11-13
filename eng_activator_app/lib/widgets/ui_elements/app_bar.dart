@@ -1,3 +1,4 @@
+import 'package:eng_activator_app/services/activity/activity_service.dart';
 import 'package:eng_activator_app/shared/services/app_navigator.dart';
 import 'package:eng_activator_app/shared/services/injector.dart';
 import 'package:eng_activator_app/shared/constants.dart';
@@ -5,8 +6,8 @@ import 'package:eng_activator_app/state/activity_provider.dart';
 import 'package:eng_activator_app/shared/state/current_url_provider.dart';
 import 'package:eng_activator_app/state/activity_response_provider.dart';
 import 'package:eng_activator_app/widgets/dictionary_bottom_sheet/dictionary_bottom_sheet.dart';
-import 'package:eng_activator_app/widgets/screens/activity/current_activity.dart';
 import 'package:eng_activator_app/widgets/screens/activity_response/activity_response_list.dart';
+import 'package:eng_activator_app/widgets/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -21,13 +22,10 @@ class AppBarWidget extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _AppBarWidgetState extends State<AppBarWidget> {
-  final AppNavigator _appNavigator = Injector.get<AppNavigator>();
-  PersistentBottomSheetController? _bottomSheetController;
+  final _appNavigator = Injector.get<AppNavigator>();
+  final _activityService = Injector.get<ActivityService>();
 
-  @override
-  void initState() {
-    super.initState();
-  }
+  PersistentBottomSheetController? _bottomSheetController;
 
   void _toggleDictionaryBottomSheet() {
     if (_bottomSheetController != null) {
@@ -41,9 +39,23 @@ class _AppBarWidgetState extends State<AppBarWidget> {
     }
   }
 
-  @override
-  void dispose() {
-    super.dispose();
+  void _navigateToCurrentActivity() {
+    _activityService.navigateToCurrentActivity(context);
+  }
+
+  void _navigateBack() {
+    var currentUrlProvider = Provider.of<CurrentUrlProvider>(context, listen: false);
+
+    if (currentUrlProvider.isOnActivityResponseScreen()) {
+      Provider.of<ActivityResponseProvider>(context, listen: false).isActivityResponseListOpenedFromBackButton = true;
+      _appNavigator.replaceCurrentUrl(ActivityResponseListWidget.screenUrl, context);
+    } else if (currentUrlProvider.isOnActivityScreen()) {
+      _appNavigator.replaceCurrentUrl(MainScreenWidget.screenUrl, context);
+    }
+  }
+
+  void _openDrawer() {
+    Scaffold.of(context).openEndDrawer();
   }
 
   @override
@@ -53,6 +65,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
     var activity = activityProvider.getCurrentActivity();
     var isBackButtonShown = currentUrlProvider.isBackButtonShown();
     var isDictionaryButtonShown = currentUrlProvider.isDictionaryButtonShown();
+    var isCurrentActivityButtonShown = currentUrlProvider.isCurrentActivityButtonShown();
 
     return AppBar(
       leading: IconButton(
@@ -61,7 +74,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
           color: Color(AppColors.green),
           size: 30,
         ),
-        onPressed: () => Scaffold.of(context).openEndDrawer(),
+        onPressed: _openDrawer,
       ),
       elevation: 3,
       backgroundColor: const Color(0xffffffff),
@@ -69,16 +82,13 @@ class _AppBarWidgetState extends State<AppBarWidget> {
       actions: [
         if (isBackButtonShown)
           IconButton(
-              icon: const Icon(
-                Icons.keyboard_backspace,
-                color: Color(AppColors.green),
-                size: 30,
-              ),
-              onPressed: () {
-                Provider.of<ActivityResponseProvider>(context, listen: false)
-                    .isActivityResponseListOpenedFromBackButton = true;
-                _appNavigator.replaceCurrentUrl(ActivityResponseListWidget.screenUrl, context);
-              }),
+            icon: const Icon(
+              Icons.keyboard_backspace,
+              color: Color(AppColors.green),
+              size: 30,
+            ),
+            onPressed: _navigateBack,
+          ),
         if (isDictionaryButtonShown)
           IconButton(
             icon: const Icon(
@@ -88,14 +98,14 @@ class _AppBarWidgetState extends State<AppBarWidget> {
             ),
             onPressed: _toggleDictionaryBottomSheet,
           ),
-        if (activity != null)
+        if (activity != null && isCurrentActivityButtonShown)
           IconButton(
             icon: const Icon(
               Icons.edit_outlined,
               color: Color(AppColors.green),
               size: 30,
             ),
-            onPressed: () => _appNavigator.replaceCurrentUrl(CurrentActivityWidget.screenUrl, context),
+            onPressed: _navigateToCurrentActivity,
           )
       ],
     );

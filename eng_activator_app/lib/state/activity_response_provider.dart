@@ -21,4 +21,8 @@ class ActivityResponseProvider with ChangeNotifier {
     activityResponseDetailsId = 0;
     isActivityResponseListOpenedFromBackButton = false;
   }
+
+  void notifyListenersAboutChange() {
+    notifyListeners();
+  }
 }

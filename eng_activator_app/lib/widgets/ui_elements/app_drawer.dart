@@ -6,22 +6,51 @@ import 'package:eng_activator_app/shared/enums.dart';
 import 'package:eng_activator_app/state/activity_provider.dart';
 import 'package:eng_activator_app/state/activity_response_provider.dart';
 import 'package:eng_activator_app/state/auth_provider.dart';
-import 'package:eng_activator_app/widgets/screens/activity/current_activity.dart';
 import 'package:eng_activator_app/widgets/screens/activity_response/activity_response_list.dart';
 import 'package:eng_activator_app/widgets/screens/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class AppDrawer extends StatelessWidget {
-  final ActivityService _activityService = Injector.get<ActivityService>();
-  final AppNavigator _appNavigator = Injector.get<AppNavigator>();
-
+class AppDrawer extends StatefulWidget {
   AppDrawer({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  _AppDrawerState createState() => _AppDrawerState();
+}
+
+class _AppDrawerState extends State<AppDrawer> {
+  final ActivityService _activityService = Injector.get<ActivityService>();
+
+  final AppNavigator _appNavigator = Injector.get<AppNavigator>();
+
+  void _navigateToCurrentActivity() {
+    _activityService.navigateToCurrentActivity(context);
+  }
+
+  void _navigateToNewRandomQuestion() {
+    _activityService.navigateToNewRandomActivity(ActivityTypeEnum.Question, context);
+  }
+
+  void _navigateToNewRandomPicture() {
+    _activityService.navigateToNewRandomActivity(ActivityTypeEnum.Picture, context);
+  }
+
+  void _navigateToMainMenu() {
+    _appNavigator.replaceCurrentUrl(MainScreenWidget.screenUrl, context);
+  }
+
+  void _navigateToActivityResponsesList() {
+    Provider.of<ActivityResponseProvider>(context, listen: false).isActivityResponseListOpenedFromBackButton = false;
+    _appNavigator.replaceCurrentUrl(ActivityResponseListWidget.screenUrl, context);
+  }
+
+  void _logout() {
     var authProvider = Provider.of<AuthProvider>(context, listen: false);
+    authProvider.logout(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     var activityProvider = Provider.of<ActivityProvider>(context);
     var activity = activityProvider.getCurrentActivity();
 
@@ -30,75 +59,60 @@ class AppDrawer extends StatelessWidget {
         padding: EdgeInsets.only(top: 40),
         children: [
           ListTile(
-            leading: Icon(
+            leading: const Icon(
               Icons.home,
               color: Color(AppColors.green),
               size: 30,
             ),
-            title: const Text('Home'),
-            onTap: () => _appNavigator.replaceCurrentUrl(MainScreenWidget.screenUrl, context),
+            title: const Text('Menu'),
+            onTap: _navigateToMainMenu,
           ),
           ListTile(
-              leading: Icon(
-                Icons.rate_review,
-                color: Color(AppColors.green),
-                size: 30,
-              ),
-              title: Text('My Activities'),
-              onTap: () {
-                Provider.of<ActivityResponseProvider>(context, listen: false)
-                    .isActivityResponseListOpenedFromBackButton = false;
-                _appNavigator.replaceCurrentUrl(ActivityResponseListWidget.screenUrl, context);
-              }),
+            leading: const Icon(
+              Icons.rate_review,
+              color: Color(AppColors.green),
+              size: 30,
+            ),
+            title: const Text('My Activities'),
+            onTap: _navigateToActivityResponsesList,
+          ),
           if (activity != null)
             ListTile(
-              leading: Icon(
+              leading: const Icon(
                 Icons.edit,
                 color: Color(AppColors.green),
                 size: 30,
               ),
-              title: Text('Opened Activity'),
-              onTap: () => _appNavigator.replaceCurrentUrl(CurrentActivityWidget.screenUrl, context),
+              title: const Text('Opened Activity'),
+              onTap: _navigateToCurrentActivity,
             ),
           ListTile(
-            leading: Icon(
+            leading: const Icon(
               Icons.arrow_forward,
               color: Color(AppColors.green),
               size: 30,
             ),
-            title: Text('Next Picture'),
-            onTap: () => _activityService.navigateToNewRandomActivity(ActivityTypeEnum.Picture, context),
+            title: const Text('Next Picture'),
+            onTap: _navigateToNewRandomPicture,
           ),
           ListTile(
-            leading: Icon(
+            leading: const Icon(
               Icons.fast_forward_outlined,
               color: Color(AppColors.green),
               size: 30,
             ),
-            title: Text('Next Question'),
-            onTap: () => _activityService.navigateToNewRandomActivity(ActivityTypeEnum.Question, context),
+            title: const Text('Next Question'),
+            onTap: _navigateToNewRandomQuestion,
           ),
           ListTile(
-              leading: Icon(
-                Icons.exit_to_app,
-                color: Color(AppColors.green),
-                size: 30,
-              ),
-              title: Text('Logout'),
-              onTap: () async {
-                await authProvider.logout(context);
-              }),
-          // ListTile(
-          //   leading: Icon(
-          //     Icons.exit_to_app,
-          //     color: Color(AppColors.green),
-          //     size: 30,
-          //   ),
-          //   title: Text('Clear app local data (remove this)'),
-          //   onTap: () {
-          //     SharedPreferences.getInstance().then((value) => value.clear());
-          //   }
-          // ),
+            leading: const Icon(
+              Icons.exit_to_app,
+              color: Color(AppColors.green),
+              size: 30,
+            ),
+            title: const Text('Logout'),
+            onTap: _logout,
+          ),
         ],
       ),
     );

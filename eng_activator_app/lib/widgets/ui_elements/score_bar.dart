@@ -21,7 +21,7 @@ class ScoreBarWidget extends StatelessWidget {
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(color: Color(AppColors.grey), width: 1),
-                    color: Color(AppColors.grey),
+                    color: const Color(AppColors.grey),
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
@@ -30,7 +30,7 @@ class ScoreBarWidget extends StatelessWidget {
                   child: Container(
                     decoration: BoxDecoration(
                       border: Border.all(color: Color(AppColors.green), width: 1),
-                      color: Color(AppColors.green),
+                      color: const Color(AppColors.green),
                       borderRadius: BorderRadius.circular(20),
                     ),
                   ),
@@ -38,7 +38,7 @@ class ScoreBarWidget extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           Text(_score.toStringAsFixed(2)),
         ],
       ),

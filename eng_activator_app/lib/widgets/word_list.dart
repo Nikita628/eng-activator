@@ -16,7 +16,7 @@ class WordListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RoundedBox(
-      bgColor: Color(AppColors.green),
+      bgColor: const Color(AppColors.green),
       margin: _margin,
       padding: const EdgeInsets.only(top: 10, bottom: 10, left: 8, right: 8),
       child: Wrap(

@@ -2,10 +2,12 @@ import 'package:eng_activator_app/models/activity/picture_activity.dart';
 import 'package:eng_activator_app/models/activity_response/activity_response_details.dart';
 import 'package:eng_activator_app/services/api_clients/activity_response_api_client.dart';
 import 'package:eng_activator_app/shared/enums.dart';
+import 'package:eng_activator_app/shared/services/app_navigator.dart';
 import 'package:eng_activator_app/shared/services/injector.dart';
 import 'package:eng_activator_app/state/activity_response_provider.dart';
 import 'package:eng_activator_app/widgets/activity_picture_widget.dart';
 import 'package:eng_activator_app/widgets/activity_response/activity_response_details.dart';
+import 'package:eng_activator_app/widgets/screens/activity_response/activity_response_list.dart';
 import 'package:eng_activator_app/widgets/ui_elements/empty_screen.dart';
 import 'package:eng_activator_app/widgets/ui_elements/overall_spinner.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +22,7 @@ class PictureActivityResponseWidget extends StatefulWidget {
 
 class _PictureActivityResponseWidgetState extends State<PictureActivityResponseWidget> {
   final _activityResponseApiClient = Injector.get<ActivityResponseApiClient>();
+  final _appNavigator = Injector.get<AppNavigator>();
   late ActivityResponseDetails _response;
   late PictureActivity _activity;
   WidgetStatusEnum _widgetStatus = WidgetStatusEnum.Loading;
@@ -64,11 +67,23 @@ class _PictureActivityResponseWidgetState extends State<PictureActivityResponseW
     } else if (_widgetStatus == WidgetStatusEnum.Error) {
       displayedWidget = EmptyScreenWidget(
         child: Center(
-          child: Text("Something went wrong"),
+          child: const Text("Something went wrong"),
         ),
       );
     }
 
-    return displayedWidget;
+    return WillPopScope(
+      child: displayedWidget,
+      
+      onWillPop: () async {
+        Future.delayed(Duration.zero).then((value) {
+          Provider.of<ActivityResponseProvider>(context, listen: false).isActivityResponseListOpenedFromBackButton =
+              true;
+          _appNavigator.replaceCurrentUrl(ActivityResponseListWidget.screenUrl, context);
+        });
+
+        return false;
+      },
+    );
   }
 }

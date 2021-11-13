@@ -1,28 +1,28 @@
-import 'dart:async';
 import 'package:eng_activator_app/models/activity/activity.dart';
-import 'package:eng_activator_app/models/activity/picture_activity.dart';
-import 'package:eng_activator_app/models/activity/question_activity.dart';
-import 'package:eng_activator_app/services/activity/activity_service.dart';
-import 'package:eng_activator_app/shared/services/injector.dart';
 import 'package:eng_activator_app/widgets/activity/activity_answer_form.dart';
 import 'package:eng_activator_app/widgets/activity/activity_generation_buttons.dart';
-import 'package:eng_activator_app/widgets/dialogs/first_picture_activity_dialog.dart';
-import 'package:eng_activator_app/widgets/dialogs/first_question_activity_dialog.dart';
 import 'package:eng_activator_app/widgets/ui_elements/app_scaffold.dart';
 import 'package:eng_activator_app/widgets/word_list.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-const _firstPictureActivityKey = "eng-activator-first-pic-activity";
-const _firstQuestionActivityKey = "eng-activator-first-quest-activity";
 
 class ActivityWidget extends StatefulWidget {
+  final Function()? _onForward;
+  final Function()? _onBack;
+  final bool _isOnBackDisabled;
   final Widget _child;
   final Activity _activity;
 
-  ActivityWidget({required Widget child, required Activity activity})
-      : _child = child,
+  ActivityWidget({
+    required Widget child,
+    required Activity activity,
+    Function()? onForward,
+    Function()? onBack,
+    bool isOnBackDisabled = false
+  })  : _child = child,
         _activity = activity,
+        _onForward = onForward,
+        _onBack = onBack,
+        _isOnBackDisabled = isOnBackDisabled,
         super();
 
   @override
@@ -32,30 +32,9 @@ class ActivityWidget extends StatefulWidget {
 }
 
 class _ActivityState extends State<ActivityWidget> {
-  final ActivityService _activityService = Injector.get<ActivityService>();
-
   @override
   void initState() {
     super.initState();
-
-    SharedPreferences.getInstance().then((value) {
-      if (widget._activity is QuestionActivity && !value.containsKey(_firstQuestionActivityKey)) {
-        _showFirstActivityDialog(FirstQuestionActivityDialog(), _firstQuestionActivityKey);
-      } else if (widget._activity is PictureActivity && !value.containsKey(_firstPictureActivityKey)) {
-        _showFirstActivityDialog(FirstPictureActivityDialog(), _firstPictureActivityKey);
-      }
-    }).catchError((e) {});
-  }
-
-  Future<void> _showFirstActivityDialog(Widget dialog, String key) async {
-    await showDialog<int>(
-        context: context,
-        builder: (BuildContext context) {
-          return dialog;
-        });
-
-    var sharedPrefs = await SharedPreferences.getInstance();
-    sharedPrefs.setBool(key, true);
   }
 
   @override
@@ -73,9 +52,9 @@ class _ActivityState extends State<ActivityWidget> {
               margin: const EdgeInsets.only(bottom: 25),
             ),
             ActivityGenerationButtons(
-              onPressed: (a) {
-                _activityService.navigateToNewRandomActivity(a, context);
-              },
+              onBack: widget._onBack,
+              onForward: widget._onForward,
+              isOnBackDisabled: widget._isOnBackDisabled,
               margin: const EdgeInsets.only(bottom: 30),
             ),
             ActivityAnswerFormWidget(),

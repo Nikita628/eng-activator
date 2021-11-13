@@ -1,7 +1,7 @@
 import 'package:eng_activator_app/state/auth_provider.dart';
 import 'package:eng_activator_app/widgets/screens/auth/login.dart';
 import 'package:eng_activator_app/widgets/screens/main_screen.dart';
-import 'package:eng_activator_app/widgets/ui_elements/auth_provider_consumer.dart';
+import 'package:eng_activator_app/widgets/ui_elements/auth_guard.dart';
 import 'package:eng_activator_app/widgets/ui_elements/empty_screen.dart';
 import 'package:eng_activator_app/widgets/ui_elements/overall_spinner.dart';
 import 'package:flutter/material.dart';

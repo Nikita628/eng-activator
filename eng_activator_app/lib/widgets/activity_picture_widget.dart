@@ -21,7 +21,7 @@ class _ActivityPictureWidgetState extends State<ActivityPictureWidget> {
   Widget build(BuildContext context) {
     return Container(
       margin: widget._margin,
-      constraints: BoxConstraints(minHeight: 100, minWidth: double.infinity, maxHeight: 250),
+      constraints: const BoxConstraints(minHeight: 100, minWidth: double.infinity, maxHeight: 250),
       decoration: const BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(10)),
       ),
@@ -38,7 +38,7 @@ class _ActivityPictureWidgetState extends State<ActivityPictureWidget> {
                   color: Colors.white,
                   width: double.infinity,
                   height: double.infinity,
-                  child: Center(child: Text("Could not load image")),
+                  child: const Center(child: Text("Could not load image")),
                 ),
               ),
             ),

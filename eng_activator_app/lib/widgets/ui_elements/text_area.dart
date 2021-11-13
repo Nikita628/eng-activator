@@ -57,7 +57,7 @@ class _AppTextAreaWidgetState extends State<AppTextAreaWidget> {
         validator: widget._validator,
         maxLength: 1000,
         initialValue: widget._value,
-        cursorColor: Color(AppColors.green),
+        cursorColor: const Color(AppColors.green),
         decoration: InputDecoration(
           contentPadding: const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
           hintText: widget._placeholder,
