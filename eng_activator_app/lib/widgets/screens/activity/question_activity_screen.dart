@@ -28,9 +28,9 @@ class QuestionActivityScreen extends StatefulWidget {
 class _QuestionActivityScreenState extends State<QuestionActivityScreen> {
   final _appNavigator = Injector.get<AppNavigator>();
   var _widgetStatus = WidgetStatusEnum.Default;
-  late ActivityProvider _activityProvider;
+  late ActivityProvider _provider;
 
-  void _rebuildState() {
+  void _rebuild() {
     setState(() {});
   }
 
@@ -38,10 +38,10 @@ class _QuestionActivityScreenState extends State<QuestionActivityScreen> {
   void initState() {
     super.initState();
 
-    _activityProvider = Provider.of<ActivityProvider>(context, listen: false);
+    _provider = Provider.of<ActivityProvider>(context, listen: false);
 
-    if (_activityProvider.generateNewActivityOnInitialization) {
-      _activityProvider.setRandomQuestionActivity();
+    if (_provider.generateNewActivityOnInitialization) {
+      _provider.setRandomQuestionActivity();
     }
 
     SharedPreferences.getInstance().then((value) {
@@ -63,7 +63,7 @@ class _QuestionActivityScreenState extends State<QuestionActivityScreen> {
   }
 
   void _onNextQuestionActivity() {
-    if (_activityProvider.getCurrentActivityAnswer().length > 0) {
+    if (_provider.getCurrentActivityAnswer().length > 0) {
       showDialog(
         context: context,
         builder: (_) => LosingProgressWarningDialog(),
@@ -80,7 +80,7 @@ class _QuestionActivityScreenState extends State<QuestionActivityScreen> {
   }
 
   void _onPreviousQuestionActivity() {
-    if (_activityProvider.getCurrentActivityAnswer().length > 0) {
+    if (_provider.getCurrentActivityAnswer().length > 0) {
       showDialog(
         context: context,
         builder: (_) => LosingProgressWarningDialog(),
@@ -97,28 +97,27 @@ class _QuestionActivityScreenState extends State<QuestionActivityScreen> {
   }
 
   void _moveToNextQuestionActivity() {
-    if (_activityProvider.activityHistory.canMoveForward()) {
-      _activityProvider.activityHistory.moveForward();
+    if (_provider.activityHistory.canMoveForward()) {
+      _provider.activityHistory.moveForward();
     } else {
-      _activityProvider.setRandomQuestionActivity();
+      _provider.setRandomQuestionActivity();
     }
 
-    _activityProvider.setCurrentActivityAnswer('');
-    _rebuildState();
+    _provider.setCurrentActivityAnswer('');
+    _rebuild();
   }
 
   void _moveToPreviousQuestion() {
-    if (_activityProvider.activityHistory.canMoveBack()) {
-      _activityProvider.setCurrentActivityAnswer('');
-      _activityProvider.activityHistory.moveBack();
-      _rebuildState();
+    if (_provider.activityHistory.canMoveBack()) {
+      _provider.setCurrentActivityAnswer('');
+      _provider.activityHistory.moveBack();
+      _rebuild();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    var activityProvider = Provider.of<ActivityProvider>(context, listen: false);
-    var currentActivity = activityProvider.getCurrentActivity() as QuestionActivity;
+    var currentActivity = _provider.getCurrentActivity() as QuestionActivity;
 
     Widget displayedWidget = EmptyScreenWidget();
 
@@ -129,7 +128,7 @@ class _QuestionActivityScreenState extends State<QuestionActivityScreen> {
         activity: currentActivity,
         onBack: _onPreviousQuestionActivity,
         onForward: _onNextQuestionActivity,
-        isOnBackDisabled: !activityProvider.activityHistory.canMoveBack(),
+        isOnBackDisabled: !_provider.activityHistory.canMoveBack(),
         child: ActivityQuestionWidget(
           text: currentActivity.question,
           margin: const EdgeInsets.only(top: 10, bottom: 25),

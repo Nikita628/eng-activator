@@ -24,9 +24,9 @@ class PictureActivityScreen extends StatefulWidget {
 
 class _PictureActivityScreenState extends State<PictureActivityScreen> {
   final _appNavigator = Injector.get<AppNavigator>();
-  late ActivityProvider _activityProvider;
+  late ActivityProvider _provider;
 
-  void _rebuildState() {
+  void _rebuild() {
     setState(() {});
   }
 
@@ -34,10 +34,10 @@ class _PictureActivityScreenState extends State<PictureActivityScreen> {
   void initState() {
     super.initState();
 
-    _activityProvider = Provider.of<ActivityProvider>(context, listen: false);
+    _provider = Provider.of<ActivityProvider>(context, listen: false);
 
-    if (_activityProvider.generateNewActivityOnInitialization) {
-      _activityProvider.setRandomPictureActivity();
+    if (_provider.generateNewActivityOnInitialization) {
+      _provider.setRandomPictureActivity();
     }
 
     SharedPreferences.getInstance().then((value) {
@@ -59,7 +59,7 @@ class _PictureActivityScreenState extends State<PictureActivityScreen> {
   }
 
   void _onNextPictureActivity() {
-    if (_activityProvider.getCurrentActivityAnswer().length > 0) {
+    if (_provider.getCurrentActivityAnswer().length > 0) {
       showDialog(
         context: context,
         builder: (_) => LosingProgressWarningDialog(),
@@ -76,18 +76,18 @@ class _PictureActivityScreenState extends State<PictureActivityScreen> {
   }
 
   void _moveToNextPictureActivity() {
-    if (_activityProvider.activityHistory.canMoveForward()) {
-      _activityProvider.activityHistory.moveForward();
+    if (_provider.activityHistory.canMoveForward()) {
+      _provider.activityHistory.moveForward();
     } else {
-      _activityProvider.setRandomPictureActivity();
+      _provider.setRandomPictureActivity();
     }
 
-    _activityProvider.setCurrentActivityAnswer('');
-    _rebuildState();
+    _provider.setCurrentActivityAnswer('');
+    _rebuild();
   }
 
   void _onPreviousPictureActivity() {
-    if (_activityProvider.getCurrentActivityAnswer().length > 0) {
+    if (_provider.getCurrentActivityAnswer().length > 0) {
       showDialog(
         context: context,
         builder: (_) => LosingProgressWarningDialog(),
@@ -104,22 +104,21 @@ class _PictureActivityScreenState extends State<PictureActivityScreen> {
   }
 
   void _moveToPrevieousPictureActivity() {
-    if (_activityProvider.activityHistory.canMoveBack()) {
-      _activityProvider.setCurrentActivityAnswer('');
-      _activityProvider.activityHistory.moveBack();
-      _rebuildState();
+    if (_provider.activityHistory.canMoveBack()) {
+      _provider.setCurrentActivityAnswer('');
+      _provider.activityHistory.moveBack();
+      _rebuild();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    var activityProvider = Provider.of<ActivityProvider>(context, listen: false);
-    var currentActivity = activityProvider.getCurrentActivity() as PictureActivity;
+    var currentActivity = _provider.getCurrentActivity() as PictureActivity;
 
     Widget displayedWidget = ActivityWidget(
       activity: currentActivity,
       onBack: _onPreviousPictureActivity,
-      isOnBackDisabled: !activityProvider.activityHistory.canMoveBack(),
+      isOnBackDisabled: !_provider.activityHistory.canMoveBack(),
       onForward: _onNextPictureActivity,
       child: ActivityPictureWidget(
         picUrl: currentActivity.picUrl,

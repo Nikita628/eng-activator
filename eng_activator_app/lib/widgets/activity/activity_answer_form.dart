@@ -55,6 +55,7 @@ class _ActivityAnswerFormWidgetState extends State<ActivityAnswerFormWidget> {
 
   void _onAnswerFormChanged(String text) {
     _activityProvider.setCurrentActivityAnswer(text);
+    _activityProvider.notifyListenersAboutChange();
   }
 
   Future<void> _sendOrAskForReview() async {
