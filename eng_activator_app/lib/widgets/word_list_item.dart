@@ -17,11 +17,28 @@ class WordListItemWidget extends StatefulWidget {
 
 class _WordListItemWidgetState extends State<WordListItemWidget> {
   late bool _isWordHighlighted = false;
+  late ActivityProvider _activityProvider;
 
-  initState() {
-    var activityProvider = Provider.of<ActivityProvider>(context, listen: false);
-    _isWordHighlighted = _currentAnswerContainsWord(activityProvider.getCurrentActivityAnswer());
+  @override
+  void initState() {
     super.initState();
+
+    _activityProvider = Provider.of<ActivityProvider>(context, listen: false);
+
+    _activityProvider.currentActivityAnswer.subscribe(_onCurrentActivityAnswerChange);
+
+    _isWordHighlighted = _currentAnswerContainsWord(_activityProvider.currentActivityAnswer.get());
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _activityProvider.currentActivityAnswer.unsubscribe(_onCurrentActivityAnswerChange);
+  }
+
+  void _onCurrentActivityAnswerChange(String value) {
+    _checkIfCurrentAnswerContainsWord(value);
+    setState(() {});
   }
 
   Future<void> _onWordTap(WordEntry wordEntry, BuildContext context) async {
@@ -87,9 +104,6 @@ class _WordListItemWidgetState extends State<WordListItemWidget> {
 
   @override
   Widget build(BuildContext context) {
-    var activityProvider = Provider.of<ActivityProvider>(context);
-    _checkIfCurrentAnswerContainsWord(activityProvider.getCurrentActivityAnswer());
-
     return GestureDetector(
       child: Chip(
         backgroundColor: _isWordHighlighted ? Color(AppColors.yellow) : Colors.white,

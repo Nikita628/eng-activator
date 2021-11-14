@@ -16,7 +16,7 @@ class ActivityService {
   void navigateToNewRandomActivity(ActivityTypeEnum activityType, BuildContext ctx) {
     var provider = Provider.of<ActivityProvider>(ctx, listen: false);
 
-    if (provider.getCurrentActivityAnswer().length > 0) {
+    if (provider.currentActivityAnswer.get().length > 0) {
       showDialog(
         context: ctx,
         builder: (_) => LosingProgressWarningDialog(),

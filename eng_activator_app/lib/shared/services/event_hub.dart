@@ -1,26 +1,25 @@
 class EventHub {
   final List<Map<String, Function>> _subscriptions = [];
 
-  void addOrReplaceListener(String event, Function handler) {
-    var existingSubscriptionIndex = _subscriptions.indexWhere((element) => element.keys.first == event);
-
-    if (existingSubscriptionIndex == -1) {
-      _subscriptions.add({ event: handler });
-    } else {
-      _subscriptions[existingSubscriptionIndex] = { event: handler };
-    }
+  void subscribe(String event, Function observer) {
+    _subscriptions.add({ event: observer });
   }
 
-  void notifyListeners(String event) {
+  void notifyObservers(String event) {
     for (var s in _subscriptions) {
-      if (s.keys.first == event) {
-        var handler = s[event] as Function;
+      if (s.entries.first.key == event) {
+        var handler = s.entries.first.value;
         handler();
       }
     }
   }
 
-  // void removeListener(String event) {
-  //   _subscriptions.removeWhere((element) => element.keys.first == event);
-  // }
+  void unsubscribe(Function observer) {
+    _subscriptions.removeWhere((element) => element.entries.first.value == observer);
+  }
+}
+
+class AppEvents {
+  static const String ScrollPageUp = "ScrollPageUp";
+  static const String ScrollPageDown = "ScrollPageDown";
 }

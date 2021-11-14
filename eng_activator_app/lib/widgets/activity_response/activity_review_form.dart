@@ -81,7 +81,7 @@ class _ActivityReviewFormWidgetState extends State<ActivityReviewFormWidget> {
     var currentActivity = activityProvider.getCurrentActivity();
     var activityType = currentActivity is QuestionActivity ? ActivityTypeEnum.Question : ActivityTypeEnum.Picture;
     var activityResponse = ActivityResponseForCreate(
-      answer: activityProvider.getCurrentActivityAnswer(),
+      answer: activityProvider.currentActivityAnswer.get(),
       activity: currentActivity as Activity,
       activityTypeId: activityType,
     );

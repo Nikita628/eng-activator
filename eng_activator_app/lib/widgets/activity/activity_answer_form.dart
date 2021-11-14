@@ -54,8 +54,7 @@ class _ActivityAnswerFormWidgetState extends State<ActivityAnswerFormWidget> {
   }
 
   void _onAnswerFormChanged(String text) {
-    _activityProvider.setCurrentActivityAnswer(text);
-    _activityProvider.notifyListenersAboutChange();
+    _activityProvider.currentActivityAnswer.set(text);
   }
 
   Future<void> _sendOrAskForReview() async {
@@ -117,7 +116,7 @@ class _ActivityAnswerFormWidgetState extends State<ActivityAnswerFormWidget> {
     var currentActivity = activityProvider.getCurrentActivity();
     var activityType = currentActivity is QuestionActivity ? ActivityTypeEnum.Question : ActivityTypeEnum.Picture;
     var activityResponse = ActivityResponseForCreate(
-      answer: activityProvider.getCurrentActivityAnswer(),
+      answer: activityProvider.currentActivityAnswer.get(),
       activity: currentActivity as Activity,
       activityTypeId: activityType,
     );
@@ -136,7 +135,7 @@ class _ActivityAnswerFormWidgetState extends State<ActivityAnswerFormWidget> {
         child: Column(
           children: [
             AppTextAreaWidget(
-              value: _activityProvider.getCurrentActivityAnswer(),
+              value: _activityProvider.currentActivityAnswer.get(),
               onChanged: _onAnswerFormChanged,
               margin: const EdgeInsets.only(bottom: 15),
               validator: _activityValidator.validateRequiredAndSwearing,

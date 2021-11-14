@@ -63,7 +63,7 @@ class _QuestionActivityScreenState extends State<QuestionActivityScreen> {
   }
 
   void _onNextQuestionActivity() {
-    if (_provider.getCurrentActivityAnswer().length > 0) {
+    if (_provider.currentActivityAnswer.get().length > 0) {
       showDialog(
         context: context,
         builder: (_) => LosingProgressWarningDialog(),
@@ -80,7 +80,7 @@ class _QuestionActivityScreenState extends State<QuestionActivityScreen> {
   }
 
   void _onPreviousQuestionActivity() {
-    if (_provider.getCurrentActivityAnswer().length > 0) {
+    if (_provider.currentActivityAnswer.get().length > 0) {
       showDialog(
         context: context,
         builder: (_) => LosingProgressWarningDialog(),
@@ -103,13 +103,13 @@ class _QuestionActivityScreenState extends State<QuestionActivityScreen> {
       _provider.setRandomQuestionActivity();
     }
 
-    _provider.setCurrentActivityAnswer('');
+    _provider.currentActivityAnswer.set('');
     _rebuild();
   }
 
   void _moveToPreviousQuestion() {
     if (_provider.activityHistory.canMoveBack()) {
-      _provider.setCurrentActivityAnswer('');
+      _provider.currentActivityAnswer.set('');
       _provider.activityHistory.moveBack();
       _rebuild();
     }

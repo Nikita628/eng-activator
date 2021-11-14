@@ -59,7 +59,7 @@ class _PictureActivityScreenState extends State<PictureActivityScreen> {
   }
 
   void _onNextPictureActivity() {
-    if (_provider.getCurrentActivityAnswer().length > 0) {
+    if (_provider.currentActivityAnswer.get().length > 0) {
       showDialog(
         context: context,
         builder: (_) => LosingProgressWarningDialog(),
@@ -82,12 +82,12 @@ class _PictureActivityScreenState extends State<PictureActivityScreen> {
       _provider.setRandomPictureActivity();
     }
 
-    _provider.setCurrentActivityAnswer('');
+    _provider.currentActivityAnswer.set('');
     _rebuild();
   }
 
   void _onPreviousPictureActivity() {
-    if (_provider.getCurrentActivityAnswer().length > 0) {
+    if (_provider.currentActivityAnswer.get().length > 0) {
       showDialog(
         context: context,
         builder: (_) => LosingProgressWarningDialog(),
@@ -105,7 +105,7 @@ class _PictureActivityScreenState extends State<PictureActivityScreen> {
 
   void _moveToPrevieousPictureActivity() {
     if (_provider.activityHistory.canMoveBack()) {
-      _provider.setCurrentActivityAnswer('');
+      _provider.currentActivityAnswer.set('');
       _provider.activityHistory.moveBack();
       _rebuild();
     }

@@ -202,12 +202,12 @@ class _ReviewsBoxWidgetState extends State<_ReviewsBoxWidget> {
         _scrollController.position.userScrollDirection == ScrollDirection.forward && _scrollController.offset == 0;
 
     if (isScrolledToTop) {
-      _eventHub.notifyListeners('scrollPageUp_AppScaffold');
+      _eventHub.notifyObservers(AppEvents.ScrollPageUp);
     } else if (isScrolledToBottom && _hasMoreItems) {
       _currentSearchParam.createdDateLessThan = _reviews.last.createdDate;
       _getReviews();
     } else if (isScrolledToBottom) {
-      _eventHub.notifyListeners('scrollPageDown_AppScaffold');
+      _eventHub.notifyObservers(AppEvents.ScrollPageDown);
     }
   }
 

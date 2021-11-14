@@ -25,24 +25,30 @@ class _AppScaffoldState extends State<AppScaffold> {
   void initState() {
     super.initState();
 
-    _eventHub.addOrReplaceListener('scrollPageUp_AppScaffold', () {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(0, duration: Duration(milliseconds: 1000), curve: Curves.ease);
-      }
-    });
-
-    _eventHub.addOrReplaceListener('scrollPageDown_AppScaffold', () {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(_scrollController.position.maxScrollExtent,
-            duration: Duration(milliseconds: 1000), curve: Curves.ease);
-      }
-    });
+    _eventHub.subscribe(AppEvents.ScrollPageUp, _scrollPageUp);
+    _eventHub.subscribe(AppEvents.ScrollPageDown, _scrollPageDown);
   }
 
   @override
   void dispose() {
-    _scrollController.dispose();
     super.dispose();
+
+    _scrollController.dispose();
+    _eventHub.unsubscribe(_scrollPageUp);
+    _eventHub.unsubscribe(_scrollPageDown);
+  }
+
+  void _scrollPageUp() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(0, duration: Duration(milliseconds: 1000), curve: Curves.ease);
+    }
+  }
+
+  void _scrollPageDown() {
+    if (_scrollController.hasClients) {
+      _scrollController.animateTo(_scrollController.position.maxScrollExtent,
+          duration: Duration(milliseconds: 1000), curve: Curves.ease);
+    }
   }
 
   @override
