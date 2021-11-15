@@ -1,8 +1,8 @@
-class StatePiece<T> {
+class Observable<T> {
   T _value;
   List<Function> _observers = [];
 
-  StatePiece(T val) : _value = val;
+  Observable(T val) : _value = val;
 
   T get() {
     return _value;

@@ -8,6 +8,7 @@ import 'package:eng_activator_app/state/activity_response_provider.dart';
 import 'package:eng_activator_app/widgets/activity_response/activity_response_list_item.dart';
 import 'package:eng_activator_app/widgets/ui_elements/app_scaffold.dart';
 import 'package:eng_activator_app/widgets/ui_elements/app_spinner.dart';
+import 'package:eng_activator_app/widgets/ui_elements/exit_warning_on_pop.dart';
 import 'package:eng_activator_app/widgets/ui_elements/overall_spinner.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -164,30 +165,32 @@ class _ActivityResponseListWidgetState extends State<ActivityResponseListWidget>
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
-      isAppBarShown: true,
-      child: Container(
-        height: MediaQuery.of(context).size.height -
-            AppConstants.preferredAppBarHeight -
-            MediaQuery.of(context).padding.top,
-        padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
-        child: Column(
-          children: [
-            Container(
-                margin: const EdgeInsets.only(bottom: 10),
-                child: _DateFilter(
-                  onFilterTap: _filterByDate,
-                  onResetFilter: _resetDateFilter,
-                  filter: _activityResponseProvider.currentSearchParam.createdDateEquals,
-                )),
-            Expanded(
-                child: _ActivityPreviewList(
-              overallStatus: _overallStatus,
-              pagingStatus: _pagingStatus,
-              scrollController: _scrollController,
-              previews: _activityResponseProvider.previews,
-            )),
-          ],
+    return ExitWarningOnPopWidget(
+      child: AppScaffold(
+        isAppBarShown: true,
+        child: Container(
+          height: MediaQuery.of(context).size.height -
+              AppConstants.preferredAppBarHeight -
+              MediaQuery.of(context).padding.top,
+          padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 10),
+          child: Column(
+            children: [
+              Container(
+                  margin: const EdgeInsets.only(bottom: 10),
+                  child: _DateFilter(
+                    onFilterTap: _filterByDate,
+                    onResetFilter: _resetDateFilter,
+                    filter: _activityResponseProvider.currentSearchParam.createdDateEquals,
+                  )),
+              Expanded(
+                  child: _ActivityPreviewList(
+                overallStatus: _overallStatus,
+                pagingStatus: _pagingStatus,
+                scrollController: _scrollController,
+                previews: _activityResponseProvider.previews,
+              )),
+            ],
+          ),
         ),
       ),
     );

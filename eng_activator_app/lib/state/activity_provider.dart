@@ -9,7 +9,7 @@ class ActivityProvider with ChangeNotifier {
   final AppStorage _appStorage = Injector.get<AppStorage>();
   final ActivityHistory activityHistory = ActivityHistory();
   bool generateNewActivityOnInitialization = false;
-  StatePiece<String> currentActivityAnswer = StatePiece('');
+  Observable<String> currentActivityAnswer = Observable('');
 
   Activity? getCurrentActivity() {
     return activityHistory.getCurrent();

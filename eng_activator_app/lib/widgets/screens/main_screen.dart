@@ -3,6 +3,7 @@ import 'package:eng_activator_app/shared/services/injector.dart';
 import 'package:eng_activator_app/shared/constants.dart';
 import 'package:eng_activator_app/shared/enums.dart';
 import 'package:eng_activator_app/widgets/ui_elements/app_scaffold.dart';
+import 'package:eng_activator_app/widgets/ui_elements/exit_warning_on_pop.dart';
 import 'package:eng_activator_app/widgets/ui_elements/rounded_button.dart';
 import 'package:flutter/material.dart';
 
@@ -37,60 +38,62 @@ class _MainScreenState extends State {
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
-      isAppBarShown: true,
-      child: Container(
-        height: MediaQuery.of(context).size.height -
-            AppConstants.preferredAppBarHeight -
-            MediaQuery.of(context).padding.top,
-        child: Column(
-          children: [
-            Image.asset(
-              'assets/images/exenge.png',
-              fit: BoxFit.contain,
-              width: 200,
-              height: 200,
-            ),
-            SizedBox(height: 40),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                GestureDetector(
-                  child: Image.asset(
-                    'assets/images/main_quest.png',
-                    width: 90,
-                    height: 90,
-                    color: _activityType == ActivityTypeEnum.Question ? Color(AppColors.green) : Colors.grey[400],
-                  ),
-                  onTap: () => _selectActivityType(ActivityTypeEnum.Question),
-                ),
-                Container(
-                  child: const Text(
-                    'OR',
-                    style: TextStyle(fontSize: 30, color: Color(AppColors.grey)),
-                  ),
-                ),
-                GestureDetector(
-                  child: Image.asset(
-                    'assets/images/main_img.png',
-                    width: 90,
-                    height: 90,
-                    color: _activityType == ActivityTypeEnum.Picture ? Color(AppColors.green) : Colors.grey[400],
-                  ),
-                  onTap: () => _selectActivityType(ActivityTypeEnum.Picture),
-                ),
-              ],
-            ),
-            RoundedButton(
-              child: const Text(
-                'LET\'S START',
-                style: TextStyle(fontSize: 25, color: Color(AppColors.grey)),
+    return ExitWarningOnPopWidget(
+      child: AppScaffold(
+        isAppBarShown: true,
+        child: Container(
+          height: MediaQuery.of(context).size.height -
+              AppConstants.preferredAppBarHeight -
+              MediaQuery.of(context).padding.top,
+          child: Column(
+            children: [
+              Image.asset(
+                'assets/images/exenge.png',
+                fit: BoxFit.contain,
+                width: 200,
+                height: 200,
               ),
-              bgColor: _activityType != null ? Color(AppColors.yellow) : Colors.grey[200],
-              margin: const EdgeInsets.only(top: 60),
-              onPressed: _navigateToNewRandomActivity,
-            ),
-          ],
+              SizedBox(height: 40),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  GestureDetector(
+                    child: Image.asset(
+                      'assets/images/main_quest.png',
+                      width: 90,
+                      height: 90,
+                      color: _activityType == ActivityTypeEnum.Question ? Color(AppColors.green) : Colors.grey[400],
+                    ),
+                    onTap: () => _selectActivityType(ActivityTypeEnum.Question),
+                  ),
+                  Container(
+                    child: const Text(
+                      'OR',
+                      style: TextStyle(fontSize: 30, color: Color(AppColors.grey)),
+                    ),
+                  ),
+                  GestureDetector(
+                    child: Image.asset(
+                      'assets/images/main_img.png',
+                      width: 90,
+                      height: 90,
+                      color: _activityType == ActivityTypeEnum.Picture ? Color(AppColors.green) : Colors.grey[400],
+                    ),
+                    onTap: () => _selectActivityType(ActivityTypeEnum.Picture),
+                  ),
+                ],
+              ),
+              RoundedButton(
+                child: const Text(
+                  'LET\'S START',
+                  style: TextStyle(fontSize: 25, color: Color(AppColors.grey)),
+                ),
+                bgColor: _activityType != null ? Color(AppColors.yellow) : Colors.grey[200],
+                margin: const EdgeInsets.only(top: 60),
+                onPressed: _navigateToNewRandomActivity,
+              ),
+            ],
+          ),
         ),
       ),
     );

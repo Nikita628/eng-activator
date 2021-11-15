@@ -14,6 +14,7 @@ import 'package:eng_activator_app/widgets/screens/main_screen.dart';
 import 'package:eng_activator_app/widgets/ui_elements/app_logo.dart';
 import 'package:eng_activator_app/widgets/ui_elements/app_scaffold.dart';
 import 'package:eng_activator_app/widgets/ui_elements/app_spinner.dart';
+import 'package:eng_activator_app/widgets/ui_elements/exit_warning_on_pop.dart';
 import 'package:eng_activator_app/widgets/ui_elements/rounded_button.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -76,72 +77,74 @@ class _SignupScreenWidgetState extends State<SignupScreenWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return AppScaffold(
-      child: Container(
-        width: double.infinity,
-        margin: const EdgeInsets.only(top: 80),
-        padding: const EdgeInsets.only(left: 20, right: 20),
-        child: Form(
-          key: _formKey,
-          child: Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                AppLogoWidget(),
-                InputField(
-                  label: 'Name',
-                  margin: EdgeInsets.only(bottom: 30),
-                  onSaved: (val) => _signupData.name = val ?? "",
-                  validator: _authValidator.validateName,
-                ),
-                InputField(
-                  label: 'Email',
-                  margin: EdgeInsets.only(bottom: 30),
-                  onSaved: (val) => _signupData.email = val ?? "",
-                  validator: _authValidator.validateEmail,
-                ),
-                InputField(
-                  label: 'Password',
-                  margin: EdgeInsets.only(bottom: 30),
-                  obscureText: true,
-                  onSaved: (val) => _signupData.password = val ?? "",
-                  validator: _authValidator.validatePassword,
-                ),
-                InputField(
-                  label: 'Password Confirmation',
-                  margin: EdgeInsets.only(bottom: 30),
-                  obscureText: true,
-                  onSaved: (val) => _signupData.passwordConfirmation = val ?? "",
-                  validator: (val) => _authValidator.validatePasswordConfirmation(_signupData.password, val),
-                ),
-                RoundedButton(
-                  child: _widgetStatus == WidgetStatusEnum.Loading
-                      ? AppSpinner()
-                      : const Text(
-                          'SIGNUP',
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+    return ExitWarningOnPopWidget(
+      child: AppScaffold(
+        child: Container(
+          width: double.infinity,
+          margin: const EdgeInsets.only(top: 80),
+          padding: const EdgeInsets.only(left: 20, right: 20),
+          child: Form(
+            key: _formKey,
+            child: Container(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  AppLogoWidget(),
+                  InputField(
+                    label: 'Name',
+                    margin: EdgeInsets.only(bottom: 30),
+                    onSaved: (val) => _signupData.name = val ?? "",
+                    validator: _authValidator.validateName,
+                  ),
+                  InputField(
+                    label: 'Email',
+                    margin: EdgeInsets.only(bottom: 30),
+                    onSaved: (val) => _signupData.email = val ?? "",
+                    validator: _authValidator.validateEmail,
+                  ),
+                  InputField(
+                    label: 'Password',
+                    margin: EdgeInsets.only(bottom: 30),
+                    obscureText: true,
+                    onSaved: (val) => _signupData.password = val ?? "",
+                    validator: _authValidator.validatePassword,
+                  ),
+                  InputField(
+                    label: 'Password Confirmation',
+                    margin: EdgeInsets.only(bottom: 30),
+                    obscureText: true,
+                    onSaved: (val) => _signupData.passwordConfirmation = val ?? "",
+                    validator: (val) => _authValidator.validatePasswordConfirmation(_signupData.password, val),
+                  ),
+                  RoundedButton(
+                    child: _widgetStatus == WidgetStatusEnum.Loading
+                        ? AppSpinner()
+                        : const Text(
+                            'SIGNUP',
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                  bgColor: const Color(AppColors.green),
-                  onPressed: _saveForm,
-                  disabled: _widgetStatus == WidgetStatusEnum.Loading,
-                ),
-                TextButton(
-                  onPressed: _widgetStatus == WidgetStatusEnum.Loading
-                      ? null
-                      : () => _appNavigator.replaceCurrentUrl(LoginScreenWidget.screenUrl, context),
-                  child: Text(
-                    'switch to login',
-                    style: TextStyle(
-                      color: Color(AppColors.green),
-                      fontWeight: FontWeight.bold,
+                    bgColor: const Color(AppColors.green),
+                    onPressed: _saveForm,
+                    disabled: _widgetStatus == WidgetStatusEnum.Loading,
+                  ),
+                  TextButton(
+                    onPressed: _widgetStatus == WidgetStatusEnum.Loading
+                        ? null
+                        : () => _appNavigator.replaceCurrentUrl(LoginScreenWidget.screenUrl, context),
+                    child: Text(
+                      'switch to login',
+                      style: TextStyle(
+                        color: Color(AppColors.green),
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
