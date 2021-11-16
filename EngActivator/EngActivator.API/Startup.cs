@@ -5,6 +5,7 @@ using EngActivator.APP.Interfaces;
 using EngActivator.APP.MapperProfiles;
 using EngActivator.APP.Services;
 using EngActivator.APP.Shared.Dtos;
+using EngActivator.APP.Shared.Dtos.Settings;
 using EngActivator.APP.Shared.Interfaces;
 using EngActivator.APP.Shared.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -42,7 +43,10 @@ namespace EngActivator.API
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IHttpContextService, HttpContextService>();
             services.AddScoped<IDictionaryService, DictionaryService>();
+            services.AddScoped<IEmailSender, EmailSender>();
+            services.AddScoped<IEmailConstructor, EmailConstructor>();
             services.AddSingleton(typeof(AppDictionary), new AppDictionary());
+            services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
 
             services.AddAutoMapper(typeof(ActivityResponseProfile));
 
@@ -108,7 +112,7 @@ namespace EngActivator.API
 
             app.UseStatusCodePagesWithReExecute("/error/{0}");
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseStaticFiles(new StaticFileOptions
             {

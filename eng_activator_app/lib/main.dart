@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:eng_activator_app/shared/constants.dart';
+import 'package:eng_activator_app/shared/enums.dart';
 import 'package:eng_activator_app/state/activity_provider.dart';
 import 'package:eng_activator_app/shared/state/current_url_provider.dart';
 import 'package:eng_activator_app/state/activity_response_provider.dart';
@@ -17,7 +18,7 @@ import 'package:eng_activator_app/widgets/screens/activity_response/question_act
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-const _isLocalDev = false;
+const currentAppEnv = AppEnvironment.Local;
 
 class MyHttpOverrides extends HttpOverrides {
   @override
@@ -31,8 +32,9 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(EnglishActivatorApp());
 
-  AppConstants.isLocalDev = _isLocalDev;
-  if (_isLocalDev) {
+  AppConstants.currentAppEnvironment = currentAppEnv;
+
+  if (currentAppEnv == AppEnvironment.Local) {
     HttpOverrides.global = MyHttpOverrides();
   }
 }

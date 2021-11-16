@@ -11,3 +11,9 @@ enum WidgetStatusEnum {
   Loading,
   Default,
 }
+
+enum AppEnvironment {
+  Local,
+  Development,
+  Production,
+}

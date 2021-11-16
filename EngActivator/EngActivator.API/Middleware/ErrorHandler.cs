@@ -55,9 +55,14 @@ namespace EngActivator.API.Middleware
             }
             catch (Exception ex)
             {
-                response = new ErrorResponse(_env.IsDevelopment() ? ex.Message : "Something went wrong");
+                var errorMessage = "Something went wrong";
 
-                // response = new ErrorResponse(ex.Message); for development purposes
+                if (_env.EnvironmentName == "Local" || _env.EnvironmentName == "Development")
+                {
+                    errorMessage = ex.Message;
+                }
+
+                response = new ErrorResponse(errorMessage);
 
                 await ProcessErrorResponse(context, ex, HttpStatusCode.InternalServerError, response);
             }
@@ -67,7 +72,7 @@ namespace EngActivator.API.Middleware
         {
             _logger.LogError(ex, ex.Message);
 
-            if (_env.IsDevelopment())
+            if (_env.EnvironmentName == "Local" || _env.EnvironmentName == "Development")
             {
                 response.Details = ex.StackTrace.ToString();
 

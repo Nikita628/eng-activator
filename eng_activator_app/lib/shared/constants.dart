@@ -1,3 +1,5 @@
+import 'package:eng_activator_app/shared/enums.dart';
+
 class AppColors {
   static const int green = 0xff12c0a0;
   static const int yellow = 0xfffbe37a;
@@ -6,32 +8,46 @@ class AppColors {
 }
 
 class AppConstants {
-  static bool isLocalDev = true;
+  static var currentAppEnvironment = AppEnvironment.Local;
 
   static const double preferredAppBarHeight = 50;
 
   static const String _localApiUrl = '10.0.2.2:5001';
-  static const String _localApiUrlWithPrefix = 'https://10.0.2.2:5001';
-  static const String _prodApiUrl = 'exenge-001-site1.ftempurl.com';
-  static const String _prodApiUrlWithPrefix = 'http://exenge-001-site1.ftempurl.com';
+  static const String _localApiUrlWithPrefix = 'http://10.0.2.2:5001';
+
+  static const String _devApiUrl = 'exenge-001-site1.ftempurl.com';
+  static const String _devApiUrlWithPrefix = 'http://exenge-001-site1.ftempurl.com';
+  
+  static const String _prodApiUrl = '';
+  static const String _prodApiUrlWithPrefix = '';
 
   static const Map<String, String> apiHeaders = {
     "content-type": "application/json",
   };
 
   static String getApiUrl() {
-    if (isLocalDev) {
-      return _localApiUrl;
-    } else {
-      return _prodApiUrl;
+    switch (currentAppEnvironment) {
+      case AppEnvironment.Local:
+        return _localApiUrl;
+      case AppEnvironment.Development:
+        return _devApiUrl;
+      case AppEnvironment.Production:
+        return _prodApiUrl;
+      default:
+        return '';
     }
   }
 
   static String getApiUrlWithPrefix() {
-    if (isLocalDev) {
-      return _localApiUrlWithPrefix;
-    } else {
-      return _prodApiUrlWithPrefix;
+    switch (currentAppEnvironment) {
+      case AppEnvironment.Local:
+        return _localApiUrlWithPrefix;
+      case AppEnvironment.Development:
+        return _devApiUrlWithPrefix;
+      case AppEnvironment.Production:
+        return _prodApiUrlWithPrefix;
+      default:
+        return '';
     }
   }
 }

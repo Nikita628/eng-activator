@@ -6,7 +6,7 @@ namespace EngActivator.APP.Interfaces
     public interface IAuthService
     {
         Task<UserAuthResult> LoginAsync(LoginData loginData);
-        Task<UserAuthResult> SignupAsync(SignupData signupData);
+        Task<bool> SignupAsync(SignupData signupData);
         Task<bool> IsEmailExistsAsync(string email);
     }
 }

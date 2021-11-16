@@ -3,6 +3,7 @@ using EngActivator.APP.Dtos;
 using EngActivator.APP.Interfaces;
 using EngActivator.APP.Shared.Dtos;
 using EngActivator.APP.Shared.Exceptions;
+using EngActivator.APP.Shared.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -21,12 +22,18 @@ namespace EngActivator.APP.Services
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IConfiguration _config;
         private readonly SymmetricSecurityKey _key;
+        private readonly IEmailSender _emailSender;
+        private readonly IEmailConstructor _emailConstructor;
 
         public AuthService(
             IConfiguration c,
             UserManager<AppUser> um,
-            SignInManager<AppUser> sm)
+            SignInManager<AppUser> sm,
+            IEmailConstructor ec,
+            IEmailSender es)
         {
+            _emailConstructor = ec;
+            _emailSender = es;
             _userManager = um;
             _signInManager = sm;
             _config = c;
@@ -63,9 +70,9 @@ namespace EngActivator.APP.Services
             };
         }
 
-        public async Task<UserAuthResult> SignupAsync(SignupData signupData)
+        public async Task<bool> SignupAsync(SignupData signupData)
         {
-            await ValidateIfEmailAlreadyTaken(signupData.Email);
+            await ValidateOnSignup(signupData);
 
             var entity = new AppUser
             {
@@ -78,18 +85,20 @@ namespace EngActivator.APP.Services
 
             ValidateSignupResult(result);
 
-            var tokenData = GenerateToken(entity);
-
-            return new UserAuthResult
+            try
             {
-                Token = tokenData.Item1,
-                TokenExpirationDate = tokenData.Item2,
-                User = new User
-                {
-                    Id = entity.Id,
-                    Name = entity.Name,
-                }
-            };
+                await _emailSender.SendEmailAsync(_emailConstructor.ConstructSignupEmail(signupData.Email, signupData.Name));
+            }
+            catch (Exception e)
+            {
+                var user = await _userManager.FindByEmailAsync(signupData.Email);
+                await _userManager.DeleteAsync(user);
+                var errorResponse = new ErrorResponse("We were not able to send registration email to provided address");
+                errorResponse.ErrorsMap.Add("email", new List<string> { "We were not able to send registration email to provided address" });
+                throw new AppErrorResponseException(errorResponse);
+            }
+
+            return true;
         }
 
         public async Task<bool> IsEmailExistsAsync(string email)
@@ -113,14 +122,23 @@ namespace EngActivator.APP.Services
             throw new AppErrorResponseException(errorResponse);
         }
 
-        private async Task ValidateIfEmailAlreadyTaken(string email)
+        private async Task ValidateOnSignup(SignupData data)
         {
-            var isEmailAlreadyTaken = await IsEmailExistsAsync(email);
+            var isEmailAlreadyTaken = await IsEmailExistsAsync(data.Email);
 
             if (isEmailAlreadyTaken)
             {
                 var errorResponse = new ErrorResponse("User with this email already exists");
                 errorResponse.ErrorsMap.Add("email", new List<string> { "User with this email already exists" });
+                throw new AppErrorResponseException(errorResponse);
+            }
+
+            var isNameTaken = await _userManager.FindByNameAsync(data.Name) != null;
+
+            if (isNameTaken)
+            {
+                var errorResponse = new ErrorResponse("User with this name already exists");
+                errorResponse.ErrorsMap.Add("name", new List<string> { "User with this name already exists" });
                 throw new AppErrorResponseException(errorResponse);
             }
         }

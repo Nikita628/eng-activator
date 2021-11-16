@@ -6,18 +6,16 @@ import 'package:eng_activator_app/shared/services/app_navigator.dart';
 import 'package:eng_activator_app/services/auth/auth_validator.dart';
 import 'package:eng_activator_app/shared/services/injector.dart';
 import 'package:eng_activator_app/shared/constants.dart';
-import 'package:eng_activator_app/state/auth_provider.dart';
+import 'package:eng_activator_app/widgets/dialogs/confirm_email_dialog.dart';
 import 'package:eng_activator_app/widgets/dialogs/error_dialog.dart';
 import 'package:eng_activator_app/widgets/screens/auth/input_field.dart';
 import 'package:eng_activator_app/widgets/screens/auth/login.dart';
-import 'package:eng_activator_app/widgets/screens/main_screen.dart';
 import 'package:eng_activator_app/widgets/ui_elements/app_logo.dart';
 import 'package:eng_activator_app/widgets/ui_elements/app_scaffold.dart';
 import 'package:eng_activator_app/widgets/ui_elements/app_spinner.dart';
 import 'package:eng_activator_app/widgets/ui_elements/exit_warning_on_pop.dart';
 import 'package:eng_activator_app/widgets/ui_elements/rounded_button.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class SignupScreenWidget extends StatefulWidget {
   static const screenUrl = '/signup-screen-widget';
@@ -33,15 +31,8 @@ class _SignupScreenWidgetState extends State<SignupScreenWidget> {
   final AuthValidator _authValidator = Injector.get<AuthValidator>();
   final AuthApiClient _authApiClient = Injector.get<AuthApiClient>();
   late WidgetStatusEnum _widgetStatus = WidgetStatusEnum.Default;
-  late AuthProvider _authProvider;
   var _formKey = GlobalKey<FormState>();
   var _signupData = SignupDto();
-
-  @override
-  void initState() {
-    _authProvider = Provider.of<AuthProvider>(context, listen: false);
-    super.initState();
-  }
 
   void _setWidgetStatus(WidgetStatusEnum status) {
     if (mounted) {
@@ -59,9 +50,12 @@ class _SignupScreenWidgetState extends State<SignupScreenWidget> {
       _setWidgetStatus(WidgetStatusEnum.Loading);
 
       try {
-        var response = await _authApiClient.signup(_signupData, context);
-        await _authProvider.setAuthData(response);
-        _appNavigator.replaceCurrentUrl(MainScreenWidget.screenUrl, context);
+        await _authApiClient.signup(_signupData, context);
+        await showDialog(
+          context: context,
+          builder: (_) => ConfirmEmailDialog(),
+        );
+        _appNavigator.replaceCurrentUrl(LoginScreenWidget.screenUrl, context);
       } on ApiResponseException catch (e) {
         await showDialog(
           context: context,
