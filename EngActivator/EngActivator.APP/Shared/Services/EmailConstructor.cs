@@ -13,7 +13,7 @@ namespace EngActivator.APP.Shared.Services
         private const string USER_NAME = "_USER_NAME_";
         private const string CONFIRMATION_LINK = "_CONFIRMATION_LINK_";
         private const string YEAR = "_YEAR_";
-        private const string LOGO_URL = "_LOGO_URL";
+        private const string LOGO_URL = "_LOGO_URL_";
         private const string PASSWORD = "_PASSWORD_";
         private const string NAME = "_NAME_";
         private const string SignupSubject = "Exenge Registration";
@@ -37,7 +37,6 @@ namespace EngActivator.APP.Shared.Services
             templateText.Replace(USER_NAME, userName);
             templateText.Replace(CONFIRMATION_LINK, confirmationLink);
             templateText.Replace(YEAR, DateTime.UtcNow.Year.ToString());
-            templateText.Replace(LOGO_URL, _appSettings.LogoUrl);
 
             email.Body = templateText.ToString();
             email.Subject = SignupSubject;

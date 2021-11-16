@@ -38,6 +38,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Files\logo.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Files\Templates\forgotPasswordEmail.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -4,12 +4,15 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace EngActivator.APP.Shared.Services
 {
     public class EmailSender : IEmailSender
     {
+        private const string LogoImageContentId = "logo";
+
         private readonly MailSettings _mailSettings;
 
         public EmailSender(IOptions<MailSettings> mailSettings)
@@ -30,6 +33,10 @@ namespace EngActivator.APP.Shared.Services
             {
                 HtmlBody = emailDto.Body
             };
+
+            var logoImage = builder.LinkedResources.Add(GetLogoPath());
+            logoImage.ContentId = LogoImageContentId;
+
             email.Body = builder.ToMessageBody();
 
             using var smtp = new SmtpClient();
@@ -37,6 +44,14 @@ namespace EngActivator.APP.Shared.Services
             smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
             await smtp.SendAsync(email);
             smtp.Disconnect(true);
+        }
+
+        private string GetLogoPath()
+        {
+            string fullPath = System.Reflection.Assembly.GetAssembly(typeof(EmailSender)).Location;
+            string theDirectory = Path.GetDirectoryName(fullPath);
+            string filePath = Path.Combine(theDirectory, "Files", "logo.png");
+            return filePath;
         }
     }
 }
