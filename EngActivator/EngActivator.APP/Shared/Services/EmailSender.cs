@@ -11,6 +11,7 @@ namespace EngActivator.APP.Shared.Services
     public class EmailSender : IEmailSender
     {
         private readonly MailSettings _mailSettings;
+
         public EmailSender(IOptions<MailSettings> mailSettings)
         {
             _mailSettings = mailSettings.Value;

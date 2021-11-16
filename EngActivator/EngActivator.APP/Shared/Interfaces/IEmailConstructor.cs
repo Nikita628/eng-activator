@@ -2,6 +2,6 @@
 {
     public interface IEmailConstructor
     {
-        public Shared.Dtos.Email ConstructSignupEmail(string to, string userName);
+        public Shared.Dtos.Email ConstructSignupEmail(string to, string userName, string emailConfirmationToken);
     }
 }

@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <Folder Include="Files\" />
+    <Folder Include="StaticFiles\images\" />
   </ItemGroup>
 
   <ItemGroup>

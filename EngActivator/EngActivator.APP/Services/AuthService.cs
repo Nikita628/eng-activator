@@ -40,11 +40,25 @@ namespace EngActivator.APP.Services
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token:Key"]));
         }
 
+        public async Task<bool> ConfirmEmailAsync(string email, string emailConfirmationToken)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user is null)
+            {
+                throw new AppUnauthorizedException("Cannot find user by email");
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(user, emailConfirmationToken);
+
+            return result.Succeeded;
+        }
+
         public async Task<UserAuthResult> LoginAsync(LoginData loginData)
         {
             var user = await _userManager.FindByEmailAsync(loginData.Email);
 
-            if (user is null)
+            if (user is null || !user.EmailConfirmed)
             {
                 throw new AppUnauthorizedException("Invalid email and/or password");
             }
@@ -70,9 +84,9 @@ namespace EngActivator.APP.Services
             };
         }
 
-        public async Task<bool> SignupAsync(SignupData signupData)
+        public async Task SignupAsync(SignupData signupData)
         {
-            await ValidateOnSignup(signupData);
+            await ValidateSignupData(signupData);
 
             var entity = new AppUser
             {
@@ -85,20 +99,19 @@ namespace EngActivator.APP.Services
 
             ValidateSignupResult(result);
 
-            try
+            await SendSignupEmail(signupData, entity);
+        }
+
+        public async Task DeleteUserAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user is null)
             {
-                await _emailSender.SendEmailAsync(_emailConstructor.ConstructSignupEmail(signupData.Email, signupData.Name));
-            }
-            catch (Exception e)
-            {
-                var user = await _userManager.FindByEmailAsync(signupData.Email);
-                await _userManager.DeleteAsync(user);
-                var errorResponse = new ErrorResponse("We were not able to send registration email to provided address");
-                errorResponse.ErrorsMap.Add("email", new List<string> { "We were not able to send registration email to provided address" });
-                throw new AppErrorResponseException(errorResponse);
+                throw new AppNotFoundException("User not found");
             }
 
-            return true;
+            await _userManager.DeleteAsync(user);
         }
 
         public async Task<bool> IsEmailExistsAsync(string email)
@@ -122,7 +135,7 @@ namespace EngActivator.APP.Services
             throw new AppErrorResponseException(errorResponse);
         }
 
-        private async Task ValidateOnSignup(SignupData data)
+        private async Task ValidateSignupData(SignupData data)
         {
             var isEmailAlreadyTaken = await IsEmailExistsAsync(data.Email);
 
@@ -139,6 +152,23 @@ namespace EngActivator.APP.Services
             {
                 var errorResponse = new ErrorResponse("User with this name already exists");
                 errorResponse.ErrorsMap.Add("name", new List<string> { "User with this name already exists" });
+                throw new AppErrorResponseException(errorResponse);
+            }
+        }
+
+        private async Task SendSignupEmail(SignupData signupData, AppUser user)
+        {
+            try
+            {
+                var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var email = _emailConstructor.ConstructSignupEmail(signupData.Email, signupData.Name, emailConfirmationToken);
+                await _emailSender.SendEmailAsync(email);
+            }
+            catch (Exception e)
+            {
+                await _userManager.DeleteAsync(user);
+                var errorResponse = new ErrorResponse("We were not able to send registration email to provided address");
+                errorResponse.ErrorsMap.Add("email", new List<string> { "We were not able to send registration email to provided address" });
                 throw new AppErrorResponseException(errorResponse);
             }
         }

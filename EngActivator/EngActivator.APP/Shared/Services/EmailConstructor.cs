@@ -1,22 +1,46 @@
-﻿using EngActivator.APP.Shared.Interfaces;
+﻿using EngActivator.APP.Shared.Dtos.Settings;
+using EngActivator.APP.Shared.Interfaces;
+using Microsoft.Extensions.Options;
+using System;
 using System.IO;
+using System.Text;
+using System.Web;
 
 namespace EngActivator.APP.Shared.Services
 {
     public class EmailConstructor : IEmailConstructor
     {
-        public Shared.Dtos.Email ConstructSignupEmail(string to, string userName)
+        private const string USER_NAME = "_USER_NAME_";
+        private const string CONFIRMATION_LINK = "_CONFIRMATION_LINK_";
+        private const string YEAR = "_YEAR_";
+        private const string LOGO_URL = "_LOGO_URL";
+        private const string PASSWORD = "_PASSWORD_";
+        private const string NAME = "_NAME_";
+        private const string SignupSubject = "Exenge Registration";
+
+        private readonly AppSettings _appSettings;
+
+        public EmailConstructor(IOptions<AppSettings> settings)
+        {
+            _appSettings = settings.Value;
+        }
+
+        public Shared.Dtos.Email ConstructSignupEmail(string to, string userName, string emailConfirmationToken)
         {
             var email = new Dtos.Email
             {
                 To = to,
             };
 
-            var templateText = GetEmailTemplateText("signupEmail.html");
-            templateText = templateText.Replace("USER_NAME", userName);
+            var confirmationLink = $"{_appSettings.ApiUrl}/api/auth/confirm-email?email={HttpUtility.UrlEncode(to)}&token={HttpUtility.UrlEncode(emailConfirmationToken)}";
+            var templateText = new StringBuilder(GetEmailTemplateText("signupEmail.html"));
+            templateText.Replace(USER_NAME, userName);
+            templateText.Replace(CONFIRMATION_LINK, confirmationLink);
+            templateText.Replace(YEAR, DateTime.UtcNow.Year.ToString());
+            templateText.Replace(LOGO_URL, _appSettings.LogoUrl);
 
-            email.Body = templateText;
-            email.Subject = "Exenge Registration";
+            email.Body = templateText.ToString();
+            email.Subject = SignupSubject;
 
             return email;
         }

@@ -16,7 +16,7 @@ namespace EngActivator.API.Controllers
         private readonly IAuthService _authService;
 
         public AuthController(
-            ILogger<AuthController> logger, 
+            ILogger<AuthController> logger,
             IAuthService auth)
         {
             _logger = logger;
@@ -34,14 +34,32 @@ namespace EngActivator.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Signup([FromBody] SignupData dto)
         {
-            return Ok(await _authService.SignupAsync(dto));
+            await _authService.SignupAsync(dto);
+
+            return Ok();
         }
 
         [HttpPost("email-exists")]
         [AllowAnonymous]
-        public async Task<IActionResult> IsEmailExists([FromQuery]string email)
+        public async Task<IActionResult> IsEmailExists([FromQuery] string email)
         {
             return Ok(await _authService.IsEmailExistsAsync(email));
+        }
+
+        [HttpGet("confirm-email")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ConfirmEmail([FromQuery] string email, [FromQuery] string token)
+        {
+            return Ok(await _authService.ConfirmEmailAsync(email, token));
+        }
+
+        [HttpDelete("delete-user")]
+        [AllowAnonymous]
+        public async Task<IActionResult> DeleteUser([FromQuery] string email)
+        {
+            await _authService.DeleteUserAsync(email);
+
+            return Ok();
         }
     }
 }

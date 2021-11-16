@@ -49,6 +49,7 @@ namespace EngActivator.API.Utils
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
+                var hostEnv = services.GetRequiredService<IHostEnvironment>();
                 var loggerFactory = services.GetRequiredService<ILoggerFactory>();
                 var userManager = services.GetRequiredService<UserManager<AppUser>>();
                 var logger = loggerFactory.CreateLogger<Program>();
@@ -59,10 +60,12 @@ namespace EngActivator.API.Utils
 
                     context.Database.Migrate();
 
-                    await SeedUsers(userManager);
-
-                    Seed(context);
-
+                    if (hostEnv.EnvironmentName == "Development" || hostEnv.EnvironmentName == "Local")
+                    {
+                        await SeedUsers(userManager);
+                        Seed(context);
+                    }
+                    
                     logger.LogInformation("---- Migrated db successfully ----");
                 }
                 catch (Exception e)
@@ -101,6 +104,7 @@ namespace EngActivator.API.Utils
                         Name = $"Seed {i}",
                         Email = $"seed_{i}@seed.com",
                         UserName = $"seed{i}",
+                        EmailConfirmed = true,
                     };
 
                     await userManager.CreateAsync(user, "Welcome01!");

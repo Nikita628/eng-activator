@@ -47,6 +47,7 @@ namespace EngActivator.API
             services.AddScoped<IEmailConstructor, EmailConstructor>();
             services.AddSingleton(typeof(AppDictionary), new AppDictionary());
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
+            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
             services.AddAutoMapper(typeof(ActivityResponseProfile));
 
@@ -61,7 +62,9 @@ namespace EngActivator.API
                 o.Password.RequireUppercase = false;
                 o.Password.RequireLowercase = false;
                 o.Password.RequireDigit = false;
+                o.SignIn.RequireConfirmedEmail = true;
             });
+            builder.AddDefaultTokenProviders();
             builder = new IdentityBuilder(builder.UserType, builder.Services);
             builder.AddEntityFrameworkStores<EngActivatorContext>();
             builder.AddSignInManager<SignInManager<AppUser>>();
