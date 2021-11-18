@@ -33,7 +33,7 @@ class _ActivityPictureWidgetState extends State<ActivityPictureWidget> {
               borderRadius: BorderRadius.circular(8.0),
               child: FadeInImage.memoryNetwork(
                 placeholder: kTransparentImage,
-                image: "${AppConstants.getApiUrlWithPrefix()}/files/randomPics/${widget._picUrl}",
+                image: "${AppConstants.getApiUrlWithPrefix()}/randomPics/${widget._picUrl}",
                 imageErrorBuilder: (_, _2, _3) => Container(
                   color: Colors.white,
                   width: double.infinity,

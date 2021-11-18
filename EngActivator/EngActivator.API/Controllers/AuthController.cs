@@ -50,7 +50,16 @@ namespace EngActivator.API.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail([FromQuery] string email, [FromQuery] string token)
         {
-            return Ok(await _authService.ConfirmEmailAsync(email, token));
+            var isEmailConfirmed = await _authService.ConfirmEmailAsync(email, token);
+
+            if (isEmailConfirmed)
+            {
+                return Redirect("/pages/emailConfirmationSuccess.html");
+            }
+            else
+            {
+                return Redirect("/pages/emailConfirmationError.html");
+            }
         }
 
         [HttpDelete("delete-user")]

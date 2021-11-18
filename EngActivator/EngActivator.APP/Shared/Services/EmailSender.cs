@@ -1,5 +1,6 @@
-﻿using EngActivator.APP.Shared.Dtos.Settings;
-using EngActivator.APP.Shared.Interfaces;
+﻿using EngActivator.APP.Shared.Interfaces;
+using EngActivator.APP.Shared.Models;
+using EngActivator.APP.Shared.Models.Settings;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
@@ -20,7 +21,7 @@ namespace EngActivator.APP.Shared.Services
             _mailSettings = mailSettings.Value;
         }
 
-        public async Task SendEmailAsync(Shared.Dtos.Email emailDto)
+        public async Task SendEmailAsync(Email emailDto)
         {
             var email = new MimeMessage
             {

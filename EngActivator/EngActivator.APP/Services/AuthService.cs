@@ -42,16 +42,23 @@ namespace EngActivator.APP.Services
 
         public async Task<bool> ConfirmEmailAsync(string email, string emailConfirmationToken)
         {
-            var user = await _userManager.FindByEmailAsync(email);
-
-            if (user is null)
+            try
             {
-                throw new AppUnauthorizedException("Cannot find user by email");
+                var user = await _userManager.FindByEmailAsync(email);
+
+                if (user is null)
+                {
+                    throw new AppUnauthorizedException("Cannot find user by email");
+                }
+
+                var result = await _userManager.ConfirmEmailAsync(user, emailConfirmationToken);
+
+                return result.Succeeded;
             }
-
-            var result = await _userManager.ConfirmEmailAsync(user, emailConfirmationToken);
-
-            return result.Succeeded;
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public async Task<UserAuthResult> LoginAsync(LoginData loginData)
@@ -125,7 +132,7 @@ namespace EngActivator.APP.Services
         {
             if (result.Succeeded) return;
 
-            var errorResponse = new ErrorResponse("Cannot register new user");
+            var errorResponse = new ErrorResponse("Something went wrong during user registration");
 
             foreach (var error in result.Errors)
             {

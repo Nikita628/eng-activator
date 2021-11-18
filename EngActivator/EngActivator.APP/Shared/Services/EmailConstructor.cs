@@ -1,5 +1,6 @@
-﻿using EngActivator.APP.Shared.Dtos.Settings;
-using EngActivator.APP.Shared.Interfaces;
+﻿using EngActivator.APP.Shared.Interfaces;
+using EngActivator.APP.Shared.Models;
+using EngActivator.APP.Shared.Models.Settings;
 using Microsoft.Extensions.Options;
 using System;
 using System.IO;
@@ -25,9 +26,9 @@ namespace EngActivator.APP.Shared.Services
             _appSettings = settings.Value;
         }
 
-        public Shared.Dtos.Email ConstructSignupEmail(string to, string userName, string emailConfirmationToken)
+        public Email ConstructSignupEmail(string to, string userName, string emailConfirmationToken)
         {
-            var email = new Dtos.Email
+            var email = new Email
             {
                 To = to,
             };

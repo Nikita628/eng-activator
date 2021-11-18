@@ -78,7 +78,7 @@ namespace EngActivator.API.Middleware
 
                 if (ex.InnerException != null)
                 {
-                    response.Message += $"\ninner exception: {ex.InnerException.Message}\n{ex.InnerException.StackTrace}";
+                    response.Details += $"\n--INNER EXCEPTION--: {ex.InnerException.Message}\n{ex.InnerException.StackTrace}";
                 }
             }
 

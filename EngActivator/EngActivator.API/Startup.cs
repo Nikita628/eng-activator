@@ -5,8 +5,8 @@ using EngActivator.APP.Interfaces;
 using EngActivator.APP.MapperProfiles;
 using EngActivator.APP.Services;
 using EngActivator.APP.Shared.Dtos;
-using EngActivator.APP.Shared.Dtos.Settings;
 using EngActivator.APP.Shared.Interfaces;
+using EngActivator.APP.Shared.Models.Settings;
 using EngActivator.APP.Shared.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -16,9 +16,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
-using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -103,7 +101,7 @@ namespace EngActivator.API
             {
                 opts.AddPolicy("CorsPolicy", policy =>
                 {
-                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins(Configuration["ApiUrl"]);
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins(Configuration["AppSettings:ApiUrl"]);
                 });
             });
         }
@@ -117,12 +115,7 @@ namespace EngActivator.API
 
             // app.UseHttpsRedirection();
 
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, "StaticFiles")),
-                RequestPath = "/files"
-                // eg https://apiurl/files/randomPics/pic01.jpg
-            });
+            app.UseStaticFiles();
 
             app.UseRouting();
 

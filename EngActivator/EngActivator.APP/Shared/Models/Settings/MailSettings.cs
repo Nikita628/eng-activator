@@ -1,4 +1,4 @@
-﻿namespace EngActivator.APP.Shared.Dtos.Settings
+﻿namespace EngActivator.APP.Shared.Models.Settings
 {
     public class MailSettings
     {

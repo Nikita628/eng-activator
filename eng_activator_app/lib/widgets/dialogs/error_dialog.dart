@@ -11,7 +11,7 @@ class ErrorDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      content: Text(_error),
+      content: SingleChildScrollView(child: Text(_error)),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),

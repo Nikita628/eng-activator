@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 
-namespace EngActivator.APP.Shared.Dtos
+namespace EngActivator.APP.Shared.Models
 {
     public class Email
     {

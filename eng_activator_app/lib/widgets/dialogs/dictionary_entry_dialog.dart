@@ -69,7 +69,7 @@ class DictionaryEntryDialog extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8.0),
                   child: FadeInImage.memoryNetwork(
                     placeholder: kTransparentImage,
-                    image: "${AppConstants.getApiUrlWithPrefix()}/files/wordPics/${_wordEntry.pictureUrl}",
+                    image: "${AppConstants.getApiUrlWithPrefix()}/wordPics/${_wordEntry.pictureUrl}",
                     imageErrorBuilder: (_, _2, _3) => Container(
                       color: Colors.white,
                       width: double.infinity,
