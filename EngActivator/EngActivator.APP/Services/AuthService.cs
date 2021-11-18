@@ -55,7 +55,7 @@ namespace EngActivator.APP.Services
 
                 return result.Succeeded;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 return false;
             }
@@ -121,11 +121,25 @@ namespace EngActivator.APP.Services
             await _userManager.DeleteAsync(user);
         }
 
-        public async Task<bool> IsEmailExistsAsync(string email)
+        public async Task SendForgotPasswordEmail(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
 
-            return user != null;
+            if (user is null)
+            {
+                throw new AppNotFoundException("User with this email was not found");
+            }
+
+            //try
+            //{
+            //    var pass = _userManager.pass
+            //}
+            //catch (Exception e)
+            //{
+            //    var errorResponse = new ErrorResponse("We were not able to send email to provided address");
+            //    errorResponse.ErrorsMap.Add("email", new List<string> { "We were not able to send email to provided address" });
+            //    throw new AppErrorResponseException(errorResponse);
+            //}
         }
 
         private void ValidateSignupResult(IdentityResult result)
@@ -163,6 +177,13 @@ namespace EngActivator.APP.Services
             }
         }
 
+        private async Task<bool> IsEmailExistsAsync(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            return user != null;
+        }
+
         private async Task SendSignupEmail(SignupData signupData, AppUser user)
         {
             try
@@ -176,7 +197,7 @@ namespace EngActivator.APP.Services
                 await _userManager.DeleteAsync(user);
                 var errorResponse = new ErrorResponse("We were not able to send registration email to provided address");
                 errorResponse.ErrorsMap.Add("email", new List<string> { "We were not able to send registration email to provided address" });
-                throw new AppErrorResponseException(errorResponse);
+                throw new AppErrorResponseException(errorResponse, e);
             }
         }
 

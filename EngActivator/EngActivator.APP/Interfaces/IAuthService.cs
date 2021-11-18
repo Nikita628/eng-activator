@@ -7,7 +7,6 @@ namespace EngActivator.APP.Interfaces
     {
         Task<UserAuthResult> LoginAsync(LoginData loginData);
         Task SignupAsync(SignupData signupData);
-        Task<bool> IsEmailExistsAsync(string email);
         Task DeleteUserAsync(string email);
         Task<bool> ConfirmEmailAsync(string email, string emailConfirmationToken);
     }

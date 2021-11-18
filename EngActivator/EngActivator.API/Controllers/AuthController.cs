@@ -39,13 +39,6 @@ namespace EngActivator.API.Controllers
             return Ok();
         }
 
-        [HttpPost("email-exists")]
-        [AllowAnonymous]
-        public async Task<IActionResult> IsEmailExists([FromQuery] string email)
-        {
-            return Ok(await _authService.IsEmailExistsAsync(email));
-        }
-
         [HttpGet("confirm-email")]
         [AllowAnonymous]
         public async Task<IActionResult> ConfirmEmail([FromQuery] string email, [FromQuery] string token)

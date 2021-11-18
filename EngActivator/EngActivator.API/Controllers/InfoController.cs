@@ -18,7 +18,7 @@ namespace EngActivator.API.Controllers
         [HttpGet("env")]
         public async Task<IActionResult> GetEnv()
         {
-            return Ok(_env.EnvironmentName);
+            return Ok(new { envName = _env.EnvironmentName });
         }
     }
 }
