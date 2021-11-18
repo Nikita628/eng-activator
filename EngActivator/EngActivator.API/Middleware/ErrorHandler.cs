@@ -39,19 +39,19 @@ namespace EngActivator.API.Middleware
             {
                 response = new ErrorResponse(notFoundEx.Message);
 
-                await ProcessErrorResponse(context, notFoundEx, HttpStatusCode.NotFound, response);
+                await SendBackErrorResponse(context, notFoundEx, HttpStatusCode.NotFound, response);
             }
             catch (AppErrorResponseException appEx)
             {
                 response = appEx.ErrorResponse;
 
-                await ProcessErrorResponse(context, appEx, HttpStatusCode.BadRequest, response);
+                await SendBackErrorResponse(context, appEx, HttpStatusCode.BadRequest, response);
             }
             catch (AppUnauthorizedException un)
             {
                 response = new ErrorResponse(un.Message);
 
-                await ProcessErrorResponse(context, un, HttpStatusCode.Unauthorized, response);
+                await SendBackErrorResponse(context, un, HttpStatusCode.Unauthorized, response);
             }
             catch (Exception ex)
             {
@@ -64,21 +64,26 @@ namespace EngActivator.API.Middleware
 
                 response = new ErrorResponse(errorMessage);
 
-                await ProcessErrorResponse(context, ex, HttpStatusCode.InternalServerError, response);
+                await SendBackErrorResponse(context, ex, HttpStatusCode.InternalServerError, response);
             }
         }
 
-        private async Task ProcessErrorResponse(HttpContext context, Exception ex, HttpStatusCode code, ErrorResponse response)
+        private async Task SendBackErrorResponse(HttpContext context, Exception occuredException, HttpStatusCode code, ErrorResponse response)
         {
-            _logger.LogError(ex, ex.Message);
+            _logger.LogError(occuredException, occuredException.Message);
+
+            if (occuredException.InnerException != null)
+            {
+                _logger.LogError(occuredException.InnerException, occuredException.InnerException.Message);
+            }
 
             if (_env.EnvironmentName == "Local" || _env.EnvironmentName == "Development")
             {
-                response.Details = ex.StackTrace.ToString();
+                response.Details = occuredException.StackTrace.ToString();
 
-                if (ex.InnerException != null)
+                if (occuredException.InnerException != null)
                 {
-                    response.Details += $"\n--INNER EXCEPTION--: {ex.InnerException.Message}\n{ex.InnerException.StackTrace}";
+                    response.Details += $"\n---INNER EXCEPTION---: {occuredException.InnerException.Message}\n{occuredException.InnerException.StackTrace}";
                 }
             }
 

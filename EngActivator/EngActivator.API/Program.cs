@@ -1,8 +1,7 @@
 using EngActivator.API.Utils;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-using System.Collections.Generic;
-using System.IO;
+using Serilog;
 using System.Threading.Tasks;
 
 namespace EngActivator.API
@@ -15,22 +14,7 @@ namespace EngActivator.API
 
             await DbSeeder.MigrateAndSeedDb(host);
 
-            //var files = Directory.GetFiles("StaticFiles/wordPics");
-
-            //var res = new List<string>();
-
-            //foreach (var f in files)
-            //{
-            //    res.Add(@"<None Update=""StaticFiles\wordPics\" + Path.GetFileName(f) + "\">\n"+ 
-            //                "<CopyToOutputDirectory>Always</CopyToOutputDirectory>\n" +
-            //        "</None>");
-            //}
-
-            //string resa = string.Join('\n', res.ToArray());
-
             host.Run();
-
-            
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -38,6 +22,8 @@ namespace EngActivator.API
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                }).UseSerilog((hostingContext, loggerConfig) =>
+                    loggerConfig.ReadFrom.Configuration(hostingContext.Configuration)
+        );
     }
 }

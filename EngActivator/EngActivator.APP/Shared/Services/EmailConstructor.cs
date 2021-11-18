@@ -13,10 +13,8 @@ namespace EngActivator.APP.Shared.Services
     {
         private const string USER_NAME = "_USER_NAME_";
         private const string CONFIRMATION_LINK = "_CONFIRMATION_LINK_";
+        private const string RESET_PASSWORD_LINK = "_RESET_PASSWORD_LINK_";
         private const string YEAR = "_YEAR_";
-        private const string LOGO_URL = "_LOGO_URL_";
-        private const string PASSWORD = "_PASSWORD_";
-        private const string NAME = "_NAME_";
         private const string SignupSubject = "Exenge Registration";
 
         private readonly AppSettings _appSettings;
@@ -26,17 +24,36 @@ namespace EngActivator.APP.Shared.Services
             _appSettings = settings.Value;
         }
 
-        public Email ConstructSignupEmail(string to, string userName, string emailConfirmationToken)
+        public Email ConstructSignupEmail(string emailTo, string userName, string emailConfirmationToken)
         {
             var email = new Email
             {
-                To = to,
+                To = emailTo,
             };
 
-            var confirmationLink = $"{_appSettings.ApiUrl}/api/auth/confirm-email?email={HttpUtility.UrlEncode(to)}&token={HttpUtility.UrlEncode(emailConfirmationToken)}";
+            var confirmationLink = $"{_appSettings.ApiUrl}/api/auth/confirm-email?email={HttpUtility.UrlEncode(emailTo)}&token={HttpUtility.UrlEncode(emailConfirmationToken)}";
             var templateText = new StringBuilder(GetEmailTemplateText("signupEmail.html"));
             templateText.Replace(USER_NAME, userName);
             templateText.Replace(CONFIRMATION_LINK, confirmationLink);
+            templateText.Replace(YEAR, DateTime.UtcNow.Year.ToString());
+
+            email.Body = templateText.ToString();
+            email.Subject = SignupSubject;
+
+            return email;
+        }
+
+        public Email ConstructResetPasswordEmail(string emailTo, string userName, string resetPasswordToken)
+        {
+            var email = new Email
+            {
+                To = emailTo,
+            };
+
+            var resetPasswordLink = $"{_appSettings.ApiUrl}/api/auth/reset-password?email={HttpUtility.UrlEncode(emailTo)}&token={HttpUtility.UrlEncode(resetPasswordToken)}";
+            var templateText = new StringBuilder(GetEmailTemplateText("signupEmail.html"));
+            templateText.Replace(USER_NAME, userName);
+            templateText.Replace(RESET_PASSWORD_LINK, resetPasswordLink);
             templateText.Replace(YEAR, DateTime.UtcNow.Year.ToString());
 
             email.Body = templateText.ToString();

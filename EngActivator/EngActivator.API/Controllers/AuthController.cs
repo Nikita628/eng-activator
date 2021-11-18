@@ -1,4 +1,5 @@
 ﻿using EngActivator.APP.Dtos;
+using EngActivator.APP.Dtos.Auth;
 using EngActivator.APP.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -60,6 +61,15 @@ namespace EngActivator.API.Controllers
         public async Task<IActionResult> DeleteUser([FromQuery] string email)
         {
             await _authService.DeleteUserAsync(email);
+
+            return Ok();
+        }
+
+        [HttpPost("send-reset-password-email")]
+        [AllowAnonymous]
+        public async Task<IActionResult> SendResetPasswordEmail([FromBody]ResetPasswordData dto)
+        {
+            await _authService.SendResetPasswordEmail(dto);
 
             return Ok();
         }

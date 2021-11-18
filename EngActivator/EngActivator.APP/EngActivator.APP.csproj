@@ -30,18 +30,18 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.13.1" />
     <PackageReference Include="MimeKit" Version="2.15.1" />
+    <PackageReference Include="Serilog.AspNetCore" Version="4.1.0" />
+    <PackageReference Include="Serilog.Filters.Expressions" Version="2.1.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="3.3.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.13.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Files\Templates\" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="Files\logo.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Files\Templates\forgotPasswordEmail.html">
+    <None Update="Files\Templates\resetPasswordEmail.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Files\Templates\signupEmail.html">

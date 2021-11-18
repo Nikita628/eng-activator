@@ -1,11 +1,13 @@
 ﻿using EngActivator.APP.DataBase.Entities;
 using EngActivator.APP.Dtos;
+using EngActivator.APP.Dtos.Auth;
 using EngActivator.APP.Interfaces;
 using EngActivator.APP.Shared.Dtos;
 using EngActivator.APP.Shared.Exceptions;
 using EngActivator.APP.Shared.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -24,19 +26,22 @@ namespace EngActivator.APP.Services
         private readonly SymmetricSecurityKey _key;
         private readonly IEmailSender _emailSender;
         private readonly IEmailConstructor _emailConstructor;
+        private readonly ILogger<AuthService> _logger;
 
         public AuthService(
             IConfiguration c,
             UserManager<AppUser> um,
             SignInManager<AppUser> sm,
             IEmailConstructor ec,
-            IEmailSender es)
+            IEmailSender es,
+            ILogger<AuthService> l)
         {
             _emailConstructor = ec;
             _emailSender = es;
             _userManager = um;
             _signInManager = sm;
             _config = c;
+            _logger = l;
             _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token:Key"]));
         }
 
@@ -57,6 +62,8 @@ namespace EngActivator.APP.Services
             }
             catch (Exception e)
             {
+                _logger.LogError(e, $"Could not confirm email: {e.Message}");
+
                 return false;
             }
         }
@@ -121,25 +128,29 @@ namespace EngActivator.APP.Services
             await _userManager.DeleteAsync(user);
         }
 
-        public async Task SendForgotPasswordEmail(string email)
+        public async Task SendResetPasswordEmail(ResetPasswordData dto)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(dto.Email);
 
             if (user is null)
             {
                 throw new AppNotFoundException("User with this email was not found");
             }
 
-            //try
-            //{
-            //    var pass = _userManager.pass
-            //}
-            //catch (Exception e)
-            //{
-            //    var errorResponse = new ErrorResponse("We were not able to send email to provided address");
-            //    errorResponse.ErrorsMap.Add("email", new List<string> { "We were not able to send email to provided address" });
-            //    throw new AppErrorResponseException(errorResponse);
-            //}
+            try
+            {
+                var resetPassToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+                var email = _emailConstructor.ConstructResetPasswordEmail(user.Email, user.Name, resetPassToken);
+                await _emailSender.SendEmailAsync(email);
+            }
+            catch (Exception e)
+            {
+                var errorResponse = new ErrorResponse("We were not able to send email to provided address");
+                errorResponse.ErrorsMap.Add("email", new List<string> { "We were not able to send email to provided address" });
+                _logger.LogError(e, $"Could not send reset password email: {e.Message}");
+
+                throw new AppErrorResponseException(errorResponse, e);
+            }
         }
 
         private void ValidateSignupResult(IdentityResult result)
@@ -197,6 +208,8 @@ namespace EngActivator.APP.Services
                 await _userManager.DeleteAsync(user);
                 var errorResponse = new ErrorResponse("We were not able to send registration email to provided address");
                 errorResponse.ErrorsMap.Add("email", new List<string> { "We were not able to send registration email to provided address" });
+                _logger.LogError(e, $"Could not send signup email: {e.Message}");
+
                 throw new AppErrorResponseException(errorResponse, e);
             }
         }
