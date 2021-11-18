@@ -12,6 +12,7 @@ import 'package:eng_activator_app/widgets/screens/activity/question_activity_scr
 import 'package:eng_activator_app/widgets/screens/activity_response/activity_response_list.dart';
 import 'package:eng_activator_app/widgets/screens/activity_response/picture_activity_response.dart';
 import 'package:eng_activator_app/widgets/screens/auth/login.dart';
+import 'package:eng_activator_app/widgets/screens/auth/reset_password_screen.dart';
 import 'package:eng_activator_app/widgets/screens/auth/signup.dart';
 import 'package:eng_activator_app/widgets/screens/main_screen.dart';
 import 'package:eng_activator_app/widgets/screens/activity_response/question_activity_response.dart';
@@ -62,6 +63,7 @@ class EnglishActivatorApp extends StatelessWidget {
           ActivityResponseListWidget.screenUrl: (_) => ActivityResponseListWidget(),
           QuestionActivityScreen.screenUrl: (_) => QuestionActivityScreen(),
           PictureActivityScreen.screenUrl: (_) => PictureActivityScreen(),
+          ResetPasswordScreenWidget.screenUrl: (_) => ResetPasswordScreenWidget(),
         },
       ),
     );

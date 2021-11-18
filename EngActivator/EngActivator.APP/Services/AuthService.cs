@@ -62,7 +62,7 @@ namespace EngActivator.APP.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e, $"Could not confirm email: {e.Message}");
+                _logger.LogError(e, $"Could not confirm email: {e.Message} {email}");
 
                 return false;
             }
@@ -128,11 +128,11 @@ namespace EngActivator.APP.Services
             await _userManager.DeleteAsync(user);
         }
 
-        public async Task SendResetPasswordEmail(ResetPasswordData dto)
+        public async Task SendResetPasswordEmailAsync(ResetPasswordDto dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.Email);
 
-            if (user is null)
+            if (user is null || !user.EmailConfirmed)
             {
                 throw new AppNotFoundException("User with this email was not found");
             }
@@ -147,9 +147,34 @@ namespace EngActivator.APP.Services
             {
                 var errorResponse = new ErrorResponse("We were not able to send email to provided address");
                 errorResponse.ErrorsMap.Add("email", new List<string> { "We were not able to send email to provided address" });
-                _logger.LogError(e, $"Could not send reset password email: {e.Message}");
+                _logger.LogError(e, $"Could not send reset password email: {e.Message} {dto.Email}");
 
                 throw new AppErrorResponseException(errorResponse, e);
+            }
+        }
+
+        public async Task<bool> ResetPasswordAsync(string email, string token, string password)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            try
+            {
+                if (user is null)
+                {
+                    throw new AppNotFoundException("User with this email was not found");
+                }
+
+                var result = await _userManager.ResetPasswordAsync(user, token, password);
+
+                return result.Succeeded;
+            }
+            catch (Exception e)
+            {
+                var errorResponse = new ErrorResponse("We were not able to reset your password");
+                errorResponse.ErrorsMap.Add("email", new List<string> { "We were not able to reset your password" });
+                _logger.LogError(e, $"Could not reset password: {e.Message} {email}");
+
+                return false;
             }
         }
 
@@ -208,7 +233,7 @@ namespace EngActivator.APP.Services
                 await _userManager.DeleteAsync(user);
                 var errorResponse = new ErrorResponse("We were not able to send registration email to provided address");
                 errorResponse.ErrorsMap.Add("email", new List<string> { "We were not able to send registration email to provided address" });
-                _logger.LogError(e, $"Could not send signup email: {e.Message}");
+                _logger.LogError(e, $"Could not send signup email: {e.Message} {signupData.Email}");
 
                 throw new AppErrorResponseException(errorResponse, e);
             }

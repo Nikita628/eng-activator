@@ -16,6 +16,7 @@ namespace EngActivator.APP.Shared.Services
         private const string RESET_PASSWORD_LINK = "_RESET_PASSWORD_LINK_";
         private const string YEAR = "_YEAR_";
         private const string SignupSubject = "Exenge Registration";
+        private const string ResetPasswordSubject = "Exenge Password Reset";
 
         private readonly AppSettings _appSettings;
 
@@ -50,14 +51,14 @@ namespace EngActivator.APP.Shared.Services
                 To = emailTo,
             };
 
-            var resetPasswordLink = $"{_appSettings.ApiUrl}/api/auth/reset-password?email={HttpUtility.UrlEncode(emailTo)}&token={HttpUtility.UrlEncode(resetPasswordToken)}";
-            var templateText = new StringBuilder(GetEmailTemplateText("signupEmail.html"));
+            var resetPasswordLink = $"{_appSettings.ApiUrl}/api/auth/reset-password-page?email={HttpUtility.UrlEncode(emailTo)}&token={HttpUtility.UrlEncode(resetPasswordToken)}";
+            var templateText = new StringBuilder(GetEmailTemplateText("resetPasswordEmail.html"));
             templateText.Replace(USER_NAME, userName);
             templateText.Replace(RESET_PASSWORD_LINK, resetPasswordLink);
             templateText.Replace(YEAR, DateTime.UtcNow.Year.ToString());
 
             email.Body = templateText.ToString();
-            email.Subject = SignupSubject;
+            email.Subject = ResetPasswordSubject;
 
             return email;
         }

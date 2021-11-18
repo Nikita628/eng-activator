@@ -10,6 +10,7 @@ namespace EngActivator.APP.Interfaces
         Task SignupAsync(SignupData signupData);
         Task DeleteUserAsync(string email);
         Task<bool> ConfirmEmailAsync(string email, string emailConfirmationToken);
-        Task SendResetPasswordEmail(ResetPasswordData dto);
+        Task SendResetPasswordEmailAsync(ResetPasswordDto dto);
+        Task<bool> ResetPasswordAsync(string email, string token, string password);
     }
 }

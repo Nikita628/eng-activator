@@ -1,4 +1,4 @@
-import 'package:eng_activator_app/models/auth/login_data.dart';
+import 'package:eng_activator_app/models/auth/reset_password_dto.dart';
 import 'package:eng_activator_app/services/api_clients/auth_api_client.dart';
 import 'package:eng_activator_app/shared/api_exception.dart';
 import 'package:eng_activator_app/shared/enums.dart';
@@ -6,43 +6,33 @@ import 'package:eng_activator_app/shared/services/app_navigator.dart';
 import 'package:eng_activator_app/services/auth/auth_validator.dart';
 import 'package:eng_activator_app/shared/services/injector.dart';
 import 'package:eng_activator_app/shared/constants.dart';
-import 'package:eng_activator_app/state/auth_provider.dart';
 import 'package:eng_activator_app/widgets/dialogs/error_dialog.dart';
+import 'package:eng_activator_app/widgets/dialogs/reset_password_dialog.dart';
 import 'package:eng_activator_app/widgets/screens/auth/input_field.dart';
-import 'package:eng_activator_app/widgets/screens/auth/reset_password_screen.dart';
-import 'package:eng_activator_app/widgets/screens/auth/signup.dart';
-import 'package:eng_activator_app/widgets/screens/main_screen.dart';
+import 'package:eng_activator_app/widgets/screens/auth/login.dart';
 import 'package:eng_activator_app/widgets/ui_elements/app_logo.dart';
 import 'package:eng_activator_app/widgets/ui_elements/app_scaffold.dart';
 import 'package:eng_activator_app/widgets/ui_elements/app_spinner.dart';
 import 'package:eng_activator_app/widgets/ui_elements/exit_warning_on_pop.dart';
 import 'package:eng_activator_app/widgets/ui_elements/rounded_button.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-class LoginScreenWidget extends StatefulWidget {
-  static const screenUrl = '/login-screen-widget';
+class ResetPasswordScreenWidget extends StatefulWidget {
+  static const screenUrl = '/reset-password-screen-widget';
 
-  const LoginScreenWidget({Key? key}) : super(key: key);
+  const ResetPasswordScreenWidget({Key? key}) : super(key: key);
 
   @override
-  _LoginScreenWidgetState createState() => _LoginScreenWidgetState();
+  _ResetPasswordScreenWidgetState createState() => _ResetPasswordScreenWidgetState();
 }
 
-class _LoginScreenWidgetState extends State<LoginScreenWidget> {
-  final AppNavigator _appNavigator = Injector.get<AppNavigator>();
-  final AuthValidator _authValidator = Injector.get<AuthValidator>();
-  final LoginDto _loginDataDto = LoginDto();
-  final AuthApiClient _authApiClient = Injector.get<AuthApiClient>();
-  late WidgetStatusEnum _widgetStatus = WidgetStatusEnum.Default;
-  late AuthProvider _authProvider;
+class _ResetPasswordScreenWidgetState extends State<ResetPasswordScreenWidget> {
+  final _appNavigator = Injector.get<AppNavigator>();
+  final _authValidator = Injector.get<AuthValidator>();
+  final _resetPasswordDto = ResetPasswordDto();
+  final _authApiClient = Injector.get<AuthApiClient>();
+  late var _widgetStatus = WidgetStatusEnum.Default;
   var _formKey = GlobalKey<FormState>();
-
-  @override
-  void initState() {
-    _authProvider = Provider.of<AuthProvider>(context, listen: false);
-    super.initState();
-  }
 
   void _setWidgetStatus(WidgetStatusEnum status) {
     if (mounted) {
@@ -60,9 +50,14 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
       _setWidgetStatus(WidgetStatusEnum.Loading);
 
       try {
-        var response = await _authApiClient.login(_loginDataDto, context);
-        await _authProvider.setAuthData(response);
-        _appNavigator.replaceCurrentUrl(MainScreenWidget.screenUrl, context);
+        await _authApiClient.resetPassword(_resetPasswordDto, context);
+
+        await showDialog(
+          context: context,
+          builder: (_) => ResetPasswordDialog(),
+        );
+
+        _appNavigator.replaceCurrentUrl(LoginScreenWidget.screenUrl, context);
       } on ApiResponseException catch (e) {
         await showDialog(
           context: context,
@@ -93,21 +88,14 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
                 InputField(
                   label: 'Email',
                   margin: EdgeInsets.only(bottom: 30),
-                  onSaved: (val) => _loginDataDto.email = val ?? "",
+                  onSaved: (val) => _resetPasswordDto.email = val ?? "",
                   validator: _authValidator.validateEmailOnLogin,
-                ),
-                InputField(
-                  label: 'Password',
-                  margin: EdgeInsets.only(bottom: 30),
-                  onSaved: (val) => _loginDataDto.password = val ?? "",
-                  validator: _authValidator.validatePasswordOnLogin,
-                  obscureText: true,
                 ),
                 RoundedButton(
                   child: _widgetStatus == WidgetStatusEnum.Loading
                       ? AppSpinner()
                       : const Text(
-                          'LOGIN',
+                          'SUBMIT',
                           style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -121,21 +109,9 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
                 TextButton(
                   onPressed: _widgetStatus == WidgetStatusEnum.Loading
                       ? null
-                      : () => _appNavigator.replaceCurrentUrl(SignupScreenWidget.screenUrl, context),
+                      : () => _appNavigator.replaceCurrentUrl(LoginScreenWidget.screenUrl, context),
                   child: const Text(
-                    'switch to signup',
-                    style: TextStyle(
-                      color: Color(AppColors.green),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: _widgetStatus == WidgetStatusEnum.Loading
-                      ? null
-                      : () => _appNavigator.replaceCurrentUrl(ResetPasswordScreenWidget.screenUrl, context),
-                  child: const Text(
-                    'forgot password?',
+                    'go to login',
                     style: TextStyle(
                       color: Color(AppColors.green),
                       fontWeight: FontWeight.bold,
