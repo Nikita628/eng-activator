@@ -113,7 +113,7 @@ namespace EngActivator.API
 
             app.UseStatusCodePagesWithReExecute("/error/{0}");
 
-            // app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
 
             app.UseStaticFiles();
 

@@ -13,13 +13,13 @@ class AppConstants {
   static const double preferredAppBarHeight = 50;
 
   static const String _localApiUrl = '10.0.2.2:5001';
-  static const String _localApiUrlWithPrefix = 'http://10.0.2.2:5001';
+  static const String _localApiUrlWithPrefix = 'https://10.0.2.2:5001';
 
-  static const String _devApiUrl = 'exenge-001-site1.ftempurl.com';
-  static const String _devApiUrlWithPrefix = 'http://exenge-001-site1.ftempurl.com';
+  static const String _devApiUrl = 'exenge-001-site2.ftempurl.com';
+  static const String _devApiUrlWithPrefix = 'https://exenge-001-site2.ftempurl.com';
   
-  static const String _prodApiUrl = '';
-  static const String _prodApiUrlWithPrefix = '';
+  static const String _prodApiUrl = 'exenge.org';
+  static const String _prodApiUrlWithPrefix = 'https://exenge.org';
 
   static const Map<String, String> apiHeaders = {
     "content-type": "application/json",

@@ -104,10 +104,13 @@ namespace EngActivator.API.Utils
                         Name = $"Seed {i}",
                         Email = $"seed_{i}@seed.com",
                         UserName = $"seed{i}",
-                        EmailConfirmed = true,
                     };
 
                     await userManager.CreateAsync(user, "Welcome01!");
+
+                    var emailConfirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
+
+                    await userManager.ConfirmEmailAsync(user, emailConfirmationToken);
                 }
             }
         }

@@ -9,7 +9,7 @@ import 'dart:convert';
 import 'package:provider/provider.dart';
 
 class DictionaryApiClient extends BaseApiClient {
-  final Uri _searchUrl = Uri.http(AppConstants.getApiUrl(), '/api/dictionary/search');
+  final Uri _searchUrl = Uri.https(AppConstants.getApiUrl(), '/api/dictionary/search');
 
   Future<DictionaryResponse> search(DictionarySearchParam param, BuildContext context) async {
     var token = Provider.of<AuthProvider>(context, listen: false).getToken();

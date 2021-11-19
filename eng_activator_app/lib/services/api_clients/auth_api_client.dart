@@ -9,9 +9,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AuthApiClient extends BaseApiClient {
-  final Uri _loginUrl = Uri.http(AppConstants.getApiUrl(), '/api/auth/login');
-  final Uri _signupUrl = Uri.http(AppConstants.getApiUrl(), '/api/auth/signup');
-  final Uri _resetPasswordUrl = Uri.http(AppConstants.getApiUrl(), '/api/auth/send-reset-password-email');
+  final Uri _loginUrl = Uri.https(AppConstants.getApiUrl(), '/api/auth/login');
+  final Uri _signupUrl = Uri.https(AppConstants.getApiUrl(), '/api/auth/signup');
+  final Uri _resetPasswordUrl = Uri.https(AppConstants.getApiUrl(), '/api/auth/send-reset-password-email');
 
   Future<void> signup(SignupDto param, BuildContext context) async {
     var response = await executeHttp(() {
