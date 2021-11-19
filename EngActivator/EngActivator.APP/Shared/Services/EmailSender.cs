@@ -29,6 +29,7 @@ namespace EngActivator.APP.Shared.Services
             };
             email.To.Add(MailboxAddress.Parse(emailDto.To));
             email.Subject = emailDto.Subject;
+            email.From.Add(MailboxAddress.Parse(_mailSettings.Mail));
 
             var builder = new BodyBuilder
             {
@@ -41,7 +42,8 @@ namespace EngActivator.APP.Shared.Services
             email.Body = builder.ToMessageBody();
 
             using var smtp = new SmtpClient();
-            smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
+            smtp.CheckCertificateRevocation = false;
+            smtp.Connect(_mailSettings.Host, _mailSettings.Port);
             smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
             await smtp.SendAsync(email);
             smtp.Disconnect(true);
