@@ -28,12 +28,15 @@ class _ActivityForReviewState extends State<ActivityForReview> {
   late ActivityResponseForReview _activityResponse;
   QuestionActivity? _questionActivity;
   PictureActivity? _pictureActivity;
+  late int _activityResponseId;
   List<WordEntry> _wordEntries = [];
 
   @override
   void initState() {
     _activityResponse = Provider.of<ActivityResponseProvider>(context, listen: false).activityResponseForReview
         as ActivityResponseForReview;
+
+    _activityResponseId = _activityResponse.id;
 
     _wordEntries = _activityResponse.activity.wordEntries;
 
@@ -55,6 +58,13 @@ class _ActivityForReviewState extends State<ActivityForReview> {
           padding: EdgeInsets.only(bottom: 30),
           child: Column(
             children: [
+              Container(
+                child: Text(
+                  "Assignment ID: ${_activityResponseId.toString()}",
+                  style: TextStyle(color: Colors.grey[700], fontSize: 14),
+                ),
+                margin: EdgeInsets.only(top: 10),
+              ),
               if (_activityResponse.activityTypeId == ActivityTypeEnum.Question)
                 ActivityQuestionWidget(
                   text: _questionActivity?.question as String,

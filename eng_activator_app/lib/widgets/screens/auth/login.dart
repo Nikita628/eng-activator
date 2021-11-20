@@ -95,6 +95,7 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
                   margin: EdgeInsets.only(bottom: 30),
                   onSaved: (val) => _loginDataDto.email = val ?? "",
                   validator: _authValidator.validateEmailOnLogin,
+                  textInputAction: TextInputAction.next,
                 ),
                 InputField(
                   label: 'Password',
@@ -102,6 +103,7 @@ class _LoginScreenWidgetState extends State<LoginScreenWidget> {
                   onSaved: (val) => _loginDataDto.password = val ?? "",
                   validator: _authValidator.validatePasswordOnLogin,
                   obscureText: true,
+                  textInputAction: TextInputAction.done,
                 ),
                 RoundedButton(
                   child: _widgetStatus == WidgetStatusEnum.Loading

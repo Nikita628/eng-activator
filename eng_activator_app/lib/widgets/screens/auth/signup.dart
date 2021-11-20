@@ -89,12 +89,14 @@ class _SignupScreenWidgetState extends State<SignupScreenWidget> {
                     margin: EdgeInsets.only(bottom: 30),
                     onSaved: (val) => _signupData.name = val ?? "",
                     validator: _authValidator.validateName,
+                    textInputAction: TextInputAction.next,
                   ),
                   InputField(
                     label: 'Email',
                     margin: EdgeInsets.only(bottom: 30),
                     onSaved: (val) => _signupData.email = val ?? "",
                     validator: _authValidator.validateEmail,
+                    textInputAction: TextInputAction.next,
                   ),
                   InputField(
                     label: 'Password',
@@ -102,6 +104,7 @@ class _SignupScreenWidgetState extends State<SignupScreenWidget> {
                     obscureText: true,
                     onSaved: (val) => _signupData.password = val ?? "",
                     validator: _authValidator.validatePassword,
+                    textInputAction: TextInputAction.next,
                   ),
                   InputField(
                     label: 'Password Confirmation',
@@ -109,6 +112,7 @@ class _SignupScreenWidgetState extends State<SignupScreenWidget> {
                     obscureText: true,
                     onSaved: (val) => _signupData.passwordConfirmation = val ?? "",
                     validator: (val) => _authValidator.validatePasswordConfirmation(_signupData.password, val),
+                    textInputAction: TextInputAction.done,
                   ),
                   RoundedButton(
                     child: _widgetStatus == WidgetStatusEnum.Loading

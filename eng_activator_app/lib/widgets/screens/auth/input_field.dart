@@ -7,6 +7,7 @@ class InputField extends StatelessWidget {
   final Function(String?)? _onSaved;
   final String? Function(String?)? _validator;
   final bool _obscure;
+  final TextInputAction _textInputAction;
 
   const InputField({
     Key? key,
@@ -15,11 +16,13 @@ class InputField extends StatelessWidget {
     Function(String?)? onSaved,
     String? Function(String?)? validator,
     bool obscureText = false,
+    required TextInputAction textInputAction,
   })  : _label = label,
         _onSaved = onSaved,
         _validator = validator,
         _margin = margin,
         _obscure = obscureText,
+        _textInputAction = textInputAction,
         super(key: key);
 
   @override
@@ -44,7 +47,7 @@ class InputField extends StatelessWidget {
             ),
           ),
         ),
-        textInputAction: TextInputAction.next,
+        textInputAction: _textInputAction,
       ),
     );
   }

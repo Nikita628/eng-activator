@@ -6,6 +6,7 @@ import 'package:eng_activator_app/shared/enums.dart';
 import 'package:eng_activator_app/state/activity_provider.dart';
 import 'package:eng_activator_app/state/activity_response_provider.dart';
 import 'package:eng_activator_app/state/auth_provider.dart';
+import 'package:eng_activator_app/widgets/screens/abusive_content_report_screen.dart';
 import 'package:eng_activator_app/widgets/screens/activity_response/activity_response_list.dart';
 import 'package:eng_activator_app/widgets/screens/main_screen.dart';
 import 'package:flutter/material.dart';
@@ -42,6 +43,10 @@ class _AppDrawerState extends State<AppDrawer> {
   void _navigateToActivityResponsesList() {
     Provider.of<ActivityResponseProvider>(context, listen: false).isActivityResponseListOpenedFromBackButton = false;
     _appNavigator.replaceCurrentUrl(ActivityResponseListWidget.screenUrl, context);
+  }
+
+  void _navigateToAbusiveContentReportScreen() {
+    _appNavigator.replaceCurrentUrl(AbusiveContentReportScreen.screenUrl, context);
   }
 
   void _logout() {
@@ -103,6 +108,15 @@ class _AppDrawerState extends State<AppDrawer> {
             ),
             title: const Text('Next Question'),
             onTap: _navigateToNewRandomQuestion,
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.dangerous_outlined,
+              color: Colors.red[200],
+              size: 30,
+            ),
+            title: const Text('Report Abusive Content'),
+            onTap: _navigateToAbusiveContentReportScreen,
           ),
           ListTile(
             leading: const Icon(

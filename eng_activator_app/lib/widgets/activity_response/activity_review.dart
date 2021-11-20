@@ -80,7 +80,7 @@ class _ActivityReviewWidgetState extends State<ActivityReviewWidget> {
                 ),
               ),
               Text(
-                "By ${widget._review.createdBy.name}",
+                "By ${widget._review.createdBy.name}, Review ID: ${widget._review.id}",
                 style: const TextStyle(
                   color: Color(AppColors.grey),
                   fontSize: 14,
@@ -108,12 +108,18 @@ class _ActivityReviewWidgetState extends State<ActivityReviewWidget> {
                 wordSpacing: 0.7,
               ),
             ),
-            IconButton(
-              onPressed: _markAsViewed,
-              icon: Icon(
-                widget._review.isViewed ? Icons.remove_red_eye : Icons.remove_red_eye_outlined,
-                color: Color(widget._review.isViewed ? AppColors.grey : AppColors.green),
-              ),
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  onPressed: _markAsViewed,
+                  icon: Icon(
+                    widget._review.isViewed ? Icons.remove_red_eye : Icons.remove_red_eye_outlined,
+                    color: Color(widget._review.isViewed ? AppColors.grey : AppColors.green),
+                  ),
+                ),
+                Text(widget._review.isViewed ? "Read" : "Not Read"),
+              ],
             ),
           ],
         ),

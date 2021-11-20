@@ -30,6 +30,8 @@ class _DictionarySearchTextFieldState extends State<DictionarySearchTextField> {
   Widget build(BuildContext context) {
     return TextField(
       controller: _textFieldController,
+      onSubmitted: (value) => widget._onSearchIconClick(value),
+      autofocus: true,
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.only(top: 5, bottom: 5, left: 10, right: 5),
         hintText: 'Search dictionary...',

@@ -140,7 +140,7 @@ class _ActivityReviewFormWidgetState extends State<ActivityReviewFormWidget> {
                 },
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             AppTextAreaWidget(
               validator: _activityValidator.validateRequiredAndSwearing,
               onSaved: (val) => _review = val ?? '',
@@ -148,7 +148,7 @@ class _ActivityReviewFormWidgetState extends State<ActivityReviewFormWidget> {
               onChanged: _onReviewTextChanged,
               value: _review,
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 15),
             RoundedButton(
               disabled: _buttonStatus == WidgetStatusEnum.Loading,
               bgColor: Color(AppColors.green),

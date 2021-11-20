@@ -43,6 +43,7 @@ namespace EngActivator.API
             services.AddScoped<IDictionaryService, DictionaryService>();
             services.AddScoped<IEmailSender, EmailSender>();
             services.AddScoped<IEmailConstructor, EmailConstructor>();
+            services.AddScoped<IAbusiveContentReportService, AbusiveContentReportService>();
             services.AddSingleton(typeof(AppDictionary), new AppDictionary());
             services.Configure<MailSettings>(Configuration.GetSection("MailSettings"));
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));

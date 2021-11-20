@@ -92,5 +92,6 @@ namespace EngActivator.APP.DataBase
         public DbSet<Entities.ActivityResponseReview> ActivityResponseReviews { get; set; }
         public DbSet<Entities.ActivityType> ActivityTypes { get; set; }
         public DbSet<Entities.AppUser> Users { get; set; }
+        public DbSet<Entities.AbusiveContentReport> AbusiveContentReports { get; set; }
     }
 }

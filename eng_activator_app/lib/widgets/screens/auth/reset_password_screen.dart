@@ -90,6 +90,7 @@ class _ResetPasswordScreenWidgetState extends State<ResetPasswordScreenWidget> {
                   margin: EdgeInsets.only(bottom: 30),
                   onSaved: (val) => _resetPasswordDto.email = val ?? "",
                   validator: _authValidator.validateEmailOnLogin,
+                  textInputAction: TextInputAction.done,
                 ),
                 RoundedButton(
                   child: _widgetStatus == WidgetStatusEnum.Loading

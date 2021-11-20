@@ -1,5 +1,6 @@
 import 'package:eng_activator_app/services/activity/activity_service.dart';
 import 'package:eng_activator_app/services/activity/activity_validator.dart';
+import 'package:eng_activator_app/services/api_clients/abusive_content_report_api_client.dart';
 import 'package:eng_activator_app/services/api_clients/activity_response_api_client.dart';
 import 'package:eng_activator_app/services/api_clients/activity_response_review_api_client.dart';
 import 'package:eng_activator_app/services/api_clients/auth_api_client.dart';
@@ -22,6 +23,7 @@ class Injector {
   static final AuthApiClient _authApiClient = AuthApiClient();
   static final ActivityResponseApiClient _activityResponseApiClient = ActivityResponseApiClient();
   static final ActivityResponseReviewApiClient _activityResponseReviewApiClient = ActivityResponseReviewApiClient();
+  static final AbusiveContentReportApiClient _abusiveContentReportApiClient = AbusiveContentReportApiClient();
 
   static T get<T>() {
     Object? objectOfType;
@@ -48,6 +50,8 @@ class Injector {
       objectOfType = _activityResponseApiClient;
     } else if (_typesEqual<T, ActivityResponseReviewApiClient>()) {
       objectOfType = _activityResponseReviewApiClient;
+    } else if (_typesEqual<T, AbusiveContentReportApiClient>()) {
+      objectOfType = _abusiveContentReportApiClient;
     }
     else {
       throw Exception('Type not found');

@@ -71,13 +71,12 @@ class ActivityResponseListItemWidget extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          _response.hasUnreadReviews
-                              ? const Icon(
-                                  Icons.message,
-                                  color: Color(AppColors.green),
-                                  size: 15,
-                                )
-                              : const SizedBox.shrink()
+                          if (_response.hasUnreadReviews)
+                            const Icon(
+                              Icons.message,
+                              color: Color(AppColors.green),
+                              size: 15,
+                            ),
                         ],
                       ),
                     ),

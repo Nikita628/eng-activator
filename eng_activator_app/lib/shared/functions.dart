@@ -1,4 +1,5 @@
 import 'package:eng_activator_app/widgets/dialogs/error_dialog.dart';
+import 'package:eng_activator_app/widgets/dialogs/info_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -18,5 +19,12 @@ Future<void> showErrorDialog(String error, BuildContext ctx) async {
   await showDialog(
     context: ctx,
     builder: (_) => ErrorDialog(error: error),
+  );
+}
+
+Future<void> showInfoDialog(String info, BuildContext ctx) async {
+  await showDialog(
+    context: ctx,
+    builder: (_) => InfoDialog(info: info),
   );
 }

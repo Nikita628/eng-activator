@@ -6,6 +6,7 @@ import 'package:eng_activator_app/shared/state/current_url_provider.dart';
 import 'package:eng_activator_app/state/activity_response_provider.dart';
 import 'package:eng_activator_app/state/auth_provider.dart';
 import 'package:eng_activator_app/widgets/home_widget.dart';
+import 'package:eng_activator_app/widgets/screens/abusive_content_report_screen.dart';
 import 'package:eng_activator_app/widgets/screens/activity/activity_for_review.dart';
 import 'package:eng_activator_app/widgets/screens/activity/picture_activity_screen.dart';
 import 'package:eng_activator_app/widgets/screens/activity/question_activity_screen.dart';
@@ -64,6 +65,7 @@ class EnglishActivatorApp extends StatelessWidget {
           QuestionActivityScreen.screenUrl: (_) => QuestionActivityScreen(),
           PictureActivityScreen.screenUrl: (_) => PictureActivityScreen(),
           ResetPasswordScreenWidget.screenUrl: (_) => ResetPasswordScreenWidget(),
+          AbusiveContentReportScreen.screenUrl: (_) => AbusiveContentReportScreen(),
         },
       ),
     );
