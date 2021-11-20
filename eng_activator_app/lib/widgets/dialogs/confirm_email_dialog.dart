@@ -6,7 +6,7 @@ class ConfirmEmailDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       content: Text(
-          "We've sent an email to provided address. Please follow the instructions from the email to complete your registration"),
+          "We've sent an email to provided address. Please follow the instructions from the email to complete your registration. If you didn't receive the email, check your spam folder."),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),

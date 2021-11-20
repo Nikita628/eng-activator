@@ -61,6 +61,7 @@ namespace EngActivator.API.Controllers
         }
 
         [HttpDelete("delete-user")]
+        [AllowAnonymous]
         public async Task<IActionResult> DeleteUser([FromQuery] string email)
         {
             await _authService.DeleteUserAsync(email);

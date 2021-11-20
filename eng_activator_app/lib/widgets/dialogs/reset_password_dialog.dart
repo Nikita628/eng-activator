@@ -6,7 +6,7 @@ class ResetPasswordDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       content: Text(
-          "We've sent an email to provided address. Please follow the instructions from the email to reset your password"),
+          "We've sent an email to provided address. Please follow the instructions from the email to reset your password. If you didn't receive the email, check your spam folder."),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
