@@ -7,6 +7,7 @@
   <ItemGroup>
     <_WebToolingArtifacts Remove="Properties\PublishProfiles\Development Settings.pubxml" />
     <_WebToolingArtifacts Remove="Properties\PublishProfiles\DevelopmentSettings.pubxml" />
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\ProductionSettings.pubxml" />
   </ItemGroup>
 
   <ItemGroup>

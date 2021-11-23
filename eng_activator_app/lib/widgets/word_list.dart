@@ -1,4 +1,3 @@
-import 'package:eng_activator_app/models/word_entry.dart';
 import 'package:eng_activator_app/shared/constants.dart';
 import 'package:eng_activator_app/widgets/ui_elements/rounded_box.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'word_list_item.dart';
 
 class WordListWidget extends StatelessWidget {
-  final List<WordEntry> _wordEntries;
+  final List<WordListItemDto> _wordListItemDtos;
   final EdgeInsets? _margin;
 
-  WordListWidget({required List<WordEntry> wordEntries, EdgeInsets? margin})
-      : _wordEntries = wordEntries,
+  WordListWidget({required List<WordListItemDto> wordListItemDtos, EdgeInsets? margin})
+      : _wordListItemDtos = wordListItemDtos,
         _margin = margin;
 
   @override
@@ -22,9 +21,9 @@ class WordListWidget extends StatelessWidget {
       child: Wrap(
         spacing: 8.0,
         runSpacing: 10,
-        children: _wordEntries
+        children: _wordListItemDtos
             .map((e) => WordListItemWidget(
-                  wordEntry: e,
+                  dto: e,
                 ))
             .toList(),
       ),

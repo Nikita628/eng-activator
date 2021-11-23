@@ -38,4 +38,26 @@ class WordEntry {
     examples = Converter.toList(json, "examples");
     forms = Converter.toList(json, "forms");
   }
+
+  bool isWordPresentInText(String text) {
+    if (text.isEmpty) {
+      return false;
+    }
+
+    var loweredText = text.toLowerCase();
+    var isPresent = false;
+
+    if (loweredText.contains(this.word)) {
+      isPresent = true;
+    } else {
+      for (var form in this.forms) {
+        if (loweredText.contains(form)) {
+          isPresent = true;
+          break;
+        }
+      }
+    }
+
+    return isPresent;
+  }
 }

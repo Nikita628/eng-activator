@@ -2,6 +2,7 @@ import 'package:eng_activator_app/models/activity_response/activity_response_det
 import 'package:eng_activator_app/widgets/activity_response/activity_answer_and_reviews_panel.dart';
 import 'package:eng_activator_app/widgets/ui_elements/app_scaffold.dart';
 import 'package:eng_activator_app/widgets/word_list.dart';
+import 'package:eng_activator_app/widgets/word_list_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -21,7 +22,7 @@ class ActivityResponseDetailsWidget extends StatefulWidget {
 
 class _ActivityResponseDetailsWidgetState extends State<ActivityResponseDetailsWidget> {
   @override
-  Widget build(BuildContext context) {    
+  Widget build(BuildContext context) {
     return AppScaffold(
       isAppBarShown: true,
       child: Container(
@@ -32,7 +33,13 @@ class _ActivityResponseDetailsWidgetState extends State<ActivityResponseDetailsW
           children: [
             widget._child,
             WordListWidget(
-              wordEntries: widget._activityResponse.activity.wordEntries,
+              wordListItemDtos: widget._activityResponse.activity.wordEntries
+                  .map(
+                    (e) => WordListItemDto(
+                      wordEntry: e,
+                      isHighlited: e.isWordPresentInText(widget._activityResponse.answer),
+                    ),
+                  ).toList(),
               margin: const EdgeInsets.only(bottom: 30),
             ),
             ActivityAnswerAndReviewsPanel(activityResponse: widget._activityResponse),

@@ -1,7 +1,6 @@
 import 'package:eng_activator_app/models/activity/picture_activity.dart';
 import 'package:eng_activator_app/models/activity_response/activity_response_for_review.dart';
 import 'package:eng_activator_app/models/activity/question_activity.dart';
-import 'package:eng_activator_app/models/word_entry.dart';
 import 'package:eng_activator_app/shared/enums.dart';
 import 'package:eng_activator_app/shared/constants.dart';
 import 'package:eng_activator_app/state/activity_response_provider.dart';
@@ -11,6 +10,7 @@ import 'package:eng_activator_app/widgets/activity_question_widget.dart';
 import 'package:eng_activator_app/widgets/ui_elements/app_scaffold.dart';
 import 'package:eng_activator_app/widgets/ui_elements/exit_warning_on_pop.dart';
 import 'package:eng_activator_app/widgets/word_list.dart';
+import 'package:eng_activator_app/widgets/word_list_item.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +29,7 @@ class _ActivityForReviewState extends State<ActivityForReview> {
   QuestionActivity? _questionActivity;
   PictureActivity? _pictureActivity;
   late int _activityResponseId;
-  List<WordEntry> _wordEntries = [];
+  List<WordListItemDto> _dtos = [];
 
   @override
   void initState() {
@@ -38,7 +38,13 @@ class _ActivityForReviewState extends State<ActivityForReview> {
 
     _activityResponseId = _activityResponse.id;
 
-    _wordEntries = _activityResponse.activity.wordEntries;
+    _dtos = _activityResponse.activity.wordEntries
+        .map(
+          (e) => WordListItemDto(
+            wordEntry: e,
+            isHighlited: e.isWordPresentInText(_activityResponse.answer),
+          ),
+        ).toList();
 
     if (_activityResponse.activityTypeId == ActivityTypeEnum.Question) {
       _questionActivity = _activityResponse.activity as QuestionActivity;
@@ -76,7 +82,7 @@ class _ActivityForReviewState extends State<ActivityForReview> {
                   margin: const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
                 ),
               WordListWidget(
-                wordEntries: _wordEntries,
+                wordListItemDtos: _dtos,
                 margin: const EdgeInsets.only(top: 10, bottom: 30, left: 10, right: 10),
               ),
               Container(

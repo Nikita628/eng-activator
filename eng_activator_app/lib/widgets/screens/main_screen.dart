@@ -42,9 +42,7 @@ class _MainScreenState extends State {
       child: AppScaffold(
         isAppBarShown: true,
         child: Container(
-          height: MediaQuery.of(context).size.height -
-              AppConstants.preferredAppBarHeight -
-              MediaQuery.of(context).padding.top,
+          padding: EdgeInsets.only(bottom: 20, top: 20),
           child: Column(
             children: [
               Image.asset(

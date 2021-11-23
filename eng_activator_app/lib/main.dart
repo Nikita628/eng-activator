@@ -20,7 +20,7 @@ import 'package:eng_activator_app/widgets/screens/activity_response/question_act
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-const currentAppEnv = AppEnvironment.Development;
+const currentAppEnv = AppEnvironment.Production;
 
 class MyHttpOverrides extends HttpOverrides {
   @override
