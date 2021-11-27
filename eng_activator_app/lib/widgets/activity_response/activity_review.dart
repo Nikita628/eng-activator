@@ -1,8 +1,10 @@
 import 'package:eng_activator_app/models/activity_response_review/activity_response_review.dart';
 import 'package:eng_activator_app/services/api_clients/activity_response_review_api_client.dart';
 import 'package:eng_activator_app/shared/constants.dart';
+import 'package:eng_activator_app/shared/enums.dart';
 import 'package:eng_activator_app/shared/services/injector.dart';
 import 'package:eng_activator_app/state/activity_response_provider.dart';
+import 'package:eng_activator_app/widgets/ui_elements/app_spinner.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +26,7 @@ class _ActivityReviewWidgetState extends State<ActivityReviewWidget> {
   final ActivityResponseReviewApiClient _activityResponseReviewApiClient =
       Injector.get<ActivityResponseReviewApiClient>();
   late ActivityResponseProvider _activityResponseProvider;
+  late WidgetStatusEnum _status = WidgetStatusEnum.Default;
 
   @override
   void initState() {
@@ -31,10 +34,18 @@ class _ActivityReviewWidgetState extends State<ActivityReviewWidget> {
     super.initState();
   }
 
-  void _setIsViewed() {
+  void _setIsViewed(bool isViewed) {
     if (mounted) {
       setState(() {
-        widget._review.isViewed = true;
+        widget._review.isViewed = isViewed;
+      });
+    }
+  }
+
+  void _setStatus(WidgetStatusEnum status) {
+    if (mounted) {
+      setState(() {
+        _status = status;
       });
     }
   }
@@ -45,7 +56,7 @@ class _ActivityReviewWidgetState extends State<ActivityReviewWidget> {
     }
 
     try {
-      _setIsViewed();
+      _setStatus(WidgetStatusEnum.Loading);
 
       var response = await _activityResponseReviewApiClient.markViewed(widget._review.id, context);
 
@@ -55,8 +66,12 @@ class _ActivityReviewWidgetState extends State<ActivityReviewWidget> {
 
         preview.hasUnreadReviews = false;
       }
+
+      _setIsViewed(true);
+
+      _setStatus(WidgetStatusEnum.Default);
     } catch (e) {
-      _setIsViewed();
+      _setIsViewed(false);
     }
   }
 
@@ -111,14 +126,20 @@ class _ActivityReviewWidgetState extends State<ActivityReviewWidget> {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                IconButton(
-                  onPressed: _markAsViewed,
-                  icon: Icon(
-                    widget._review.isViewed ? Icons.remove_red_eye : Icons.remove_red_eye_outlined,
-                    color: Color(widget._review.isViewed ? AppColors.grey : AppColors.green),
+                if (_status == WidgetStatusEnum.Loading)
+                  ConstrainedBox(
+                    constraints: BoxConstraints(maxHeight: 40, maxWidth: 40),
+                    child: Container(child: AppSpinner(), padding: EdgeInsets.all(10),),
                   ),
-                ),
-                Text(widget._review.isViewed ? "Read" : "Not Read"),
+                if (_status == WidgetStatusEnum.Default)
+                  IconButton(
+                    onPressed: _markAsViewed,
+                    icon: Icon(
+                      widget._review.isViewed ? Icons.remove_red_eye : Icons.remove_red_eye_outlined,
+                      color: Color(widget._review.isViewed ? AppColors.grey : AppColors.green),
+                    ),
+                  ),
+                if (_status == WidgetStatusEnum.Default) Text(widget._review.isViewed ? "Read" : "Not Read"),
               ],
             ),
           ],

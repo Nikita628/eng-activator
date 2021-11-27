@@ -50,12 +50,16 @@ namespace EngActivator.API
 
             services.AddAutoMapper(typeof(ActivityResponseProfile));
 
-            services.AddDbContext<EngActivatorContext>(
-                x => x.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
-            );
+            services
+              .AddDbContext<EngActivatorContext>(options =>
+              {
+                  options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                  options.EnableSensitiveDataLogging();
+              });
 
             // identity
-            var builder = services.AddIdentityCore<AppUser>(o => {
+            var builder = services.AddIdentityCore<AppUser>(o =>
+            {
                 o.Password.RequiredLength = 6;
                 o.Password.RequireNonAlphanumeric = false;
                 o.Password.RequireUppercase = false;

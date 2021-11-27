@@ -90,6 +90,20 @@ class _WordListWidgetListeningToCurrentActivityAnswerState
   }
 
   @override
+  void didUpdateWidget(covariant _WordListWidgetListeningToCurrentActivityAnswer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    _wordListItemDtos = widget._wordEntries
+        .map(
+          (e) => WordListItemDto(
+            wordEntry: e,
+            isHighlited: e.isWordPresentInText(_activityProvider.currentActivityAnswer.get()),
+          ),
+        )
+        .toList();
+  }
+
+  @override
   void dispose() {
     super.dispose();
     _activityProvider.currentActivityAnswer.unsubscribe(_onCurrentActivityAnswerChange);

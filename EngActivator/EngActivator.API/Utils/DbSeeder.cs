@@ -60,10 +60,12 @@ namespace EngActivator.API.Utils
 
                     context.Database.Migrate();
 
+                    SeedNecessaryData(context);
+
                     if (hostEnv.EnvironmentName == "Development" || hostEnv.EnvironmentName == "Local")
                     {
-                        await SeedUsers(userManager);
-                        Seed(context);
+                        await SeedTestUsers(userManager);
+                        SeedTestData(context);
                     }
                     
                     logger.LogInformation("---- Migrated db successfully ----");
@@ -75,13 +77,16 @@ namespace EngActivator.API.Utils
             }
         }
 
-        private static void Seed(EngActivatorContext context)
+        private static void SeedNecessaryData(EngActivatorContext context)
         {
             if (!context.ActivityTypes.Any())
             {
                 SeedActvityTypes(context);
             }
+        }
 
+        private static void SeedTestData(EngActivatorContext context)
+        {
             if (!context.ActivityResponses.Any())
             {
                 SeedActivityResponses(context);
@@ -93,7 +98,7 @@ namespace EngActivator.API.Utils
             }
         }
 
-        private static async Task SeedUsers(UserManager<AppUser> userManager)
+        private static async Task SeedTestUsers(UserManager<AppUser> userManager)
         {
             if (!userManager.Users.Any())
             {
