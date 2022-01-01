@@ -74,7 +74,7 @@ namespace EngActivator.APP.Services
 
             if (user is null || !user.EmailConfirmed)
             {
-                throw new AppUnauthorizedException("Invalid email and/or password");
+                throw new AppUnauthorizedException($"User with email {loginData.Email} was not found");
             }
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginData.Password, false);
@@ -134,7 +134,7 @@ namespace EngActivator.APP.Services
 
             if (user is null || !user.EmailConfirmed)
             {
-                throw new AppNotFoundException("User with this email was not found");
+                throw new AppNotFoundException($"User with email {dto.Email} was not found");
             }
 
             try
@@ -161,7 +161,7 @@ namespace EngActivator.APP.Services
             {
                 if (user is null)
                 {
-                    throw new AppNotFoundException("User with this email was not found");
+                    throw new AppNotFoundException($"User with email {email} was not found");
                 }
 
                 var result = await _userManager.ResetPasswordAsync(user, token, password);
@@ -198,8 +198,8 @@ namespace EngActivator.APP.Services
 
             if (isEmailAlreadyTaken)
             {
-                var errorResponse = new ErrorResponse("User with this email already exists");
-                errorResponse.ErrorsMap.Add("email", new List<string> { "User with this email already exists" });
+                var errorResponse = new ErrorResponse($"User with email {data.Email} already exists");
+                errorResponse.ErrorsMap.Add("email", new List<string> { $"User with email {data.Email} already exists" });
                 throw new AppErrorResponseException(errorResponse);
             }
 
@@ -207,8 +207,8 @@ namespace EngActivator.APP.Services
 
             if (isNameTaken)
             {
-                var errorResponse = new ErrorResponse("User with this name already exists");
-                errorResponse.ErrorsMap.Add("name", new List<string> { "User with this name already exists" });
+                var errorResponse = new ErrorResponse($"User with name {data.Name} already exists");
+                errorResponse.ErrorsMap.Add("name", new List<string> { $"User with name {data.Name} already exists" });
                 throw new AppErrorResponseException(errorResponse);
             }
         }
